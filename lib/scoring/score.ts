@@ -129,6 +129,39 @@ export function computeScore(
   };
 }
 
+// ── Kelengkapan data dimensi (coverage) — transparansi skor TANPA mengubah formula.
+// Skor total tetap = rata-rata berbobot dimensi yang diketahui (renormalisasi). Coverage hanya
+// MENANDAI berapa dimensi yang benar-benar punya data, agar "data bolong" tak menang diam-diam.
+// Penting: dimensi survei (kondisi/owner) hanya dihitung "diharapkan" SETELAH hunian disurvey —
+// "belum disurvey" ≠ data hilang. Jadi pra-survey total coverage = 3 (harga/lokasi/fasilitas).
+export type DimScores = {
+  score_harga: number | null;
+  score_lokasi: number | null;
+  score_fasilitas: number | null;
+  score_kondisi: number | null;
+  score_owner: number | null;
+};
+
+export const DIM_LABEL: Record<string, string> = {
+  harga: "harga",
+  lokasi: "jarak",
+  fasilitas: "fasilitas",
+  kondisi: "kondisi",
+  owner: "owner",
+};
+
+export function dataCoverage(s: DimScores): { known: number; total: number; missing: string[] } {
+  const surveyed = s.score_kondisi != null || s.score_owner != null;
+  const dims: { key: string; v: number | null }[] = [
+    { key: "harga", v: s.score_harga },
+    { key: "lokasi", v: s.score_lokasi },
+    { key: "fasilitas", v: s.score_fasilitas },
+  ];
+  if (surveyed) dims.push({ key: "kondisi", v: s.score_kondisi }, { key: "owner", v: s.score_owner });
+  const missing = dims.filter((d) => d.v == null).map((d) => d.key);
+  return { known: dims.length - missing.length, total: dims.length, missing };
+}
+
 // Deal breaker yang DAPAT dideteksi dari field Kontrakan Slice 1 (konservatif — hindari false flag).
 // Sisanya (km_di_luar, lantai_3_tanpa_lift, bayar_setahun_dimuka) butuh survey/field lain → tidak auto-flag.
 export function evalDealBreakers(activeKeys: string[], draft: ExtractedDraft): string[] {

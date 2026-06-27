@@ -21,7 +21,7 @@ export async function recordDecisionAction(
     .eq("id", candidateId)
     .eq("user_id", userId)
     .maybeSingle();
-  if (!c) return { ok: false, error: "Kandidat tidak ditemukan." };
+  if (!c) return { ok: false, error: "Hunian tidak ditemukan." };
 
   const { error } = await supabaseAdmin.from("decisions").insert({
     user_id: userId,

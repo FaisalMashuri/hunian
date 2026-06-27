@@ -67,7 +67,7 @@ export function InputFlow() {
           } else setError(res.error);
         });
       } else {
-        if (!draft.title?.trim()) { setError("Nama kandidat wajib diisi."); return; }
+        if (!draft.title?.trim()) { setError("Nama hunian wajib diisi."); return; }
         if (!draft.harga_asli || draft.harga_asli <= 0) { setError("Harga sewa wajib diisi (lebih dari 0)."); return; }
         setSource(sourceFromDraft(draft, "manual"));
         setStep("review");
@@ -93,13 +93,13 @@ export function InputFlow() {
 
   // ── Label action bar kontekstual
   const bar = (() => {
-    if (step === "review") return { title: "Periksa hasil ekstraksi", sub: "Ketuk baris untuk koreksi; field ⚠ sebaiknya dilengkapi", label: pending ? "Menyimpan…" : "Simpan Kandidat →" };
+    if (step === "review") return { title: "Periksa Data yang Ditemukan", sub: "Ketuk baris untuk koreksi; field ⚠ sebaiknya dilengkapi", label: pending ? "Menyimpan…" : "Tambah ke Shortlist →" };
     if (mode === "paste") {
       const n = pasteText.length;
       return {
-        title: n === 0 ? "Tempel deskripsi dulu" : `${n.toLocaleString("id-ID")} karakter siap diekstrak`,
+        title: n === 0 ? "Tempel deskripsi dulu" : `${n.toLocaleString("id-ID")} karakter siap dibaca AI`,
         sub: n === 0 ? "Copy teks dari WhatsApp, OLX, atau mana saja" : "AI akan membaca dan mengisi form otomatis",
-        label: pending ? "Mengekstrak…" : "Ekstrak & Lanjut →",
+        label: pending ? "Membaca…" : "Baca & Lanjut →",
       };
     }
     const TYPE_LABEL: Record<PropertyType, string> = { kontrakan: "Kontrakan", apartemen: "Apartemen", kost: "Kost" };
@@ -116,9 +116,9 @@ export function InputFlow() {
     <div className="min-h-screen bg-[#F4F3F0] pb-36 sm:pb-24">
       {/* TOPNAV + STEPPER */}
       <nav className="sticky top-0 z-50 flex h-[54px] items-center gap-2 border-b border-[#E4E3DF] bg-white/95 px-3 backdrop-blur sm:gap-3.5 sm:px-6">
-        <Link href="/kandidat" className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#E4E3DF] px-2.5 py-1.5 text-[13px] font-medium text-zinc-500 transition-colors hover:bg-[#F4F3F0] hover:text-zinc-900 sm:px-3">
+        <Link href="/dashboard" className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#E4E3DF] px-2.5 py-1.5 text-[13px] font-medium text-zinc-500 transition-colors hover:bg-[#F4F3F0] hover:text-zinc-900 sm:px-3">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="m15 18-6-6 6-6" /></svg>
-          <span className="hidden sm:inline">Kandidat</span>
+          <span className="hidden sm:inline">Dashboard</span>
         </Link>
         <div className="flex flex-1 items-center justify-center gap-1.5 sm:gap-2">
           <StepItem n={1} label="Input" state={step === "input" ? "active" : "done"} />
@@ -133,13 +133,13 @@ export function InputFlow() {
       {/* CONTENT */}
       {step === "success" && savedId ? (
         <div className="mx-auto max-w-[720px] px-4 py-7 sm:px-6">
-          <Success title={draft.title ?? "Kandidat"} id={savedId} locationWarning={locationWarning} onAddAnother={reset} />
+          <Success title={draft.title ?? "Hunian"} id={savedId} locationWarning={locationWarning} onAddAnother={reset} />
         </div>
       ) : (
         <div className="mx-auto max-w-[720px] px-4 py-7 sm:px-6">
           {step === "input" ? (
             <>
-              <h1 className="mb-1.5 text-center text-[22px] font-extrabold tracking-tight text-zinc-900 sm:text-left">Tambah Kandidat Baru</h1>
+              <h1 className="mb-1.5 text-center text-[22px] font-extrabold tracking-tight text-zinc-900 sm:text-left">Tambah ke Shortlist</h1>
               <p className="mb-5 text-center text-[13.5px] text-zinc-500 sm:text-left">Masukkan informasi hunian yang ingin kamu evaluasi.</p>
 
               {/* TAB SWITCHER */}

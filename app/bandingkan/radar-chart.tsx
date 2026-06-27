@@ -23,7 +23,7 @@ export function RadarChart({
     vals.map((v, i) => { const p = pt(i, (radius * Math.max(0, Math.min(100, v))) / 100); return `${p.x},${p.y}`; }).join(" ");
 
   return (
-    <svg viewBox={`0 0 ${size} ${size}`} className="mx-auto h-auto w-full max-w-[340px]" role="img" aria-label="Perbandingan multi-dimensi">
+    <svg viewBox={`0 0 ${size} ${size}`} className="mx-auto h-auto w-full max-w-[340px]" role="img" aria-label="Perbandingan multi-aspek">
       {/* rings */}
       {[25, 50, 75, 100].map((rv) => (
         <polygon

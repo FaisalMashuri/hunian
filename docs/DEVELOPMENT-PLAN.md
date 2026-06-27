@@ -54,7 +54,7 @@ Fase 5  Instrumentasi + Pilot         ██░░░░░░  2–3 hari
 **Tujuan:** sistem punya context user untuk evaluasi; fondasi data & auth siap.
 
 **Tugas (FR-LP-1 + FR-ON-1..5):**
-- [x] **Landing page publik di `/`** (hero + how-it-works + features + CTA), responsif penuh, animasi Framer Motion + gambar placeholder — FR-LP-1, NFR-9/10. ✅ build hijau. `/login` terpisah; app di `/kandidat` (+ route lain) diproteksi middleware.
+- [x] **Landing page publik di `/`** (hero + how-it-works + features + CTA), responsif penuh, animasi Framer Motion + gambar placeholder — FR-LP-1, NFR-9/10. ✅ build hijau. `/login` terpisah; app di `/dashboard` (+ route lain) diproteksi middleware.
 - [ ] **Google login wajib (Auth.js/NextAuth)** sebagai gerbang awal sebelum onboarding; kaitkan data ke user — FR-AU-1/2, NFR-4. *(Setup OAuth dikerjakan di Fase 0; di sini integrasi ke flow + proteksi route.)*
 - [ ] Step Budget (ideal & maksimal) — FR-ON-1.
 - [ ] Step Tujuan + moda transport (≥2 moda; schema siap 4) + lokasi via Google Maps — FR-ON-2.
@@ -97,7 +97,7 @@ Fase 5  Instrumentasi + Pilot         ██░░░░░░  2–3 hari
 - [x] Evaluasi deal breaker → flag pelanggar (`candidate_deal_breaker_flags`, tanpa hapus); subset terdeteksi Slice 1 (no_dapur/no_memasak) — FR-DB-1. ✅
 - [x] Jarak/skor Lokasi: **Google Maps Distance Matrix** (`lib/maps/distance.ts`) — saat simpan, jarak tujuan→kandidat dihitung otomatis (server-side) dari `dest_address` + `alamat` kandidat, moda dari onboarding → `candidate_commute` (api_provider=google_maps) → `score_lokasi` (skor jadi `v1-3D`). Gagal/data kurang → null (di-renormalisasi). ✅
 - [x] AI explanation on-demand (`lib/explain/explain.ts` + ExplainPanel): faktor pendukung + "yang belum diketahui", AI tidak mengubah skor — FR-SC-3, FR-AI-3. ✅
-- [x] **Layar detail kandidat `/kandidat/[id]`** (Layar 6): breakdown skor, flag, detail, sumber, ubah status, hapus. ✅
+- [x] **Layar detail kandidat `/shortlist/[id]`** (Layar 6): breakdown skor, flag, detail, sumber, ubah status, hapus. ✅
 
 **Exit criteria:** kandidat menampilkan skor (kecil), flag deal breaker, dan penjelasan natural; skor dapat diaudit & reproducible.
 
@@ -160,7 +160,7 @@ Redesign detail page + dashboard menampilkan beberapa section sebagai placeholde
 | Section (placeholder) | Belum ada | Dibutuhkan untuk mengaktifkan |
 |---|---|---|
 | **Verdict** (Pertahankan/Sisihkan) | Sistem keputusan per kandidat | Kolom verdict/keputusan di `candidates` + aksi UI + (opsional) integrasi dgn `recordDecisionAction`. Catatan: "Perlu data" sudah diturunkan nyata (skor null / jarak kosong) di kartu dashboard. |
-| **Hasil survey** (★ Kondisi/Owner/Lingkungan) | ~~Tabel `candidate_surveys`~~ **SUDAH AKTIF (S2-2)** | `candidate_surveys` dibuat (migration S2-0); form survei di `/kandidat/[id]/survey` (lengkapi data + rating) → `score_kondisi`/`score_owner` + radar 5 dimensi (detail & bandingkan); bobot K&O di editor Prioritas `/pengaturan`. |
+| **Hasil survey** (★ Kondisi/Owner/Lingkungan) | ~~Tabel `candidate_surveys`~~ **SUDAH AKTIF (S2-2)** | `candidate_surveys` dibuat (migration S2-0); form survei di `/shortlist/[id]/survey` (lengkapi data + rating) → `score_kondisi`/`score_owner` + radar 5 dimensi (detail & bandingkan); bobot K&O di editor Prioritas `/pengaturan`. |
 | **Timeline** | ~~Tabel `candidate_events`~~ **SUDAH AKTIF (S2-3)** | `candidate_events` (migration S2-0) + `lib/events.ts` (`insertCandidateEvent`) mencatat added/status_changed/data_updated/survey_completed/price_changed/user_note; timeline + "Tambah catatan manual" di detail. |
 | **Biaya all-in** (listrik/air/internet/IPL) | ~~Ekstraksi & pengisian~~ **SUDAH AKTIF (S2-5, display-only)** | Migration S2-5 menambah `biaya_listrik_nominal`/`biaya_air_nominal`; diisi via form "Update Survey" (Rp listrik/air/IPL); kartu "Rincian Biaya All-in" di detail menghitung total. **Tidak masuk scoring** (hindari false precision). Internet masih "Segera". |
 | **Negosiasi harga awal→akhir** | ~~Nilai `harga_akhir_bulanan`~~ **SUDAH AKTIF (S2-4)** | `recordNegotiationAction` + kontrol "Catat harga nego" di header detail → set `harga_akhir_bulanan` (GENERATED `harga_efektif` COALESCE) → badge hemat + re-score + event `price_changed`. |

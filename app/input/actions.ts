@@ -120,7 +120,7 @@ export async function saveCandidate(
     .select("id")
     .single();
 
-  if (error) return { ok: false, error: `Gagal menyimpan kandidat: ${error.message}` };
+  if (error) return { ok: false, error: `Gagal menyimpan hunian: ${error.message}` };
   const candidateId = data.id as string;
 
   // Timeline (S2-3): event "kandidat ditambahkan".

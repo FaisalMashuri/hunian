@@ -42,7 +42,14 @@ export async function saveOnboarding(input: OnboardingInput): Promise<SaveResult
     },
     { onConflict: "user_id" },
   );
-  if (prefErr) return { ok: false, error: `Gagal menyimpan preferensi: ${prefErr.message}` };
+  if (prefErr) {
+    // FK violation user_id → baris `users` sesi sudah basi (mis. DB di-reset, cookie JWT lama).
+    // Ubah pesan kriptik jadi arahan jelas: keluar lalu masuk lagi (jwt callback re-upsert users).
+    if (prefErr.code === "23503" || /user_id_fkey/.test(prefErr.message)) {
+      return { ok: false, error: "Sesimu sudah kedaluwarsa (akun belum tersinkron). Keluar lalu masuk lagi, lalu ulangi." };
+    }
+    return { ok: false, error: `Gagal menyimpan preferensi: ${prefErr.message}` };
+  }
 
   // Deal breaker: ganti total (idempotent).
   await supabaseAdmin.from("user_deal_breakers").delete().eq("user_id", userId);

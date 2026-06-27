@@ -16,7 +16,11 @@ import {
   toggle,
 } from "./options";
 
-const STEP_TITLES = ["Budget sewamu", "Tujuan & transport", "Prioritas"];
+const STEP_TITLES = [
+  "Berapa budget bulananmu?",
+  "Ke mana kamu biasanya pergi?",
+  "Apa yang paling penting bagimu?",
+];
 
 const rp = (n: number) => "Rp " + new Intl.NumberFormat("id-ID").format(n);
 const pct = (v: number) => ((v - BUDGET_MIN) / (BUDGET_MAX - BUDGET_MIN)) * 100;
@@ -66,7 +70,7 @@ export function OnboardingFlow() {
         dealBreakers,
       });
       if (res.ok) {
-        router.push("/kandidat");
+        router.push("/dashboard");
       } else {
         setError(res.error);
       }
@@ -116,9 +120,9 @@ export function OnboardingFlow() {
           {step === 0 && (
             <div className="mt-2">
               <p className="text-[15px] leading-relaxed text-zinc-600">
-                Dua angka <span className="font-semibold text-zinc-800">per bulan</span>: ideal dan
-                batas maksimal. Harga sewa per tahun/6/3 bulan otomatis dikonversi ke per bulan untuk
-                dibandingkan.
+                Tentukan rentang harga yang <span className="font-semibold text-zinc-800">nyaman</span>:
+                ideal dan batas maksimal. Sewa tahunan atau per 6 bulan otomatis dikonversi ke per
+                bulan supaya semua listing bisa dibandingkan apple-to-apple.
               </p>
               <div className="mt-6 rounded-2xl border border-zinc-200 bg-white p-5">
                 <div className="mb-1 flex items-baseline justify-between">
@@ -163,7 +167,7 @@ export function OnboardingFlow() {
                   />
                 </div>
                 <p className="mt-2.5 text-xs leading-snug text-zinc-400">
-                  Zona budgetmu — harga di dalam zona ini menang poin, di atasnya turun cepat.
+                  Hunian akan menilai lebih positif listing yang harganya masuk di zona ini.
                 </p>
               </div>
             </div>
@@ -173,7 +177,7 @@ export function OnboardingFlow() {
           {step === 1 && (
             <div className="mt-2">
               <p className="text-[15px] leading-relaxed text-zinc-600">
-                Lokasi tujuan utama dan cara kamu ke sana — untuk menilai kedekatan tiap kandidat.
+                Lokasi tujuan utama dan cara kamu ke sana — untuk menilai kedekatan tiap hunian.
               </p>
 
               <label className="mt-6 block text-sm font-semibold text-zinc-700">
@@ -186,7 +190,7 @@ export function OnboardingFlow() {
                 className="mt-2 w-full rounded-xl border border-zinc-200 bg-white px-4 py-3.5 text-[15px] text-zinc-900 placeholder:text-zinc-400 focus:border-teal-600"
               />
               <p className="mt-1.5 text-xs text-zinc-400">
-                Jarak dihitung dari titik ini (input km manual saat review kandidat).
+                Jarak ke lokasi ini akan dipakai untuk menilai kedekatan tiap hunian yang kamu tambahkan.
               </p>
 
               <label className="mt-6 block text-sm font-semibold text-zinc-700">
@@ -220,7 +224,8 @@ export function OnboardingFlow() {
           {step === 2 && (
             <div className="mt-2">
               <p className="text-[15px] leading-relaxed text-zinc-600">
-                Pilih yang paling penting — kami ubah jadi bobot skor. Wajib pilih minimal satu.
+                Pilih apa yang paling penting bagimu — ini akan memengaruhi cara Hunian menilai tiap
+                pilihan hunian.
               </p>
 
               <div className="mt-5 flex flex-col gap-2.5">
@@ -259,7 +264,7 @@ export function OnboardingFlow() {
 
               <h2 className="mt-8 text-lg font-bold tracking-tight text-zinc-900">Deal breaker</h2>
               <p className="mt-1 text-sm text-zinc-600">
-                Kandidat yang melanggar akan <strong className="font-semibold">ditandai</strong>, bukan
+                Hunian yang melanggar akan <strong className="font-semibold">ditandai</strong>, bukan
                 otomatis dihapus. Opsional.
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -298,7 +303,13 @@ export function OnboardingFlow() {
             disabled={!canNext || pending}
             className="inline-flex h-[52px] w-full items-center justify-center rounded-xl bg-teal-700 text-base font-semibold text-white shadow-sm transition-colors hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {pending ? "Menyimpan…" : step < 2 ? "Lanjut" : "Selesai & mulai"}
+            {pending
+              ? "Menyimpan…"
+              : step === 0
+                ? "Simpan Budget →"
+                : step === 1
+                  ? "Simpan Tujuan →"
+                  : "Mulai Pakai Hunian →"}
           </button>
         </div>
       </div>

@@ -41,7 +41,7 @@ export async function getDistanceKm(
   const key = process.env.GOOGLE_MAPS_API_KEY;
   if (!key) return { km: null, error: "GOOGLE_MAPS_API_KEY belum diset" };
   if (!origin.trim()) return { km: null, error: "Lokasi tujuan (onboarding) belum diisi" };
-  if (!destination.trim()) return { km: null, error: "Alamat kandidat kosong" };
+  if (!destination.trim()) return { km: null, error: "Alamat hunian kosong" };
 
   const url = new URL("https://maps.googleapis.com/maps/api/distancematrix/json");
   url.searchParams.set("origins", origin);

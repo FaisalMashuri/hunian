@@ -32,7 +32,7 @@ export function IconSettings({ active }: { active: boolean }) {
 export type NavItem = { href: string; label: string; Icon: (p: { active: boolean }) => React.ReactElement };
 
 export const NAV_ITEMS: NavItem[] = [
-  { href: "/kandidat", label: "Kandidat", Icon: IconHome },
+  { href: "/dashboard", label: "Dashboard", Icon: IconHome },
   { href: "/bandingkan", label: "Bandingkan", Icon: IconCompare },
   { href: "/pengaturan", label: "Pengaturan", Icon: IconSettings },
 ];

@@ -231,7 +231,7 @@ export function ReviewList({
       </div>
 
       <Section title="📋 Informasi Dasar">
-        <ReviewRow label="Nama Kandidat" kind="text" value={draft.title} source={source.title} warn onCommit={commit("title")} />
+        <ReviewRow label="Nama Hunian" kind="text" value={draft.title} source={source.title} warn onCommit={commit("title")} />
         <ReviewRow label="Kontak Owner" kind="text" value={draft.kontak_owner} source={source.kontak_owner} emptyHint="Belum diisi" onCommit={commit("kontak_owner")} />
         <ReviewRow label="Alamat" kind="text" value={draft.alamat} source={source.alamat} warn emptyHint="Tidak ditemukan di teks" onCommit={commit("alamat")} />
       </Section>
@@ -289,14 +289,14 @@ export function ReviewList({
       {/* STATUS — Slice 2 (disabled) */}
       <div className="overflow-hidden rounded-2xl border border-[#E4E3DF] bg-white shadow-sm">
         <div className="flex items-center gap-2 border-b border-[#E4E3DF] bg-[#FAFAF9] px-3.5 py-2.5 text-[11px] font-bold uppercase tracking-wider text-zinc-400 sm:px-4">
-          Status Kandidat <span className="rounded-full bg-amber-50 px-1.5 py-0.5 text-[9.5px] text-amber-700">Segera</span>
+          Status Hunian <span className="rounded-full bg-amber-50 px-1.5 py-0.5 text-[9.5px] text-amber-700">Segera</span>
         </div>
         <div className="flex flex-wrap items-center gap-1.5 px-3.5 py-3 sm:px-4">
           <span className="cursor-not-allowed select-none rounded-lg border-[1.5px] border-teal-700 bg-teal-50 px-3.5 py-1.5 text-[13px] font-semibold text-teal-700 opacity-70">🟢 Tersedia</span>
           <span className="cursor-not-allowed select-none rounded-lg border-[1.5px] border-[#E4E3DF] bg-white px-3.5 py-1.5 text-[13px] font-medium text-zinc-400 opacity-60">🔵 Sudah Disurvey</span>
           <span className="cursor-not-allowed select-none rounded-lg border-[1.5px] border-[#E4E3DF] bg-white px-3.5 py-1.5 text-[13px] font-medium text-zinc-400 opacity-60">⚫ Sudah Tersewa</span>
         </div>
-        <div className="px-3.5 pb-3 text-xs text-zinc-400 sm:px-4">Default: Tersedia. Ubah status setelah survey langsung (dari halaman kandidat).</div>
+        <div className="px-3.5 pb-3 text-xs text-zinc-400 sm:px-4">Default: Tersedia. Ubah status setelah survey langsung (dari halaman detail hunian).</div>
       </div>
     </div>
   );

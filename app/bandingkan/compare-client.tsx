@@ -140,7 +140,7 @@ export function CompareClient({
     lines.push(`Kamu memilih ${c.title} pada ${tgl}.`);
     lines.push("");
     const reasons: string[] = [];
-    if (cheapest?.id === c.id && hargaDiff) reasons.push(`harga ${rp(c.harga)}/bln — termurah di antara kandidat (hemat hingga ${rp(hargaDiff)}/bln, setara ${rp(hargaDiff * 12)}/tahun)`);
+    if (cheapest?.id === c.id && hargaDiff) reasons.push(`harga ${rp(c.harga)}/bln — termurah di antara pilihan (hemat hingga ${rp(hargaDiff)}/bln, setara ${rp(hargaDiff * 12)}/tahun)`);
     else if (c.harga != null) reasons.push(`harga ${rp(c.harga)}/bln`);
     if (nearest?.id === c.id && c.distanceKm != null) reasons.push(`jarak ${fmtKm(c.distanceKm)} ke tujuan — terdekat`);
     else if (c.distanceKm != null) reasons.push(`jarak ${fmtKm(c.distanceKm)} ke tujuan`);
@@ -185,12 +185,12 @@ export function CompareClient({
   type Bullet = { t: "ok" | "mid" | "bad"; text: string };
   const bulletsFor = (c: CompareCandidate): Bullet[] => {
     const out: Bullet[] = [];
-    if (cheapest?.id === c.id && hargaDiff) out.push({ t: "ok", text: `Hemat ${rp(hargaDiff)} per bulan dibanding kandidat termahal` });
+    if (cheapest?.id === c.id && hargaDiff) out.push({ t: "ok", text: `Hemat ${rp(hargaDiff)} per bulan dibanding pilihan termahal` });
     if (c.dealBreakers.length === 0) out.push({ t: "ok", text: "Tidak ada deal breaker — sesuai syarat wajibmu" });
     if (nearest?.id === c.id && c.distanceKm != null) out.push({ t: "ok", text: `Paling dekat ke tujuan — ${fmtKm(c.distanceKm)}${c.durationMin ? ` · ~${c.durationMin} mnt` : ""}` });
     if (c.furnished === "furnished") out.push({ t: "ok", text: "Full furnished — langsung bisa tinggal" });
     if (cheapest?.id !== c.id && hargaDiff && c.harga != null && cheapest?.harga != null) out.push({ t: "mid", text: `${rp(c.harga - cheapest.harga)} lebih mahal/bln dibanding termurah` });
-    if (nearest?.id !== c.id && c.distanceKm != null && nearest?.distanceKm != null) out.push({ t: "mid", text: `${Math.round((c.distanceKm - nearest.distanceKm) * 10) / 10} km lebih jauh dari kandidat terdekat` });
+    if (nearest?.id !== c.id && c.distanceKm != null && nearest?.distanceKm != null) out.push({ t: "mid", text: `${Math.round((c.distanceKm - nearest.distanceKm) * 10) / 10} km lebih jauh dari pilihan terdekat` });
     if (c.furnished && c.furnished !== "furnished") out.push({ t: "mid", text: `${c.furnished === "semi" ? "Semi furnished" : "Unfurnished"} — perlu beli sebagian perabot` });
     for (const db of c.dealBreakers) out.push({ t: "bad", text: `${db} — deal breaker yang kamu tetapkan, konfirmasi dulu ke pemilik` });
     return out.slice(0, 5);
@@ -215,13 +215,13 @@ export function CompareClient({
           <div className="mb-6 rounded-[18px] border border-[#E4E3DF] bg-white p-6 text-left shadow-sm">
             <div className="mb-3.5 flex items-center gap-2 text-[15px] font-bold text-zinc-900">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0f766e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
-              Decision Memo
+              Catatan Keputusan
             </div>
             <p className="whitespace-pre-line text-[13.5px] leading-relaxed text-zinc-700">{memo}</p>
           </div>
           <div className="flex flex-wrap justify-center gap-2.5">
             <button type="button" onClick={copyMemo} className="rounded-xl bg-teal-700 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-teal-800">{copied ? "✓ Memo disalin" : "📋 Salin Memo"}</button>
-            <Link href="/kandidat" className="inline-flex items-center rounded-xl border-[1.5px] border-[#E4E3DF] px-5 py-3 text-sm text-zinc-500 transition-colors hover:bg-[#F4F3F0]">← Kembali ke daftar</Link>
+            <Link href="/dashboard" className="inline-flex items-center rounded-xl border-[1.5px] border-[#E4E3DF] px-5 py-3 text-sm text-zinc-500 transition-colors hover:bg-[#F4F3F0]">← Ke Dashboard</Link>
           </div>
         </div>
       </div>
@@ -233,9 +233,9 @@ export function CompareClient({
       <div className="min-h-screen bg-[#F4F3F0]">
         <TopNav sel={sel} />
         <div className="mx-auto max-w-[1100px] px-6 py-16 text-center">
-          <h2 className="text-lg font-bold tracking-tight text-zinc-900">Butuh minimal 2 kandidat</h2>
-          <p className="mx-auto mt-1.5 max-w-sm text-sm text-zinc-600">Tambah kandidat lain dulu untuk bisa membandingkan.</p>
-          <Link href="/input" className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-teal-700 px-5 text-sm font-semibold text-white hover:bg-teal-800">+ Tambah kandidat</Link>
+          <h2 className="text-lg font-bold tracking-tight text-zinc-900">Butuh minimal 2 hunian</h2>
+          <p className="mx-auto mt-1.5 max-w-sm text-sm text-zinc-600">Tambah hunian lain dulu untuk bisa membandingkan.</p>
+          <Link href="/input" className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-teal-700 px-5 text-sm font-semibold text-white hover:bg-teal-800">+ Tambah ke Shortlist</Link>
         </div>
       </div>
     );
@@ -324,7 +324,7 @@ export function CompareClient({
         <div className="mb-4 grid gap-4 lg:grid-cols-[420px_1fr]">
           <div className="rounded-2xl border border-[#E4E3DF] bg-white p-5 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
-              <div className="text-sm font-bold text-zinc-900">Perbandingan Visual 5 Dimensi</div>
+              <div className="text-sm font-bold text-zinc-900">Perbandingan 5 Aspek</div>
               <div className="flex flex-wrap gap-3">
                 {sel.map((c, i) => (
                   <span key={c.id} className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: tone(i).color }}>
@@ -367,10 +367,10 @@ export function CompareClient({
               {cheapest && hargaDiff ? <>{cheapest.title} lebih murah. Setara <strong>{rp(hargaDiff * 12)} per tahun</strong>.</> : "Harga setara / data belum lengkap."}
             </KeyFact>
             <KeyFact icon="📍" iconBg="#DBEAFE" label="Selisih Jarak ke Tujuan" main={distDiff != null ? `${distDiff} km` : "—"} badge={nearest ? { text: `✓ ${nearest.title} terdekat`, color: tone(sel.findIndex((x) => x.id === nearest.id)).color, bg: tone(sel.findIndex((x) => x.id === nearest.id)).bg } : null}>
-              {nearest && nearest.distanceKm != null ? <>{nearest.title} {fmtKm(nearest.distanceKm)}{nearest.durationMin ? ` (~${nearest.durationMin} mnt)` : ""}{farthest && farthest.id !== nearest.id ? <>, {farthest.title} {fmtKm(farthest.distanceKm)}.</> : "."}</> : "Jarak belum terhitung untuk semua kandidat."}
+              {nearest && nearest.distanceKm != null ? <>{nearest.title} {fmtKm(nearest.distanceKm)}{nearest.durationMin ? ` (~${nearest.durationMin} mnt)` : ""}{farthest && farthest.id !== nearest.id ? <>, {farthest.title} {fmtKm(farthest.distanceKm)}.</> : "."}</> : "Jarak belum terhitung untuk semua hunian."}
             </KeyFact>
             <KeyFact icon="⚠️" iconBg="#FFFBEB" label="Deal Breaker" main={dbCand ? `${dbCand.title}` : "Semua clear"} badge={dbCand ? { text: "⚠ Perlu konfirmasi", color: "#b45309", bg: "#FFFBEB" } : { text: "✓ Tidak ada", color: "#059669", bg: "#ECFDF5" }}>
-              {dbCand ? <><strong>{dbCand.dealBreakers.join(", ")}</strong> — syarat wajib yang kamu tetapkan. Konfirmasi ke owner sebelum dipertimbangkan lebih lanjut.</> : "Tidak ada kondisi yang kamu hindari pada kandidat manapun."}
+              {dbCand ? <><strong>{dbCand.dealBreakers.join(", ")}</strong> — syarat wajib yang kamu tetapkan. Konfirmasi ke owner sebelum dipertimbangkan lebih lanjut.</> : "Tidak ada kondisi yang kamu hindari pada hunian manapun."}
             </KeyFact>
             <KeyFact icon="👤" iconBg="#ECFDF5" label="Owner / Pemilik" main="Segera" badge={{ text: "Setelah survey", color: "#71717a", bg: "#F4F3F0" }}>
               Penilaian owner (responsivitas, fleksibilitas) tersedia setelah fitur survey — <strong>Slice 2</strong>.
@@ -449,7 +449,7 @@ export function CompareClient({
             <h2 className="mb-2 text-[22px] font-extrabold tracking-tight text-zinc-900">Yakin pilih {confirm.title}?</h2>
             <p className="mb-4 text-sm leading-relaxed text-zinc-500">Dengan memilih ini, kamu menyatakan sudah memahami dan menerima kondisi di bawah ini.</p>
             <div className="mb-5 rounded-xl border border-[#E4E3DF] bg-[#FAFAF9] p-3.5">
-              <div className="mb-2.5 text-[11px] font-bold uppercase tracking-wider text-zinc-400">Trade-off yang kamu setujui</div>
+              <div className="mb-2.5 text-[11px] font-bold uppercase tracking-wider text-zinc-400">Kekurangan yang kamu terima</div>
               {bulletsFor(confirm).map((b, bi) => (
                 <div key={bi} className="mb-2 flex items-start gap-2 text-[13px] leading-snug text-zinc-700 last:mb-0">
                   <span className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded text-[11px] font-bold ${b.t === "ok" ? "bg-emerald-50 text-emerald-600" : b.t === "mid" ? "bg-amber-50 text-amber-700" : "bg-rose-50 text-rose-600"}`}>{b.t === "ok" ? "✓" : b.t === "mid" ? "~" : "!"}</span>
@@ -474,7 +474,7 @@ export function CompareClient({
 function TopNav({ sel }: { sel: CompareCandidate[] }) {
   return (
     <nav className="sticky top-0 z-50 flex h-[54px] items-center gap-3.5 border-b border-[#E4E3DF] bg-white/95 px-4 backdrop-blur sm:px-7">
-      <Link href="/kandidat" className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#E4E3DF] px-3 py-1.5 text-[13px] font-medium text-zinc-500 transition-colors hover:bg-[#F4F3F0] hover:text-zinc-900">
+      <Link href="/dashboard" className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#E4E3DF] px-3 py-1.5 text-[13px] font-medium text-zinc-500 transition-colors hover:bg-[#F4F3F0] hover:text-zinc-900">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="m15 18-6-6 6-6" /></svg>
         Kembali
       </Link>

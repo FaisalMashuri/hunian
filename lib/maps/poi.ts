@@ -26,6 +26,8 @@ export type Poi = {
   distanceKm: number; // garis lurus
   walkMin: number | null; // estimasi (jalan) bila dekat
   motorMin: number | null; // estimasi (motor) bila agak jauh
+  routeKm?: number | null; // jarak tempuh jalan asli (Directions, S2-7) — null bila belum/tak dihitung
+  routeMin?: number | null; // durasi tempuh menit asli (Directions, S2-7)
 };
 
 export type PoiSummary = {
@@ -62,9 +64,12 @@ function estTimes(distanceKm: number): { walkMin: number | null; motorMin: numbe
 }
 
 const MAX_PER_CATEGORY = 8;
+// Beberapa mirror publik Overpass — dirotasi saat satu sibuk/429 (lihat wiki.openstreetmap.org/wiki/Overpass_API).
 const OVERPASS_ENDPOINTS = [
   "https://overpass-api.de/api/interpreter",
   "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass.private.coffee/api/interpreter",
+  "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
 ];
 
 type OverpassTags = Record<string, string>;
@@ -85,6 +90,7 @@ function buildQuery(lat: number, lng: number, radiusM: number): string {
     `nwr["highway"="bus_stop"](around:${a});`,
     `nwr["railway"~"^(station|halt|tram_stop)$"](around:${a});`,
     `nwr["amenity"="bus_station"](around:${a});`,
+    `nwr["aeroway"="aerodrome"](around:${a});`,
     `nwr["shop"~"^(convenience|supermarket|mall|department_store)$"](around:${a});`,
     `nwr["amenity"="marketplace"](around:${a});`,
     `nwr["amenity"~"^(hospital|clinic|pharmacy|doctors)$"](around:${a});`,
@@ -103,6 +109,7 @@ function classify(tags: OverpassTags): { category: PoiCategory; emoji: string; s
   const shop = tags.shop;
 
   // Transport
+  if (tags.aeroway === "aerodrome") return { category: "transport", emoji: "✈️", sub: "Bandara" };
   if (tags.highway === "bus_stop") return { category: "transport", emoji: "🚌", sub: "Halte bus" };
   if (tags.highway === "motorway_junction") return { category: "highway", emoji: "🛣️", sub: "Pintu/akses tol" };
   if (tags.barrier === "toll_booth") return { category: "highway", emoji: "🛣️", sub: "Gerbang tol" };
@@ -150,22 +157,32 @@ function classify(tags: OverpassTags): { category: PoiCategory; emoji: string; s
 
 async function callOverpass(query: string): Promise<OverpassResponse> {
   let lastErr: unknown = null;
-  for (const endpoint of OVERPASS_ENDPOINTS) {
-    const url = `${endpoint}?data=${encodeURIComponent(query)}`;
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 12_000);
-    try {
-      const res = await fetch(url, { signal: ctrl.signal, next: { revalidate: 604800 } });
-      if (!res.ok) {
-        lastErr = new Error(`HTTP ${res.status}`);
-        continue;
+  // 2 putaran: tiap putaran coba semua mirror; jeda singkat antar putaran agar lolos rate-limit (HTTP 429).
+  // Respons sukses (GET) di-cache Next 7 hari; cache per-kandidat di candidate_poi (poi-cache.ts) menambah lapis kedua.
+  for (let round = 0; round < 2; round++) {
+    for (const endpoint of OVERPASS_ENDPOINTS) {
+      const url = `${endpoint}?data=${encodeURIComponent(query)}`;
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 15_000);
+      try {
+        // Header etiket Overpass: tanpa User-Agent/Accept beberapa mirror menolak (406) atau lebih agresif rate-limit.
+        const res = await fetch(url, {
+          signal: ctrl.signal,
+          headers: { "User-Agent": "Hunian/1.0 (rental decision app; +hunian)", Accept: "application/json" },
+          next: { revalidate: 604800 },
+        });
+        if (!res.ok) {
+          lastErr = new Error(`HTTP ${res.status}`);
+          continue;
+        }
+        return (await res.json()) as OverpassResponse;
+      } catch (e) {
+        lastErr = e;
+      } finally {
+        clearTimeout(timer);
       }
-      return (await res.json()) as OverpassResponse;
-    } catch (e) {
-      lastErr = e;
-    } finally {
-      clearTimeout(timer);
     }
+    if (round === 0) await new Promise((r) => setTimeout(r, 1500)); // backoff sebelum putaran ke-2
   }
   throw lastErr ?? new Error("Overpass tak merespons");
 }

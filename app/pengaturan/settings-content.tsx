@@ -79,10 +79,10 @@ export function SettingsContent({
   const build = (): PrefsInput => ({ budgetIdeal, budgetMax, tujuan, transportModes, priorities, dealBreakers, customDealBreakers: customDBs, deadline });
 
   const MSG: Record<PanelId, string> = {
-    budget: "Budget diperbarui — budget zone semua kandidat direcalculate ✓",
-    tujuan: "Tujuan & transportasi diperbarui — skor lokasi direcalculate ✓",
-    prioritas: "Prioritas diperbarui — skor semua kandidat direcalculate ✓",
-    dealbreaker: "Deal breaker diperbarui — flag kandidat diperbarui ✓",
+    budget: "Budget diperbarui — budget zone semua hunian dihitung ulang ✓",
+    tujuan: "Tujuan & transportasi diperbarui — skor lokasi dihitung ulang ✓",
+    prioritas: "Prioritas diperbarui — skor semua hunian dihitung ulang ✓",
+    dealbreaker: "Deal breaker diperbarui — flag hunian diperbarui ✓",
     deadline: "Deadline diperbarui ✓",
   };
   const save = (id: PanelId) => start(async () => {
@@ -117,14 +117,14 @@ export function SettingsContent({
             <span className="grid h-7 w-7 place-items-center rounded-lg bg-teal-50 text-sm">🔍</span>
             Preferensi Pencarian
           </div>
-          <p className="mt-1 pl-9 text-xs text-zinc-500">Mengubah preferensi merecalculate skor semua kandidat aktif otomatis.</p>
+          <p className="mt-1 pl-9 text-xs text-zinc-500">Mengubah preferensi menghitung ulang skor semua hunian aktif otomatis.</p>
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-[#E4E3DF] bg-white shadow-sm">
           {/* BUDGET */}
           <SettingRow open={open === "budget"} onToggle={() => togglePanel("budget")} icon="💰" iconBg="#EDE9FE" label="Budget Bulanan"
             summary={<><span>Ideal <strong className="text-zinc-700">{rp(budgetIdeal)}</strong></span><Dot /><span>Maks <strong className="text-zinc-700">{rp(budgetMax)}</strong></span><Impact cls="bg-[#EDE9FE] text-[#5B21B6]">⬟ Budget zone</Impact></>}
-            footer={<Footer note="Berlaku ke semua kandidat aktif" onCancel={() => setOpen(null)} onSave={() => save("budget")} pending={pending} saveLabel="Simpan Budget" />}>
+            footer={<Footer note="Berlaku ke semua hunian aktif" onCancel={() => setOpen(null)} onSave={() => save("budget")} pending={pending} saveLabel="Simpan Budget" />}>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Field label="Budget Ideal / bulan" hint="Target kenyamanan finansialmu">
                 <div className={prefixWrap}><Prefix /><input className="min-w-0 flex-1 bg-transparent px-3 py-2.5 font-mono text-[13.5px] outline-none" type="number" value={budgetIdeal} onChange={(e) => setBudgetIdeal(Number(e.target.value) || 0)} /></div>
@@ -133,14 +133,14 @@ export function SettingsContent({
                 <div className={prefixWrap}><Prefix /><input className="min-w-0 flex-1 bg-transparent px-3 py-2.5 font-mono text-[13.5px] outline-none" type="number" value={budgetMax} onChange={(e) => setBudgetMax(Number(e.target.value) || 0)} /></div>
               </Field>
             </div>
-            <Info>Budget zone semua kandidat (Hemat / Ideal / Menekan / Di atas maks) diperbarui otomatis.</Info>
+            <Info>Budget zone semua hunian (Hemat / Ideal / Menekan / Di atas maks) diperbarui otomatis.</Info>
           </SettingRow>
 
           {/* TUJUAN & TRANSPORTASI */}
           <SettingRow open={open === "tujuan"} onToggle={() => togglePanel("tujuan")} icon="📍" iconBg="#DBEAFE" label="Tujuan & Transportasi"
             summary={<><span className="truncate">{tujuan || "Belum diatur"}</span><Dot /><span>{TRANSPORTS.find((t) => t.id === transportModes[0])?.icon ?? "—"} {TRANSPORTS.find((t) => t.id === transportModes[0])?.label ?? "Belum dipilih"}</span><Impact cls="bg-teal-50 text-teal-700">⬟ Skor lokasi</Impact></>}
-            footer={<Footer note="Skor lokasi semua kandidat direcalculate" onCancel={() => setOpen(null)} onSave={() => save("tujuan")} pending={pending} saveLabel="Simpan Tujuan" />}>
-            <Field label="Lokasi tujuan utama (kantor / kampus / dll)" hint="Dipakai menghitung jarak semua kandidat">
+            footer={<Footer note="Skor lokasi semua hunian dihitung ulang" onCancel={() => setOpen(null)} onSave={() => save("tujuan")} pending={pending} saveLabel="Simpan Tujuan" />}>
+            <Field label="Lokasi tujuan utama (kantor / kampus / dll)" hint="Dipakai menghitung jarak semua hunian">
               <LocationAutocomplete value={tujuan} onChange={setTujuan} placeholder="Ketik alamat atau nama tempat…" className={fieldInput} autoResolve />
             </Field>
             <div className="mt-3">
@@ -162,7 +162,7 @@ export function SettingsContent({
           {/* PRIORITAS */}
           <SettingRow open={open === "prioritas"} onToggle={() => togglePanel("prioritas")} icon="⭐" iconBg="#FEF3C7" label="Prioritas Pencarian"
             summary={<>{(["harga", "lokasi", "fasilitas"] as const).map((k, i) => (<span key={k} className="flex items-center gap-1 text-[12.5px]">{i > 0 && <Dot />}{PRIO_EMOJI[k]} <Stars w={k === "harga" ? w.harga : k === "lokasi" ? w.lokasi : w.fasilitas} /></span>))}<Impact cls="bg-teal-50 text-teal-700">⬟ Semua skor</Impact></>}
-            footer={<Footer note="Skor semua kandidat aktif direcalculate" onCancel={() => setOpen(null)} onSave={() => save("prioritas")} pending={pending} saveLabel="Simpan Prioritas" />}>
+            footer={<Footer note="Skor semua hunian aktif dihitung ulang" onCancel={() => setOpen(null)} onSave={() => save("prioritas")} pending={pending} saveLabel="Simpan Prioritas" />}>
             <p className="mb-3.5 text-[13px] text-zinc-500">Pilih semua yang penting bagimu. Sistem generate bobot otomatis — tak perlu isi persen.</p>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {PRIORITIES.map((p) => {
@@ -183,21 +183,21 @@ export function SettingsContent({
               ))}
             </div>
             <div className="mt-3 rounded-[10px] border border-[#E4E3DF] bg-white p-3.5">
-              <div className="mb-2 text-[11px] font-bold uppercase tracking-wider text-zinc-400">Preview Prioritasmu (5 dimensi)</div>
+              <div className="mb-2 text-[11px] font-bold uppercase tracking-wider text-zinc-400">Preview Prioritasmu (5 aspek)</div>
               {[{ k: "harga", e: "💰", l: "Harga", w: w.harga }, { k: "lokasi", e: "📍", l: "Lokasi", w: w.lokasi }, { k: "fasilitas", e: "🛋️", l: "Fasilitas", w: w.fasilitas }, { k: "kondisi", e: "🛡️", l: "Kondisi & lingkungan", w: w.kondisi }, { k: "owner", e: "👤", l: "Owner", w: w.owner }].map((d) => (
                 <div key={d.k} className="mb-1 flex items-center justify-between text-[13px] last:mb-0"><span className="text-zinc-500">{d.e} {d.l}</span><Stars w={d.w} /></div>
               ))}
-              <p className="mt-2 text-[11.5px] text-zinc-400">Kondisi &amp; Owner mempengaruhi skor setelah kandidat disurvey. Yang tidak dipilih dapat bobot sisa dibagi rata.</p>
+              <p className="mt-2 text-[11.5px] text-zinc-400">Kondisi &amp; Owner mempengaruhi skor setelah hunian disurvey. Yang tidak dipilih dapat bobot sisa dibagi rata.</p>
             </div>
           </SettingRow>
 
           {/* DEAL BREAKER */}
           <SettingRow open={open === "dealbreaker"} onToggle={() => togglePanel("dealbreaker")} icon="🛡️" iconBg="#FFFBEB" label="Deal Breaker"
             summary={<><span className="font-semibold text-amber-600">{dealBreakers.length + customDBs.length} aktif</span>{(dealBreakers[0] || customDBs[0]) && <><Dot /><span className="truncate">{dealBreakers[0] ? DEAL_BREAKERS.find((d) => d.id === dealBreakers[0])?.label : customDBs[0]}</span></>}<Impact cls="bg-[#F4F3F0] text-zinc-500">⬟ Flag only</Impact></>}
-            footer={<Footer note="Flag kandidat yang melanggar diperbarui" onCancel={() => setOpen(null)} onSave={() => save("dealbreaker")} pending={pending} saveLabel="Simpan Deal Breaker" />}>
+            footer={<Footer note="Flag hunian yang melanggar diperbarui" onCancel={() => setOpen(null)} onSave={() => save("dealbreaker")} pending={pending} saveLabel="Simpan Deal Breaker" />}>
             <div className="mb-3.5 flex items-start gap-2 text-[13px] text-zinc-500">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-px shrink-0" aria-hidden><circle cx="12" cy="12" r="10" /><path d="M12 8v4" /><path d="M12 16h.01" /></svg>
-              Deal breaker hanya menandai kandidat — tidak menghapus. Kandidat tetap bisa dilihat & dinilai.
+              Deal breaker hanya menandai hunian — tidak menghapus. Hunian tetap bisa dilihat & dinilai.
             </div>
             <div className="flex flex-col gap-1.5">
               {DEAL_BREAKERS.map((db) => {
@@ -228,7 +228,7 @@ export function SettingsContent({
               <input className="flex-1 rounded-[9px] border-[1.5px] border-dashed border-[#D1D0CC] bg-white px-3 py-2 text-[13px] outline-none focus:border-solid focus:border-teal-700" value={customInput} onChange={(e) => setCustomInput(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustom(); } }} placeholder="Tambah syarat kustom…" />
               <button type="button" onClick={addCustom} className="whitespace-nowrap rounded-[9px] bg-teal-700 px-3.5 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-teal-800">+ Tambah</button>
             </div>
-            <p className="mt-2 text-[11.5px] text-zinc-400">Kustom = pengingat pribadi. <strong className="text-zinc-500">Belum otomatis menandai kandidat</strong> (hanya preset yang auto-flag).</p>
+            <p className="mt-2 text-[11.5px] text-zinc-400">Kustom = pengingat pribadi. <strong className="text-zinc-500">Belum otomatis menandai hunian</strong> (hanya preset yang auto-flag).</p>
           </SettingRow>
 
           {/* DEADLINE */}
@@ -262,11 +262,11 @@ export function SettingsContent({
             <div className="min-w-0">
               <div className="truncate text-base font-bold text-zinc-900">{user.name}</div>
               <div className="truncate text-[13px] text-zinc-500">{user.email}</div>
-              <div className="mt-0.5 text-[11.5px] text-zinc-400">{user.candidateCount} kandidat tersimpan</div>
+              <div className="mt-0.5 text-[11.5px] text-zinc-400">{user.candidateCount} hunian di shortlist</div>
             </div>
           </div>
-          <AccountRow icon="📦" iconBg="#EDE9FE" label="Ekspor Data" sub="Download semua kandidat sebagai spreadsheet" right="Segera hadir ›" onClick={() => toast("Fitur ekspor data akan segera hadir")} />
-          <AccountRow icon="🔗" iconBg="#DBEAFE" label="Bagikan Daftar" sub="Ajak pasangan atau keluarga melihat kandidatmu" right="Segera hadir ›" onClick={() => toast("Fitur berbagi akan segera hadir")} />
+          <AccountRow icon="📦" iconBg="#EDE9FE" label="Ekspor Data" sub="Download semua hunian sebagai spreadsheet" right="Segera hadir ›" onClick={() => toast("Fitur ekspor data akan segera hadir")} />
+          <AccountRow icon="🔗" iconBg="#DBEAFE" label="Bagikan Daftar" sub="Ajak pasangan atau keluarga melihat shortlist-mu" right="Segera hadir ›" onClick={() => toast("Fitur berbagi akan segera hadir")} />
           <AccountRow icon="🔒" iconBg="#F4F3F0" label="Kebijakan Privasi" sub="Bagaimana data kamu digunakan" right="›" onClick={() => toast("Kebijakan privasi akan segera hadir")} />
           <AccountRow icon="🚪" iconBg="#FFF1F2" label="Keluar dari Akun" sub="Datamu tetap tersimpan dan bisa diakses saat masuk lagi" right="Keluar ›" danger onClick={() => setLogoutOpen(true)} />
         </div>
@@ -285,7 +285,7 @@ export function SettingsContent({
           <div className="w-full max-w-[400px] rounded-[20px] bg-white p-7 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="mb-3 text-4xl">👋</div>
             <h2 className="mb-2 text-lg font-extrabold tracking-tight text-zinc-900">Keluar dari Hunian?</h2>
-            <p className="mb-5 text-[13.5px] leading-relaxed text-zinc-500">Data dan kandidatmu tetap tersimpan dengan aman. Kamu bisa masuk kembali kapan saja.</p>
+            <p className="mb-5 text-[13.5px] leading-relaxed text-zinc-500">Data dan shortlist-mu tetap tersimpan dengan aman. Kamu bisa masuk kembali kapan saja.</p>
             <div className="flex gap-2">
               <button type="button" onClick={() => setLogoutOpen(false)} className="flex-1 rounded-[10px] border-[1.5px] border-[#E4E3DF] py-2.5 text-[13.5px] text-zinc-500 transition-colors hover:bg-[#F4F3F0]">Tetap di sini</button>
               <form action={signOutAction} className="flex-1">

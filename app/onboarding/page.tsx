@@ -15,7 +15,7 @@ export default async function OnboardingPage() {
     .eq("user_id", userId)
     .maybeSingle();
 
-  if (data?.onboarding_completed) redirect("/kandidat");
+  if (data?.onboarding_completed) redirect("/dashboard");
 
   return <OnboardingFlow />;
 }

@@ -4,36 +4,36 @@ import { FadeIn, Stagger, StaggerItem, HoverLift } from "@/components/motion/mot
 
 const VALUE_PROPS = [
   {
-    title: "Satu tempat untuk semua kandidat",
+    title: "Tidak ada listing yang tercecer lagi",
     body: "Tempel dari WhatsApp, OLX, Mamikos. Yang berserakan jadi satu daftar rapi yang bisa dibandingkan.",
   },
   {
-    title: "Verifikasi, bukan ketik ulang",
-    body: "AI mengekstrak deskripsi jadi data terstruktur. Kamu cukup mengoreksi yang ditandai.",
+    title: "Tempel, AI baca — kamu tinggal koreksi",
+    body: "AI membaca deskripsi jadi data terstruktur. Kamu cukup mengoreksi yang ditandai.",
   },
   {
     title: "Trade-off yang jujur",
-    body: "Lihat persis apa yang dikorbankan tiap pilihan. Skor rule-based yang bisa kamu telusuri.",
+    body: "Lihat persis apa yang kamu korbankan di tiap pilihan — dengan alasan yang bisa kamu cek sendiri, bukan angka misterius dari AI.",
   },
 ];
 
 const STEPS = [
   {
     n: "01",
-    title: "Masukkan kandidat yang sudah kamu temukan",
-    desc: "Copy deskripsi dari WhatsApp, OLX, Mamikos, atau isi manual. AI ekstrak datanya otomatis — kamu tinggal review dan lengkapi.",
+    title: "Masukkan pilihan yang sudah kamu temukan",
+    desc: "Copy deskripsi dari WhatsApp, OLX, Mamikos, atau isi manual. AI baca datanya otomatis — kamu tinggal review dan lengkapi.",
     tags: ["WhatsApp", "OLX", "Mamikos", "Facebook"],
   },
   {
     n: "02",
     title: "Survey dan lengkapi saat kunjungan",
-    desc: "Bukan form panjang. Rating bintang untuk 6 dimensi penting, selesai dalam 2–3 menit. Sistem langsung perbarui evaluasi.",
+    desc: "Bukan form panjang. Rating bintang untuk 6 aspek penting, selesai dalam 2–3 menit. Sistem langsung perbarui evaluasi.",
     tags: ["Kebersihan ★★★★", "Parkir ★★★", "Owner ★★★★★"],
   },
   {
     n: "03",
     title: "Bandingkan dan putuskan dengan yakin",
-    desc: "Bukan ranking angka. Hunian menunjukkan trade-off nyata antar kandidat — apa yang kamu korbankan jika memilih masing-masing.",
+    desc: "Bukan ranking angka. Hunian menunjukkan trade-off nyata antar pilihan — apa yang kamu korbankan jika memilih masing-masing.",
     tags: ["Trade-off jelas", "Deal breaker terdeteksi"],
   },
 ];
@@ -67,10 +67,27 @@ function PhotoStripe({ className = "" }: { className?: string }) {
 export default async function LandingPage() {
   const session = await auth();
   const loggedIn = !!session?.user?.id;
-  const ctaHref = loggedIn ? "/kandidat" : "/login";
+  const ctaHref = loggedIn ? "/dashboard" : "/login";
 
   return (
     <div className="flex min-h-screen flex-col">
+      {/* Structured data (SEO) — sinyal ke Google bahwa ini tool, bukan artikel. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            name: "Hunian",
+            description:
+              "Decision tool untuk membandingkan hunian sewa (kontrakan, kost, apartemen) di Indonesia.",
+            applicationCategory: "UtilityApplication",
+            operatingSystem: "Web",
+            inLanguage: "id",
+            offers: { "@type": "Offer", price: "0", priceCurrency: "IDR" },
+          }),
+        }}
+      />
       {/* Nav */}
       <nav className="mx-auto flex w-full max-w-[1120px] items-center justify-between px-6 py-5">
         <Logo />
@@ -78,7 +95,7 @@ export default async function LandingPage() {
           href={ctaHref}
           className="rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
         >
-          {loggedIn ? "Buka aplikasi" : "Masuk"}
+          {loggedIn ? "Buka aplikasi" : "Masuk & Mulai"}
         </Link>
       </nav>
 
@@ -87,7 +104,7 @@ export default async function LandingPage() {
         <header className="mx-auto grid w-full max-w-[1120px] items-center gap-10 px-6 pb-8 pt-8 lg:grid-cols-[1.02fr_.98fr] lg:gap-[52px] lg:pt-10">
           <FadeIn y={18}>
             <span className="mb-5 inline-flex items-center rounded-full bg-teal-50 px-3 py-1.5 text-[13px] font-semibold text-teal-800">
-              Decision Support untuk Hunian
+              Alat bantu pilih hunian sewa di Indonesia
             </span>
             <h1 className="text-[clamp(2.25rem,5vw,3.5rem)] font-extrabold leading-[1.05] tracking-tight text-zinc-900">
               Semakin banyak pilihan.
@@ -97,9 +114,9 @@ export default async function LandingPage() {
               <span className="text-teal-700">salah pilih.</span>
             </h1>
             <p className="mt-5 max-w-[500px] text-lg leading-relaxed text-zinc-600">
-              Hunian membantu membandingkan rumah yang sudah kamu temukan, sehingga kamu bisa memilih
-              berdasarkan <strong className="font-semibold">kebutuhan</strong>, bukan sekadar{" "}
-              <strong className="font-semibold">feeling</strong>.
+              Tempel deskripsi dari WA broker atau OLX — AI baca datanya, Hunian skor tiap pilihan, dan
+              kamu lihat <strong className="font-semibold">trade-off yang jelas</strong> sebelum
+              memutuskan.
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-4">
               <HoverLift>
@@ -107,7 +124,7 @@ export default async function LandingPage() {
                   href={ctaHref}
                   className="inline-flex h-[52px] items-center justify-center gap-2.5 rounded-xl bg-teal-700 px-6 text-base font-semibold text-white shadow-sm transition-colors hover:bg-teal-800"
                 >
-                  Coba sekarang →
+                  Mulai Bandingkan Hunianku →
                 </Link>
               </HoverLift>
               <span className="text-sm font-medium text-zinc-400">Gratis · masuk dengan Google</span>
@@ -208,8 +225,8 @@ export default async function LandingPage() {
               </h2>
               <div className="mx-auto my-8 h-[3px] w-12 rounded-full bg-teal-700" />
               <p className="text-base leading-[1.7] text-zinc-600">
-                Marketplace bagus untuk menemukan kandidat. Tapi tidak ada yang membantu kamu{" "}
-                <em>memutuskan</em> dari kandidat yang sudah kamu temukan. Hunian mengisi gap itu.
+                Marketplace bagus untuk menemukan pilihan. Tapi tidak ada yang membantu kamu{" "}
+                <em>memutuskan</em> dari pilihan yang sudah kamu temukan. Hunian mengisi gap itu.
               </p>
             </div>
           </FadeIn>
@@ -271,9 +288,9 @@ export default async function LandingPage() {
               <ul className="flex flex-col gap-3">
                 {[
                   "Deal breaker langsung terdeteksi dan di-flag — tidak perlu tunggu sampai sudah terlanjur suka",
-                  "Kandidat yang didominasi kandidat lain otomatis diidentifikasi",
+                  "Kalau ada pilihan yang kalah di semua aspek dibanding pilihan lain, Hunian langsung memberi tahu",
                   "Evaluasi diperbarui setiap kali ada data baru — termasuk setelah survey",
-                  "Semua verdict bisa ditelusuri ke bukti yang konkret",
+                  "Setiap rekomendasi ada alasannya — bisa kamu cek, bukan percaya begitu saja",
                 ].map((li) => (
                   <li key={li} className="flex items-start gap-2.5 text-sm leading-snug text-zinc-600">
                     <span className="mt-0.5 shrink-0 font-bold text-emerald-600">✓</span>
@@ -372,11 +389,11 @@ export default async function LandingPage() {
         </section>
       </main>
 
-      <footer className="mx-auto w-full max-w-[1120px] px-6 pb-12 pt-4 text-center">
-        <span className="text-[13px] font-medium text-zinc-400">
-          Hunian · Slice 1 — Kontrakan
-        </span>
-      </footer>
+      {/*<footer className="mx-auto w-full max-w-[1120px] px-6 pb-12 pt-4 text-center">*/}
+      {/*  <span className="text-[13px] font-medium text-zinc-400">*/}
+      {/*    Hunian · Slice 1 — Kontrakan*/}
+      {/*  </span>*/}
+      {/*</footer>*/}
     </div>
   );
 }

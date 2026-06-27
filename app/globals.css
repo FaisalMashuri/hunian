@@ -40,3 +40,35 @@
     border-radius: 0.5rem;
   }
 }
+
+/* Bar progres navigasi global (NFR-11) — feedback "sedang pindah halaman". */
+@layer components {
+  .nav-progress {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    height: 3px;
+    overflow: hidden;
+    background-color: hsl(var(--ring) / 0.12);
+    pointer-events: none;
+  }
+  .nav-progress__bar {
+    height: 100%;
+    width: 40%;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, transparent, hsl(var(--ring)), transparent);
+    animation: nav-progress-slide 1s ease-in-out infinite;
+  }
+  @keyframes nav-progress-slide {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(350%); }
+  }
+  /* Hormati prefers-reduced-motion (NFR-10): bar statis, tanpa gerak. */
+  @media (prefers-reduced-motion: reduce) {
+    .nav-progress__bar {
+      width: 100%;
+      animation: none;
+      background: hsl(var(--ring) / 0.6);
+    }
+  }
+}

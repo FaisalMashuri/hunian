@@ -94,7 +94,7 @@ function PriceSection({ draft, set, hargaPlaceholder = "3.500.000", depositPlace
             <span className={prefixLabel}>Rp</span>
             <input className={prefixInput} disabled placeholder="—" />
           </div>
-          <span className="text-[11.5px] text-zinc-400">Catat negosiasi nanti dari halaman kandidat</span>
+          <span className="text-[11.5px] text-zinc-400">Catat negosiasi nanti dari halaman detail hunian</span>
         </div>
       </div>
       <div className="mt-2.5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
@@ -131,7 +131,7 @@ function KontrakanForm({ draft, set }: { draft: ExtractedDraft; set: SetDraft })
       {/* ── Dasar */}
       <div className="mb-4 space-y-2.5">
         <div className="flex flex-col gap-1.5">
-          <Label>Nama Kandidat <Req /></Label>
+          <Label>Nama Hunian <Req /></Label>
           <input className={input} value={draft.title ?? ""} onChange={(e) => set("title", e.target.value || null)} placeholder="mis. Kontrakan Pak Budi Jatiwaringin" />
         </div>
         <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
@@ -210,7 +210,7 @@ function KontrakanForm({ draft, set }: { draft: ExtractedDraft; set: SetDraft })
       {/* ── Catatan */}
       <div className="flex flex-col gap-1.5">
         <Label>Catatan</Label>
-        <textarea className={input + " min-h-[80px] resize-y"} value={draft.deskripsi ?? ""} onChange={(e) => set("deskripsi", e.target.value || null)} placeholder="Hal-hal penting tentang kandidat ini — bebas banjir, akses jalan, lingkungan, plus/minus…" />
+        <textarea className={input + " min-h-[80px] resize-y"} value={draft.deskripsi ?? ""} onChange={(e) => set("deskripsi", e.target.value || null)} placeholder="Hal-hal penting tentang hunian ini — bebas banjir, akses jalan, lingkungan, plus/minus…" />
       </div>
     </Card>
   );
@@ -258,7 +258,7 @@ function ApartemenForm({ draft, set, typeData, setTS }: { draft: ExtractedDraft;
         <div className="flex flex-col gap-1.5">
           <Label>Nama Apartemen <Req /></Label>
           <input className={input} value={draft.title ?? ""} onChange={(e) => set("title", e.target.value || null)} placeholder="mis. Apt Skandinavia Lt 12" />
-          <span className="text-[11.5px] text-zinc-400">Dipakai sebagai nama kandidat.</span>
+          <span className="text-[11.5px] text-zinc-400">Dipakai sebagai nama hunian.</span>
         </div>
         <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
           <TSInput field={APARTEMEN_FIELDS[0]} typeData={typeData} setTS={setTS} />
@@ -307,7 +307,7 @@ function KostForm({ draft, set, typeData, setTS }: { draft: ExtractedDraft; set:
         <div className="flex flex-col gap-1.5">
           <Label>Nama Kost <Req /></Label>
           <input className={input} value={draft.title ?? ""} onChange={(e) => set("title", e.target.value || null)} placeholder="mis. Kost Pak Hasan Cibubur" />
-          <span className="text-[11.5px] text-zinc-400">Dipakai sebagai nama kandidat.</span>
+          <span className="text-[11.5px] text-zinc-400">Dipakai sebagai nama hunian.</span>
         </div>
         <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
           <div className="flex flex-col gap-1.5">

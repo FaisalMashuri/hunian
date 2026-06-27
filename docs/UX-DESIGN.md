@@ -27,9 +27,9 @@
 ```
 /                        Landing + Login CTA (publik, tanpa sesi)
 /onboarding              Onboarding 4-step (gate: sesi ada, onboarding_completed=false)
-/kandidat                Daftar kandidat            [TAB 1 🏠]
-/kandidat/[id]           Detail kandidat (Skor + AI explanation)
-/kandidat/[id]/review    Property Review (post-extraction)
+/dashboard                Daftar kandidat            [TAB 1 🏠]
+/shortlist/[id]           Detail kandidat (Skor + AI explanation)
+/shortlist/[id]/review    Property Review (post-extraction)
 /input                   Input Property Kontrakan
 /bandingkan              Compare kandidat           [TAB 2 ⚖]
 /pengaturan              Pengaturan preferensi      [TAB 3 ⚙]
@@ -52,16 +52,16 @@ REQUEST MASUK
    ▼ ALLOW
 
 Edge cases:
-  / + sesi + completed=true    → redirect /kandidat
+  / + sesi + completed=true    → redirect /dashboard
   / + sesi + completed=false   → redirect /onboarding
-  /onboarding + completed=true → redirect /kandidat
+  /onboarding + completed=true → redirect /dashboard
 ```
 
 `onboarding_completed` dibaca dari `user_preferences` via server session. Jika baris `user_preferences` belum ada (user baru sekali login), buat baris `onboarding_completed=false` lalu redirect `/onboarding`.
 
 ### A.3 Navigasi — RESPONSIF (keputusan Faisal 2026-06-26)
 
-App shell (`components/app/app-shell.tsx`) dipakai semua layar app (`/kandidat`, `/kandidat/[id]`, `/bandingkan`, `/pengaturan`, `/input`, `/review`). TIDAK dipakai di `/` (landing), `/login`, `/onboarding` (layar fokus/flow).
+App shell (`components/app/app-shell.tsx`) dipakai semua layar app (`/dashboard`, `/shortlist/[id]`, `/bandingkan`, `/pengaturan`, `/input`, `/review`). TIDAK dipakai di `/` (landing), `/login`, `/onboarding` (layar fokus/flow).
 
 **Layar besar (≥ `sm`):** **sidebar kiri** (`w-60`, fixed) — logo + nav (Kandidat · Bandingkan · Pengaturan, aktif = teal) + blok akun & **Keluar** di bawah. Konten `sm:pl-60`. Tidak ada bottom nav. (`components/app/sidebar.tsx`)
 
@@ -87,23 +87,23 @@ Komponen "Tambah kandidat" tampil sebagai tombol di header section Kandidat (sem
         user baru (completed=false) ───┤─── returning (completed=true)
                 │                                     │
                 ▼                                     ▼
-        /onboarding (Step 1→4, Step 3&4 skippable)   /kandidat (TAB 1)
+        /onboarding (Step 1→4, Step 3&4 skippable)   /dashboard (TAB 1)
                 │                                     │  [FAB +]
                 └───── set completed=true ────────────┤
                                                  tap  │  FAB
                                             kandidat   │   │
                                    ┌────────────────┐  │   ▼
-                                   │ /kandidat/[id] │◄─┘  /input
+                                   │ /shortlist/[id] │◄─┘  /input
                                    │ Skor + AI      │      tab PASTE (default) / MANUAL
                                    └────────────────┘      │  Ekstrak (~5dtk)
                                                            │  gagal → fallback manual (NFR-5)
                                                            ▼
-                                              /kandidat/[id]/review
+                                              /shortlist/[id]/review
                                               ReviewRow ✓/⚠ + input km manual
                                               [Simpan] → score dihitung server-side
                                                            │
                                                            ▼
-                                                       /kandidat
+                                                       /dashboard
    /bandingkan (TAB 2) — ≥2 kandidat aktif — trade-off forward — FR-CM-1/2/3
    /pengaturan (TAB 3) — edit semua preferensi — FR-ON-5
 ```
@@ -145,7 +145,7 @@ Komponen "Tambah kandidat" tampil sebagai tombol di header section Kandidat (sem
 | Loading | Tombol: spinner + disabled, "Menghubungkan..." |
 | OAuth error | Sonner: "Login gagal. Coba lagi, atau periksa koneksimu." Tombol aktif lagi |
 | Success (baru) | Redirect `/onboarding` |
-| Success (returning) | Redirect `/kandidat` |
+| Success (returning) | Redirect `/dashboard` |
 
 **Microcopy:** Headline "Bandingkan hunian sewa tanpa spreadsheet". Sub "Copy deskripsi dari WhatsApp, Hunian ekstrak & bantu kamu pilih yang paling masuk akal." CTA "Masuk dengan Google" (bukan "Login/Sign in"). Footer "Gratis. Tidak butuh install."
 
@@ -270,10 +270,10 @@ Furnished        🔴  ○ Furnished  ○ Semi  ○ Unfurnished
 | PASTE default | Textarea kosong + placeholder hint |
 | PASTE terisi | Counter karakter; "Ekstrak & Lanjut" aktif |
 | PASTE loading | Tombol disabled+spinner "AI sedang membaca..."; Skeleton (NFR-1 target <5dtk) |
-| PASTE success | Redirect `/kandidat/[id]/review` |
+| PASTE success | Redirect `/shortlist/[id]/review` |
 | PASTE gagal (NFR-5) | Sonner "Ekstraksi gagal — kami pindahkan ke form manual. Isi yang kurang." → auto-switch tab Manual; teks tetap tersimpan sebagai `source_text` |
 | PASTE multi-listing | **Extract listing PERTAMA** + info banner "Kami mendeteksi lebih dari satu listing. Yang diproses listing pertama — tambah sisanya satu per satu." (bukan error/block — keputusan SYN) |
-| MANUAL submit | Validasi client → server action → `/kandidat/[id]/review` (tanpa extraction) |
+| MANUAL submit | Validasi client → server action → `/shortlist/[id]/review` (tanpa extraction) |
 
 **Microcopy:** Placeholder "Tempel deskripsi dari WhatsApp, OLX, atau mana saja di sini". CTA "Ekstrak & Lanjut →". Badge wajib bertuliskan "wajib" (bukan hanya asterisk). Select periode: konversi otomatis ke per bulan (FR-IN-3).
 
@@ -284,7 +284,7 @@ Furnished        🔴  ○ Furnished  ○ Semi  ○ Unfurnished
 ### LAYAR 4 — Property Review
 
 **Tujuan:** User memverifikasi & melengkapi hasil ekstraksi sebelum kandidat disimpan final.
-**Route:** `/kandidat/[id]/review` · **FR:** FR-RV-1, FR-RV-2, FR-IN-3, FR-SC-1 (input lokasi)
+**Route:** `/shortlist/[id]/review` · **FR:** FR-RV-1, FR-RV-2, FR-IN-3, FR-SC-1 (input lokasi)
 
 ```
 [← Kembali]        Review Kandidat
@@ -330,7 +330,7 @@ Foto           —                      ⚠   [+ Upload foto]
 | 🔴 masih ⚠ | "Simpan" disabled; badge header "Lengkapi N field wajib" |
 | Semua 🔴 terisi | "Simpan" aktif |
 | Submit loading | Spinner; scoring dihitung server-side |
-| Submit success | Sonner "Kandidat disimpan" → `/kandidat` |
+| Submit success | Sonner "Kandidat disimpan" → `/dashboard` |
 | Submit error | Sonner "Gagal menyimpan, coba lagi" |
 
 **Microcopy:** Header "Ketuk baris untuk mengoreksi nilai yang ditandai ⚠". Tooltip ✓ "Kepercayaan tinggi — tetap cek sendiri" (trust-copy fix DA: confidence≥0.7 ≠ pasti benar). Tooltip ⚠ "Perlu dicek — kosong atau kurang yakin". CTA "Simpan Kandidat →".
@@ -342,7 +342,7 @@ Foto           —                      ⚠   [+ Upload foto]
 ### LAYAR 5 — Daftar Kandidat
 
 **Tujuan:** User melihat semua kandidat aktif, status, & flag deal breaker dalam satu pandangan.
-**Route:** `/kandidat` · **FR:** FR-ST-1, FR-DB-1
+**Route:** `/dashboard` · **FR:** FR-ST-1, FR-DB-1
 
 **Populated:**
 ```
@@ -394,7 +394,7 @@ Mulai dengan menambah hunian pertama yang kamu lirik.
 ### LAYAR 6 — Detail Kandidat / Skor + AI Explanation
 
 **Tujuan:** Menampilkan scoring per dimensi & penjelasan AI natural; mendorong aksi nyata (lengkapi data, hubungi owner).
-**Route:** `/kandidat/[id]` · **FR:** FR-SC-1, FR-SC-2, FR-SC-3, FR-AI-3, FR-DB-1, FR-ST-1, NFR-7
+**Route:** `/shortlist/[id]` · **FR:** FR-SC-1, FR-SC-2, FR-SC-3, FR-AI-3, FR-DB-1, FR-ST-1, NFR-7
 
 ```
 ←  Kontrakan Jatibening
@@ -491,7 +491,7 @@ PILIH DENGAN SADAR
 
 **Simbol 3-layer (ikon+warna+teks):** ✓ emerald "Sangat sesuai" · ~ amber "Ada trade-off" · ✗ rose "Di luar batas / langgar deal breaker". Legenda selalu tampil. Deal breaker pelanggar → baris "Deal brk ✗" + card tambah "⚠ 1 deal breaker — cek dengan owner".
 
-**Pilih → Dialog konfirmasi** (tampilkan ulang trade-off ~) → "Ya, ini pilihanku →" → INSERT `decisions` (`candidate_id`, `scoring_version` dari kandidat terpilih, `score_at_decision`, `candidates_compared` snapshot) → Toast "Kamu memilih [judul]. Semoga cocok!" → `Sheet` exit survey "Apakah perbandingan tadi membantu kamu memutuskan? [Ya] [Tidak] · Lewati" (KPI, PRD §10; auto-dismiss 15 dtk) → redirect `/kandidat` (kandidat terpilih dapat Badge "Dipilih").
+**Pilih → Dialog konfirmasi** (tampilkan ulang trade-off ~) → "Ya, ini pilihanku →" → INSERT `decisions` (`candidate_id`, `scoring_version` dari kandidat terpilih, `score_at_decision`, `candidates_compared` snapshot) → Toast "Kamu memilih [judul]. Semoga cocok!" → `Sheet` exit survey "Apakah perbandingan tadi membantu kamu memutuskan? [Ya] [Tidak] · Lewati" (KPI, PRD §10; auto-dismiss 15 dtk) → redirect `/dashboard` (kandidat terpilih dapat Badge "Dipilih").
 
 **Komponen:** `Table`, `Dialog`, `Sheet`, `Badge`, `Skeleton`, `Button`, `Separator`, `Checkbox` (selector), `Sonner`. `CompareTable` & `TradeoffCard` = custom.
 **State:** <2→empty · 2→tabel 2 kolom (no scroll) · 3→horizontal-scroll · 4+→selector · deal breaker→baris ✗ amber · score recalculating→Skeleton baris Skor saja · confirming→Dialog · post-pilih→Toast+Sheet+redirect.
@@ -561,6 +561,9 @@ Base 4px. Padding halaman `px-4`. Card `p-4`. Stack form `space-y-3`. Gap card `
 5. **AI explanation = teman bicara**, conversational; "Yang belum diketahui:" selalu ada bila data tak lengkap.
 6. **Perubahan Settings → auto-recalculate** + toast.
 7. **Deal breaker: flag, bukan blokir** — tak ada tombol "hapus/exclude" yang dipromosikan.
+
+### Loading & Skeleton states (NFR-11 — perceived performance)
+Hunian harus **terasa instan**, jadi **bukan loading spinner**. Pola: **Server Components + Streaming + Suspense + Skeleton**. Tiap halaman data dipecah jadi **shell statis (tampil seketika)** + widget data yang di-stream lewat `<Suspense>` dengan **skeleton yang MENIRU layout asli** (bukan kotak generik) — ukuran/grid/border sama dengan komponen final agar transisi tak "melompat". Kerja lambat (geocode, Directions, Overpass POI, signed-URL Storage) **tak boleh memblok scaffold**; ia berada di boundary `<Suspense>` sendiri sehingga header/verdict/biaya tampil duluan, peta/POI/foto menyusul. `loading.tsx` per-route menampilkan skeleton shell saat navigasi pertama. Primitif tunggal: `components/ui/skeleton.tsx` (`Skeleton`/`SkeletonCard`). Animasi pulse **hormati `prefers-reduced-motion`** (Tailwind `animate-pulse` otomatis nonaktif). Implementasi: `docs/DEVELOPMENT-PLAN-SLICE2.md` §S2-PERF.
 
 ### Mobile & Aksesibilitas
 Touch target min 44×44px. FAB 56×56px `bottom-20 right-4 shadow-lg`. Bottom nav `h-14` + `env(safe-area-inset-bottom)`. Input `text-base` (16px) cegah auto-zoom iOS. Compare `overflow-x-auto` native + kolom pertama `sticky left-0 z-10 bg-white`. Sheet selalu dari bawah (`side="bottom"`). Skeleton `prefers-reduced-motion`→instant.

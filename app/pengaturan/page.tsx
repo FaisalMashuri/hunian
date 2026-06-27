@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { AppShell } from "@/components/app/app-shell";
-import { SidebarContext } from "@/app/kandidat/sidebar-context";
+import { SidebarContext, SidebarZone } from "@/app/dashboard/sidebar-context";
 import { budgetZone, type BudgetZone } from "@/lib/pricing";
 import { SettingsContent, type SettingsInitial } from "./settings-content";
 import type { TransportMode } from "@/lib/types/db";
@@ -80,8 +80,7 @@ export default async function PengaturanPage() {
       ideal={ideal}
       max={max}
       priorities={priorities}
-      zoneCount={zoneCount}
-      zoneTotal={zoneTotal}
+      zoneSlot={<SidebarZone zoneCount={zoneCount} zoneTotal={zoneTotal} />}
       deadlineDate={deadlineDate}
       deadlineDaysLeft={deadlineDaysLeft}
     />

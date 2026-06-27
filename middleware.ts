@@ -8,7 +8,8 @@ export const { auth: middleware } = NextAuth(authConfig);
 // Publik: `/` (landing), `/login`, `/api/auth/*`, asset statis.
 export const config = {
   matcher: [
-    "/kandidat/:path*",
+    "/dashboard/:path*",
+    "/shortlist/:path*",
     "/onboarding/:path*",
     "/bandingkan/:path*",
     "/pengaturan/:path*",

@@ -6,13 +6,13 @@ export type AppUser = { name: string; email: string; initial: string };
 // Shell aplikasi (post-login). Desktop: sidebar kiri (nav + konteks + profil). Mobile: header + bottom nav.
 // `bleed`: konten penuh tanpa max-width/padding (halaman atur sendiri) — agar topbar bisa mepet ujung-ujung.
 export function AppShell({
-  user,
+  user: _user,
   children,
   aside,
   navBadge,
   bleed = false,
 }: {
-  user: AppUser;
+  user?: AppUser;
   children: React.ReactNode;
   aside?: React.ReactNode;
   navBadge?: number;
@@ -20,7 +20,7 @@ export function AppShell({
 }) {
   return (
     <div className="min-h-screen sm:pl-64">
-      <Sidebar user={user} aside={aside} navBadge={navBadge} />
+      <Sidebar aside={aside} navBadge={navBadge} />
 
       {/* Header mobile — hanya untuk halaman non-bleed (halaman bleed punya topbar sendiri) */}
       {!bleed && (

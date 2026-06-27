@@ -1,10 +1,18 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signIn, auth } from "@/auth";
 
+export const metadata: Metadata = {
+  title: "Masuk ke Hunian — mulai bandingkan hunian sewa",
+  description:
+    "Masuk dengan Google untuk mulai mengumpulkan, menskor, dan membandingkan pilihan hunian sewamu. Gratis.",
+  alternates: { canonical: "/login" },
+};
+
 export default async function LoginPage() {
   const session = await auth();
-  if (session?.user?.id) redirect("/kandidat");
+  if (session?.user?.id) redirect("/dashboard");
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-stone-50 p-6">
@@ -14,16 +22,18 @@ export default async function LoginPage() {
         </Link>
 
         <div className="rounded-2xl border border-zinc-200 bg-white p-7 text-center shadow-sm">
-          <h1 className="text-xl font-bold tracking-tight text-zinc-900">Masuk ke Hunian</h1>
+          <h1 className="text-xl font-bold tracking-tight text-zinc-900">
+            Masuk untuk mulai bandingkan — gratis sepenuhnya
+          </h1>
           <p className="mt-2 text-sm text-zinc-600">
-            Datamu (kandidat & preferensi) tersimpan aman dan terkait ke akunmu.
+            Daftar shortlist dan preferensimu tersimpan supaya bisa dilanjutkan kapan saja.
           </p>
 
           <form
             className="mt-6"
             action={async () => {
               "use server";
-              await signIn("google", { redirectTo: "/kandidat" });
+              await signIn("google", { redirectTo: "/dashboard" });
             }}
           >
             <button
@@ -52,7 +62,7 @@ export default async function LoginPage() {
             </button>
           </form>
 
-          <p className="mt-4 text-xs text-zinc-500">Gratis. Tidak butuh install.</p>
+          <p className="mt-4 text-xs text-zinc-500">Gratis sepenuhnya. Tidak perlu install apa-apa.</p>
         </div>
 
         <Link href="/" className="block text-center text-sm text-zinc-500 hover:text-zinc-700">

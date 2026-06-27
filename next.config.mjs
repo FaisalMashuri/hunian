@@ -5,6 +5,13 @@ const nextConfig = {
   experimental: {
     serverActions: { bodySizeLimit: "10mb" },
   },
+  // Redirect 301 dari URL lama /kandidat → struktur baru /dashboard (list) & /shortlist/[id] (detail).
+  async redirects() {
+    return [
+      { source: "/kandidat", destination: "/dashboard", permanent: true },
+      { source: "/kandidat/:path*", destination: "/shortlist/:path*", permanent: true },
+    ];
+  },
   images: {
     // Sumber gambar placeholder (dev/awal). Ganti dgn asset final saat siap.
     remotePatterns: [

@@ -46,6 +46,7 @@ Butuh `.env.local` (lihat `.env.example`). `benchmark/` punya `.env` sendiri.
 3. **Semantik harga terkunci:** `harga_sewa_bulanan` = ASLI/listing, immutable. Scoring SELALU baca kolom GENERATED `harga_efektif_bulanan` (COALESCE akhir, asli). Bila formula/semantik skor berubah, **naikkan `scoring_version`**.
 4. **Scoring rule-based, bukan AI.** AI hanya extraction/normalization/explanation (FR-AI-3). Jangan biarkan AI menentukan skor.
 5. **Jangan commit secrets.** `.env.local` gitignored; service-role key hanya server-side (`import "server-only"`).
+6. **Pola perceived performance (NFR-11).** Halaman data = **shell instan + konten di-stream** (`<Suspense>` + skeleton dari `components/ui/skeleton.tsx`), **bukan** fetch semua di `page.tsx` lalu blok render. `page.tsx` hanya `auth()` + `prefs` guard; fetch berat & **kerja lambat** (geocode/Directions/Overpass/Storage) pindah ke `*-content.tsx`/`*-section.tsx` async di balik `<Suspense>`. Untuk dataset saling-bergantung (verdict pool) pakai **satu loader ber-React-`cache()`** (mis. `app/dashboard/data.ts`, `app/shortlist/[id]/location.ts`) agar beberapa boundary `<Suspense>` berbagi satu fetch (di-dedup). Paralelkan query independen dengan `Promise.all`; sediakan `loading.tsx` per-route. Lihat `docs/DEVELOPMENT-PLAN-SLICE2.md` §S2-PERF.
 
 ## Setup eksternal (sekali, manual)
 

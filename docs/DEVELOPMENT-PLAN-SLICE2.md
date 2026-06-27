@@ -54,6 +54,7 @@ S2-5  Biaya all-in terstruktur                 ███░░░  ekstraksi + f
 S2-6  Apartemen & Kost (type_specific_data)    █████░  perluas extraction + form + detail
 S2-7  POI rute asli ter-cache di DB            ███░░░  upgrade dari garis lurus
 S2-8  Aktivasi lain (moda, dll)                ██░░░░  pelengkap
+S2-PERF Perceived performance (streaming)      ████░░  lintas-halaman, tanpa migrasi
 ```
 
 **Catatan scoring (konvensi CLAUDE.md #3):** begitu survey menambah dimensi Kondisi/Owner, **naikkan `scoring_version`** (mis. `1.0` → `2.0`/`v2-5D`) agar skor lama vs baru bisa dibedakan. `harga_efektif_bulanan` tetap COALESCE(akhir, terpilih, asli).
@@ -73,7 +74,7 @@ S2-8  Aktivasi lain (moda, dll)                ██░░░░  pelengkap
 - `next.config.mjs`: `serverActions.bodySizeLimit: "10mb"` (default 1MB terlalu kecil utk foto ponsel).
 
 ## S2-2 — Survey fisik → lengkapi data + skor 5 dimensi  *(fase kunci)* — ✅ IMPLEMENTED 2026-06-27
-> Status: **selesai** (typecheck hijau). File: `lib/scoring/score.ts` (5D + `scoreKondisiFromSurvey`/`scoreOwnerFromSurvey`), `lib/scoring/rescore.ts` (baca survey scores), `app/onboarding/options.ts` (`computeWeights` 5D + PRIORITIES), callers (`app/input/actions.ts`, `app/onboarding/actions.ts`, `app/pengaturan/actions.ts`). Capture: `app/kandidat/[id]/survey/{page,survey-client,actions}.tsx` (form 2-bagian + `saveSurveyAction`). UI: detail (`Update Survey` link, Hasil Survey nyata, Disurvey date, radar 5D), settings (prioritas Kondisi/Owner aktif), bandingkan (radar un-ghost, baris bintang nyata). Sisa minor: foto-survei masih dummy (S2-1), timeline UI (S2-3), migrasi one-shot otomatis terjadi via rescore saat prefs berubah / kandidat disurvey.
+> Status: **selesai** (typecheck hijau). File: `lib/scoring/score.ts` (5D + `scoreKondisiFromSurvey`/`scoreOwnerFromSurvey`), `lib/scoring/rescore.ts` (baca survey scores), `app/onboarding/options.ts` (`computeWeights` 5D + PRIORITIES), callers (`app/input/actions.ts`, `app/onboarding/actions.ts`, `app/pengaturan/actions.ts`). Capture: `app/shortlist/[id]/survey/{page,survey-client,actions}.tsx` (form 2-bagian + `saveSurveyAction`). UI: detail (`Update Survey` link, Hasil Survey nyata, Disurvey date, radar 5D), settings (prioritas Kondisi/Owner aktif), bandingkan (radar un-ghost, baris bintang nyata). Sisa minor: foto-survei masih dummy (S2-1), timeline UI (S2-3), migrasi one-shot otomatis terjadi via rescore saat prefs berubah / kandidat disurvey.
 **Survey = DUA fungsi sekaligus** (kunjungan fisik momen paling natural untuk keduanya):
 - **(A) Lengkapi data objektif** yang belum ada di listing — persis daftar **"Yang belum lengkap"** di detail (`listUnknowns`, `lib/extraction/unknowns.ts`): kamar tidur/mandi, furnished, carport, dapur, luas, deposit, biaya listrik/air, alamat, dll. → update kolom `candidates` → **memperbaiki skor 3D lama** (terutama Fasilitas/Lokasi) + completeness.
 - **(B) Penilaian subjektif** (rating 1–5 + tag) → `candidate_surveys` → **menambah 2 dimensi baru** (Kondisi, Owner).
@@ -89,14 +90,14 @@ S2-8  Aktivasi lain (moda, dll)                ██░░░░  pelengkap
 
 **Scoring:** isi `score_kondisi` & `score_owner` dari rating (avg sederhana per kelompok → 0–100); aktifkan `weight_keamanan`/`weight_owner` di formula → radar **5 dimensi** nyata (`lib/scoring/score.ts`, `rescore.ts`). **Bump `scoring_version` → 2.0** + migrasi one-shot. Bobot K&O **bisa diatur user** di editor Prioritas `/pengaturan` (G1=A); perluas `computeWeights` 3D→5D. `deriveVerdict` (`lib/scoring/verdict.ts`) boleh ikut 5D dengan perubahan **eksplisit**, framing tetap trade-off.
 
-**UI:** detail page (`app/kandidat/[id]/page.tsx`) ganti `<ComingSoon title="Hasil survey">` & `SurveyPhotos` dummy dengan data nyata; "Yang belum lengkap" menyusut seiring data terisi; di **Bandingkan** (`compare-client.tsx`) baris survey "— Segera" → bintang nyata, `compare-radar.tsx` dims Kondisi/Owner lepas `placeholder`.
+**UI:** detail page (`app/shortlist/[id]/page.tsx`) ganti `<ComingSoon title="Hasil survey">` & `SurveyPhotos` dummy dengan data nyata; "Yang belum lengkap" menyusut seiring data terisi; di **Bandingkan** (`compare-client.tsx`) baris survey "— Segera" → bintang nyata, `compare-radar.tsx` dims Kondisi/Owner lepas `placeholder`.
 
 ## S2-3 — Timeline / events — ✅ IMPLEMENTED 2026-06-27
 - Helper terpusat `lib/events.ts` (`insertCandidateEvent`, best-effort). Event dicatat: `added` (saveCandidate), `status_changed` (updateStatusAction), `data_updated` (updateCandidateAction), `survey_completed`+`data_updated` (saveSurveyAction), `price_changed` (recordNegotiationAction), `user_note` (`recordNoteAction`).
 - UI: section Timeline di detail render dari `candidate_events` (urut `occurred_at`) + `timeline-note.tsx` ("Tambah catatan manual"). `ComingSoon` dihapus dari detail.
 
 ## S2-4 — Negosiasi harga (awal → akhir) — ✅ IMPLEMENTED 2026-06-27
-- `recordNegotiationAction` (`app/kandidat/[id]/actions.ts`) set `harga_akhir_bulanan` → GENERATED `harga_efektif_bulanan` COALESCE → re-score (skor harga) + event `price_changed`.
+- `recordNegotiationAction` (`app/shortlist/[id]/actions.ts`) set `harga_akhir_bulanan` → GENERATED `harga_efektif_bulanan` COALESCE → re-score (skor harga) + event `price_changed`.
 - UI: komponen `negotiation-control.tsx` ("Catat harga nego") di header detail; badge **hemat** muncul otomatis. Tanpa migrasi.
 
 ## S2-5 — Biaya all-in (display-only) — ✅ IMPLEMENTED 2026-06-27
@@ -109,18 +110,36 @@ S2-8  Aktivasi lain (moda, dll)                ██░░░░  pelengkap
 - Form **fungsional** (`manual-forms.tsx` ApartemenForm/KostForm), type-selector tanpa "Segera"; field umum → kolom `candidates`, extra → **`type_specific_data`** JSONB. `saveCandidate` tulis `property_type` + `type_specific_data`; review-list & detail render adaptif per tipe; **edit** juga mendukung (`updateCandidateAction` tulis type_specific_data).
 - **Ditunda**: ekstraksi AI paste untuk apartemen/kost (tetap Kontrakan-only — apartemen/kost = manual). Scoring pakai 3D/5D yang ada (type_specific_data display-only). Zod/`pg_jsonschema` bila perlu validasi lebih ketat.
 
-## S2-7 — POI rute asli ter-cache di DB
-**Upgrade:** dari **jarak garis lurus** (sekarang) ke **rute asli per-POI** via Google Directions, **di-cache** agar tak call berulang.
-- Buat tabel `candidate_poi` (DDL di DEVELOPMENT-PLAN.md). Saat detail dibuka & cache kosong → fetch Overpass, upsert (`straight_km`). Hitung `route_km`/`route_min` **lazy & terbatas** (top-N) via `lib/maps/directions.ts`; UI pakai `route_*` bila ada, fallback `straight_km`. Biaya Directions terbayar sekali per (kandidat × POI).
+## S2-7 — POI rute asli ter-cache di DB — ✅ IMPLEMENTED 2026-06-28
+**Upgrade:** dari **jarak garis lurus** ke **rute asli per-POI** via Google Directions, **di-cache** di `candidate_poi`.
+- **Migration:** `db/migrations/2026-06-27_slice2_s2-7_candidate_poi.sql` (idempoten; tabel sudah ada di DB) — `candidate_poi` + UNIQUE(candidate_id, osm_id) + index + RLS owner-via-join.
+- **`lib/maps/poi-cache.ts` (`loadCandidatePois`)** = sumber tunggal POI detail. Alur: baca `candidate_poi` → bila ada & **segar (<30 hari)** pakai cache (TANPA Overpass, rekonstruksi emoji/sub generik per kategori). Bila kosong/stale → `fetchNearbyPOIs` (Overpass) → hitung rute **top-N** (terdekat overall + per kategori summary, paralel `Promise.all`, `lib/maps/directions.ts`) → **upsert SELURUH daftar POI** (`straight_km` + `route_km`/`route_min` utk top-N). UI pakai `route_*` bila ada (tag "rute"), fallback `straight_km`.
+- **Dua manfaat:** rute tempuh jalan asli untuk POI penting **dan** Overpass dipanggil **sekali per kandidat** (cache DB → tak hammer Overpass = atasi HTTP 429).
+- **Ketahanan Overpass** (`lib/maps/poi.ts`): 4 mirror dirotasi + retry 2 putaran (backoff 1.5s); **header `User-Agent` + `Accept: application/json`** (tanpa ini mirror utama balas **406**). Kategori POI ditambah **bandara** (`aeroway=aerodrome`); pasar/mall/ibadah/halte/stasiun/terminal/kuliner sudah ada.
+- UI: `poi-section.tsx` (kartu summary pakai rute bila tersedia, label "rute asli/garis lurus") · `poi-explorer.tsx` (jarak & waktu pakai rute, tag **RUTE**, nota diperbarui).
 
 ## S2-8 — Aktivasi pelengkap
 - Moda **`transit`** & **`jalan_kaki_sepeda`**: insert baris baru `candidate_commute` saat dipilih.
 - (Opsional) Deal breaker **auto-eliminasi** sebagai mode; **progressive clarification** prioritas; breadcrumb "Survey" di topnav Bandingkan jadi nyata setelah S2-2.
 - (Opsional) Deal breaker **kustom** ikut evaluasi semi-otomatis bila kelak ada aturan; saat ini tetap pengingat pribadi.
 
+## S2-PERF — Perceived performance (streaming + skeleton) — ✅ IMPLEMENTED 2026-06-27
+**Tujuan:** halaman **terasa instan** (NFR-11) — bukan layar putih lalu semua muncul sekaligus. Pola **Server Components + Streaming + Suspense + Skeleton**: shell statis tampil seketika, konten data di-stream per-boundary, kerja lambat tak memblok scaffold. Tanpa migrasi DB.
+
+**Tugas:**
+- [x] **Primitif skeleton reusable** — `components/ui/skeleton.tsx` (`Skeleton`/`SkeletonCard`, `animate-pulse` hormat `prefers-reduced-motion`; token `border-[#E4E3DF]`). Menggantikan `animate-pulse` ad-hoc (mis. `PoiSkeleton` inline). — NFR-11, NFR-10.
+- [x] **`/dashboard` (daftar/list)** — shell (`page.tsx`) hanya `auth()` + `prefs`; konten di `dashboard-content.tsx` dibungkus `<Suspense fallback={<DashboardSkeleton/>}>`. Loader **`data.ts` ber-React-`cache()`** (`commute`+`flags` paralel `Promise.all`) di-dedup antara konten utama & sub-seksi sidebar **Distribusi zona** (boundary `<Suspense>` sendiri). `loading.tsx` + `skeletons.tsx`. — NFR-11.
+- [x] **`/shortlist/[id]` (detail)** — kerja LAMBAT dipindah keluar dari jalur blocking ke boundary `<Suspense>` masing-masing: **`map-section.tsx`** (geocode + Directions), **`photo-section.tsx`** (signed URL Storage), **POI** (`PoiGate`). Resolver koordinat **`location.ts` ber-`cache()`** dipakai bersama MapSection & PoiGate (satu geocode/satu write). Query inti diparalelkan (`Promise.all`). `loading.tsx` + `skeletons.tsx`. — NFR-11.
+- [x] **`/bandingkan`** — `compare-content.tsx` (`commute`/`flags`/`surveys` paralel `Promise.all`) di `<Suspense fallback={<CompareSkeleton/>}>`; `loading.tsx`. — NFR-11.
+- [x] **`/input`** — `loading.tsx` (skeleton topnav + stepper + form) untuk navigasi pertama; map Leaflet sudah `next/dynamic({ ssr:false })`. — NFR-11.
+
+**Exit criteria:** `typecheck` + `build` hijau; tiap route memunculkan shell + skeleton lebih dulu lalu konten "pop in"; di detail, header/verdict/biaya tampil sebelum peta/POI/foto; tak ada fetch ganda (loader ber-`cache()` di-dedup).
+**Dependensi:** tak ada migrasi; murni refactor render. **Estimasi:** ~1 hari kerja.
+
 ---
 
 ## Definition of Done (Slice 2)
+- **Perceived performance (S2-PERF):** semua halaman data pakai pola streaming + skeleton; shell instan, kerja lambat non-blocking, query diparalelkan, `loading.tsx` per-route (NFR-11). ✅
 - Survey fisik mengisi `candidate_surveys` → **radar 5 dimensi nyata** (Kondisi/Owner) di detail & bandingkan; `score_kondisi`/`score_owner` terisi; `scoring_version` dinaikkan.
 - Foto kandidat nyata (upload + render dari Storage) menggantikan dummy.
 - Timeline nyata dari `candidate_events`; negosiasi harga & biaya all-in aktif.

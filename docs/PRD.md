@@ -188,6 +188,7 @@ Tiap requirement punya acceptance criteria (AC). Prioritas: **M**ust / **S**houl
 | ID | Kategori | Requirement |
 |---|---|---|
 | NFR-1 | Performa | Ekstraksi satu listing terasa cepat (target < ~5 dtk) |
+| NFR-11 | Perceived performance | Halaman **terasa instan** via **Server Components + Streaming + Suspense + Skeleton** — bukan sekadar spinner. Shell statis (topbar/search/sidebar) tampil seketika; konten data di-stream per-boundary `<Suspense>` dengan **skeleton yang meniru layout**; kerja lambat (geocode/Directions/Overpass/Storage) tak memblok scaffold; query data diparalelkan (`Promise.all`); `loading.tsx` per-route untuk navigasi pertama. Skeleton hormati `prefers-reduced-motion` (lihat NFR-10). Implementasi: lihat `docs/DEVELOPMENT-PLAN-SLICE2.md` §S2-PERF |
 | NFR-9 | Responsif | UI **responsif penuh** — mobile, tablet, desktop — dengan pendekatan mobile-first (Tailwind breakpoints `sm`/`md`/`lg`). Tidak ada layar yang rusak/terpotong di lebar manapun; Compare tetap terbaca di layar kecil |
 | NFR-10 | Animasi & visual | Animasi proper via **Framer Motion** (scroll-reveal, stagger, micro-interaction) — purposeful (mengarahkan perhatian/feedback), bukan dekorasi berlebih; **wajib hormati `prefers-reduced-motion`**. **Gambar placeholder** dipakai agar layar hidup sebelum asset final (`components/ui/placeholder-image.tsx`); primitives animasi di `components/motion/motion.tsx` |
 | NFR-2 | Biaya | Biaya AI per ekstraksi rendah & terpantau (GPT-4o mini); fallback rule-based tersedia |

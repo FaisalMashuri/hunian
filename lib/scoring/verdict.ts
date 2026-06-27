@@ -21,7 +21,7 @@ export const VERDICT_META: Record<
   { label: string; tone: "emerald" | "amber" | "rose" | "zinc"; iconBg: string; iconColor: string; labelColor: string }
 > = {
   pertahankan: { label: "Pertahankan", tone: "emerald", iconBg: "bg-emerald-50", iconColor: "text-emerald-600", labelColor: "text-emerald-600" },
-  cek_db: { label: "Pertahankan (cek DB)", tone: "amber", iconBg: "bg-amber-50", iconColor: "text-amber-600", labelColor: "text-amber-600" },
+  cek_db: { label: "Pertahankan — cek syarat dulu", tone: "amber", iconBg: "bg-amber-50", iconColor: "text-amber-600", labelColor: "text-amber-600" },
   sisihkan: { label: "Sisihkan", tone: "rose", iconBg: "bg-rose-50", iconColor: "text-rose-600", labelColor: "text-rose-600" },
   perlu_data: { label: "Perlu data tambahan", tone: "zinc", iconBg: "bg-zinc-100", iconColor: "text-zinc-500", labelColor: "text-zinc-500" },
 };
@@ -44,21 +44,32 @@ export function deriveVerdict(c: VerdictInput, allActive: VerdictInput[]): Verdi
   if (c.score_total == null || c.distanceKm == null) {
     return { kind: "perlu_data", label: VERDICT_META.perlu_data.label, reason: "Jarak/skor belum lengkap — skor belum valid." };
   }
+  // Caveat coverage: dimensi listing yang masih bolong (lokasi sudah dijamin ada di atas).
+  // Skor dihitung dari dimensi yang diketahui saja → tandai agar skor tak terbaca sepasti yang berdata penuh.
+  const missing: string[] = [];
+  if (c.score_harga == null) missing.push("harga");
+  if (c.score_fasilitas == null) missing.push("fasilitas");
+  const dataCaveat = missing.length ? ` Data ${missing.join(" & ")} belum ada — skor dari dimensi yang diketahui saja.` : "";
+
   if (c.flagCount > 0) {
     return {
       kind: "cek_db",
       label: VERDICT_META.cek_db.label,
-      reason: `Skor bagus, tapi ada ${c.flagCount} deal breaker aktif — konfirmasi dulu.`,
+      reason: `Skor bagus, tapi ada ${c.flagCount} deal breaker aktif — konfirmasi dulu.${dataCaveat}`,
     };
   }
   const dominator = allActive.find((x) => x.id !== c.id && dominates(x, c));
   if (dominator) {
-    return { kind: "sisihkan", label: VERDICT_META.sisihkan.label, reason: `Didominasi ${dominator.title} di semua dimensi.` };
+    return { kind: "sisihkan", label: VERDICT_META.sisihkan.label, reason: `Didominasi ${dominator.title} di semua aspek.` };
   }
   const facts: string[] = [];
   if ((c.score_harga ?? 0) >= 80) facts.push("harga ideal");
   if ((c.score_lokasi ?? 0) >= 70) facts.push("lokasi dekat");
   facts.push("deal breaker clear");
   const reason = facts.slice(0, 3).join(", ");
-  return { kind: "pertahankan", label: VERDICT_META.pertahankan.label, reason: reason.charAt(0).toUpperCase() + reason.slice(1) + "." };
+  return {
+    kind: "pertahankan",
+    label: VERDICT_META.pertahankan.label,
+    reason: reason.charAt(0).toUpperCase() + reason.slice(1) + "." + dataCaveat,
+  };
 }
