@@ -1,0 +1,342 @@
+[
+  {
+    "id": "sample-1-jatibening",
+    "text": "Disewakan kontrakan daerah Jatibening Bekasi 🏠\n2 kamar tidur 1 kamar mandi, ada carport motor+mobil, dapur bersih\nHarga 3,5jt/bulan nego tipis\nDeposit 2 bulan\nMinat WA 0812-3456-7890",
+    "gold": {
+      "harga_sewa_bulanan": 3500000,
+      "periode_asli": "bulan",
+      "deposit": 7000000,
+      "kamar_tidur": 2,
+      "kamar_mandi": 1,
+      "luas_bangunan_m2": null,
+      "furnished": null,
+      "carport": true,
+      "dapur": true,
+      "alamat": "Jatibening Bekasi",
+      "kontak_owner": "081234567890"
+    }
+  },
+  {
+    "id": "sample-2-cibubur",
+    "text": "Rumah kontrakan full furnished siap huni\nLT 60 LB 45, 3KT 2KM\nLokasi Cibubur dekat pintu tol\nSewa 45jt/tahun (bisa nego)\nListrik token terpisah\nHub: 0856 1122 3344",
+    "gold": {
+      "harga_sewa_bulanan": 3750000,
+      "periode_asli": "tahun",
+      "deposit": null,
+      "kamar_tidur": 3,
+      "kamar_mandi": 2,
+      "luas_bangunan_m2": 45,
+      "furnished": "furnished",
+      "carport": null,
+      "dapur": null,
+      "alamat": "Cibubur",
+      "kontak_owner": "085611223344"
+    }
+  },
+  {
+    "id": "sample-3-tangerang",
+    "text": "Kontrakan petak 1 kamar, kamar mandi dalam, blm furnish\nbisa buat masak sendiri\nharga 1.200.000 perbulan\ndp 1 bulan\ndaerah Tangerang kota\n0899-000-1111",
+    "gold": {
+      "harga_sewa_bulanan": 1200000,
+      "periode_asli": "bulan",
+      "deposit": 1200000,
+      "kamar_tidur": 1,
+      "kamar_mandi": 1,
+      "luas_bangunan_m2": null,
+      "furnished": "unfurnished",
+      "carport": null,
+      "dapur": true,
+      "alamat": "Tangerang kota",
+      "kontak_owner": "08990001111"
+    }
+  },
+  {
+    "id": "sample-4-depok",
+    "text": "Kontrakan 2 lantai Depok, 3KT 2KM, semi furnished ada AC\nLT/LB 72/100\nharga 4jt/bln nego\nminimal sewa 1thn, deposit 1 bulan\nwa 081299887766",
+    "gold": {
+      "harga_sewa_bulanan": 4000000,
+      "periode_asli": "bulan",
+      "deposit": 4000000,
+      "kamar_tidur": 3,
+      "kamar_mandi": 2,
+      "luas_bangunan_m2": 100,
+      "furnished": "semi",
+      "carport": null,
+      "dapur": null,
+      "alamat": "Depok",
+      "kontak_owner": "081299887766"
+    }
+  },
+  {
+    "id": "sample-5-bsd",
+    "text": "Disewakan rumah di BSD\nfull furnished, siap huni, 2 kamar tidur 1 kamar mandi\nada garasi 1 mobil\nRp 60.000.000 / tahun\nhub 0813-2233-4455",
+    "gold": {
+      "harga_sewa_bulanan": 5000000,
+      "periode_asli": "tahun",
+      "deposit": null,
+      "kamar_tidur": 2,
+      "kamar_mandi": 1,
+      "luas_bangunan_m2": null,
+      "furnished": "furnished",
+      "carport": true,
+      "dapur": null,
+      "alamat": "BSD",
+      "kontak_owner": "081322334455"
+    }
+  },
+  {
+    "id": "sample-6-bekasi-timur",
+    "text": "kontrakan murah daerah bekasi timur\n1 kamar, kamar mandi luar, dapur umum\nkosongan\n750rb perbulan\nbisa nego dikit\nminat hub 0856-9988-7766",
+    "gold": {
+      "harga_sewa_bulanan": 750000,
+      "periode_asli": "bulan",
+      "deposit": null,
+      "kamar_tidur": 1,
+      "kamar_mandi": 1,
+      "luas_bangunan_m2": null,
+      "furnished": "unfurnished",
+      "carport": null,
+      "dapur": true,
+      "alamat": "bekasi timur",
+      "kontak_owner": "085699887766"
+    }
+  },
+  {
+    "id": "sample-7-jatiasih",
+    "text": "RUMAH KONTRAKAN\nLokasi: Jl. Melati No.12, Jatiasih\nKamar: 2\nKM: 1\nLuas: 36m2\nHarga: 2.800.000/bulan\nDeposit: 5.600.000\nFurnish: kosongan\nCP: 0877-1234-5678",
+    "gold": {
+      "harga_sewa_bulanan": 2800000,
+      "periode_asli": "bulan",
+      "deposit": 5600000,
+      "kamar_tidur": 2,
+      "kamar_mandi": 1,
+      "luas_bangunan_m2": 36,
+      "furnished": "unfurnished",
+      "carport": null,
+      "dapur": null,
+      "alamat": "Jl. Melati No.12, Jatiasih",
+      "kontak_owner": "087712345678"
+    }
+  },
+  {
+    "id": "sample-8-cikarang",
+    "text": "sewa kontrakan 3x4 buat pasutri\nkamar mandi dalam, bisa masak\nblm termasuk listrik\n1,5jt/bln\ndp 1x\narea Cikarang\n0895 0000 1234",
+    "gold": {
+      "harga_sewa_bulanan": 1500000,
+      "periode_asli": "bulan",
+      "deposit": 1500000,
+      "kamar_tidur": null,
+      "kamar_mandi": 1,
+      "luas_bangunan_m2": null,
+      "furnished": null,
+      "carport": null,
+      "dapur": true,
+      "alamat": "Cikarang",
+      "kontak_owner": "089500001234"
+    }
+  },
+  {
+    "id": "sample-9-sawangan",
+    "text": "Apik! Kontrakan baru di Sawangan 🏡✨\n2 kmr tdr, 1 km mandi\ncarport motor\nharga sewa 30jt/tahun\nnego halus\nWA only: 0812.3456.1111",
+    "gold": {
+      "harga_sewa_bulanan": 2500000,
+      "periode_asli": "tahun",
+      "deposit": null,
+      "kamar_tidur": 2,
+      "kamar_mandi": 1,
+      "luas_bangunan_m2": null,
+      "furnished": null,
+      "carport": true,
+      "dapur": null,
+      "alamat": "Sawangan",
+      "kontak_owner": "081234561111"
+    }
+  },
+  {
+    "id": "sample-10-tangsel",
+    "text": "kontrakan 2kamar di tangsel\nada dapur, ada carport\ntidak boleh masak ikan asin wkwk\nharga 3.2jt nego\nper bulan ya\ndeposit nego\n08111222333",
+    "gold": {
+      "harga_sewa_bulanan": 3200000,
+      "periode_asli": "bulan",
+      "deposit": null,
+      "kamar_tidur": 2,
+      "kamar_mandi": null,
+      "luas_bangunan_m2": null,
+      "furnished": null,
+      "carport": true,
+      "dapur": true,
+      "alamat": "tangsel",
+      "kontak_owner": "08111222333"
+    }
+  },
+  {
+    "id": "sample-11-pondok-gede",
+    "text": "Dikontrakan cepat!! Rumah 3 kamar 2 kamar mandi full furnish\nLB 90\nGarasi muat 2 mobil\nLokasi Pondok Gede\n5jt/bulan atau 55jt setahun (lebih murah)\ndeposit 2 bulan\nTelp/WA 0813 9090 8080",
+    "gold": {
+      "harga_sewa_bulanan": 5000000,
+      "periode_asli": "bulan",
+      "deposit": 10000000,
+      "kamar_tidur": 3,
+      "kamar_mandi": 2,
+      "luas_bangunan_m2": 90,
+      "furnished": "furnished",
+      "carport": true,
+      "dapur": null,
+      "alamat": "Pondok Gede",
+      "kontak_owner": "081390908080"
+    }
+  },
+  {
+    "id": "sample-12-bojonggede",
+    "text": "kontrakan 1 lantai\n2 KT, 1 KM dalam\nsemi furnished (kasur + lemari)\nair pam, listrik 1300w\nRp3jt-an per bulan\nlokasi deket stasiun Bojonggede\n0856-1111-2222",
+    "gold": {
+      "harga_sewa_bulanan": 3000000,
+      "periode_asli": "bulan",
+      "deposit": null,
+      "kamar_tidur": 2,
+      "kamar_mandi": 1,
+      "luas_bangunan_m2": null,
+      "furnished": "semi",
+      "carport": null,
+      "dapur": null,
+      "alamat": "Bojonggede",
+      "kontak_owner": "085611112222"
+    }
+  },
+  {
+    "id": "sample-13-harapan-indah",
+    "text": "OVER KONTRAK rumah Harapan Indah\nsisa 8 bulan, lanjut aja\n2kt 2km, unfurnished\nlt 60\n3jt/bln\nno deposit krn over\nwa 081234509876",
+    "gold": {
+      "harga_sewa_bulanan": 3000000,
+      "periode_asli": "bulan",
+      "deposit": 0,
+      "kamar_tidur": 2,
+      "kamar_mandi": 2,
+      "luas_bangunan_m2": null,
+      "furnished": "unfurnished",
+      "carport": null,
+      "dapur": null,
+      "alamat": "Harapan Indah",
+      "kontak_owner": "081234509876"
+    }
+  },
+  {
+    "id": "sample-14-green-garden",
+    "text": "Sewa kontrakan, lihat foto ya\nDM aja\nharga 2jt\n2 kamar\nGreen Garden Jakarta Barat",
+    "gold": {
+      "harga_sewa_bulanan": 2000000,
+      "periode_asli": null,
+      "deposit": null,
+      "kamar_tidur": 2,
+      "kamar_mandi": null,
+      "luas_bangunan_m2": null,
+      "furnished": null,
+      "carport": null,
+      "dapur": null,
+      "alamat": "Green Garden Jakarta Barat",
+      "kontak_owner": null
+    }
+  },
+  {
+    "id": "sample-15-margonda",
+    "text": "kontrakan 1kmr cocok utk karyawan\nkmr mandi dalam, dapur kecil\nfurnished komplit ac kulkas\nlistrik token\n1.800.000/bln min 6 bulan\ndp 1 bln\ndaerah Margonda Depok\nhub bu Sri 0813-7777-6666",
+    "gold": {
+      "harga_sewa_bulanan": 1800000,
+      "periode_asli": "bulan",
+      "deposit": 1800000,
+      "kamar_tidur": 1,
+      "kamar_mandi": 1,
+      "luas_bangunan_m2": null,
+      "furnished": "furnished",
+      "carport": null,
+      "dapur": true,
+      "alamat": "Margonda Depok",
+      "kontak_owner": "081377776666"
+    }
+  },
+  {
+    "id": "sample-16-kemang",
+    "text": "Dijual cepat rumah... eh disewakan ding\n4KT 3KM mewah\nfull furniture\nLT 200 LB 150\nKemang Jaksel\n150 juta / tahun\nserius wa 0812 5050 5050",
+    "gold": {
+      "harga_sewa_bulanan": 12500000,
+      "periode_asli": "tahun",
+      "deposit": null,
+      "kamar_tidur": 4,
+      "kamar_mandi": 3,
+      "luas_bangunan_m2": 150,
+      "furnished": "furnished",
+      "carport": null,
+      "dapur": null,
+      "alamat": "Kemang Jaksel",
+      "kontak_owner": "081250505050"
+    }
+  },
+  {
+    "id": "sample-17-kapuk",
+    "text": "kontrakan petakan\n450rb/bulan\nkamar mandi luar bareng\ngak boleh masak di kamar\ndaerah kapuk\n089600001234",
+    "gold": {
+      "harga_sewa_bulanan": 450000,
+      "periode_asli": "bulan",
+      "deposit": null,
+      "kamar_tidur": null,
+      "kamar_mandi": 1,
+      "luas_bangunan_m2": null,
+      "furnished": null,
+      "carport": null,
+      "dapur": false,
+      "alamat": "kapuk",
+      "kontak_owner": "089600001234"
+    }
+  },
+  {
+    "id": "sample-18-cinere-emoji",
+    "text": "RUMAH DISEWA\n📍 Cinere\n🛏 3 kamar\n🚿 2 kamar mandi\n🚗 carport 1\n💰 3.500.000/bln (nego)\n💵 deposit 2x\n🏠 unfurnished\n📞 0821-3344-5566",
+    "gold": {
+      "harga_sewa_bulanan": 3500000,
+      "periode_asli": "bulan",
+      "deposit": 7000000,
+      "kamar_tidur": 3,
+      "kamar_mandi": 2,
+      "luas_bangunan_m2": null,
+      "furnished": "unfurnished",
+      "carport": true,
+      "dapur": null,
+      "alamat": "Cinere",
+      "kontak_owner": "082133445566"
+    }
+  },
+  {
+    "id": "sample-19-serpong-3bulan",
+    "text": "info kontrakan\nharga 9jt per 3 bulan\n2 kamar tidur ac semua\nkamar mandi 1\nbisa masak ada dapur\nfurnished\nlokasi Serpong\nwa 0857-1212-1212",
+    "gold": {
+      "harga_sewa_bulanan": 3000000,
+      "periode_asli": "3bulan",
+      "deposit": null,
+      "kamar_tidur": 2,
+      "kamar_mandi": 1,
+      "luas_bangunan_m2": null,
+      "furnished": "furnished",
+      "carport": null,
+      "dapur": true,
+      "alamat": "Serpong",
+      "kontak_owner": "085712121212"
+    }
+  },
+  {
+    "id": "sample-20-cibubur-2",
+    "text": "kontrakan 2 lt, 3 kamar, 2 kmd\nhalaman luas bisa parkir 3 mobil\ntdk ada perabot\nLB 110\nCibubur\nRp 4.250.000 per bulan\ndeposit Rp 4.250.000\n0813-0000-9999",
+    "gold": {
+      "harga_sewa_bulanan": 4250000,
+      "periode_asli": "bulan",
+      "deposit": 4250000,
+      "kamar_tidur": 3,
+      "kamar_mandi": 2,
+      "luas_bangunan_m2": 110,
+      "furnished": "unfurnished",
+      "carport": true,
+      "dapur": null,
+      "alamat": "Cibubur",
+      "kontak_owner": "081300009999"
+    }
+  }
+]

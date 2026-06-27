@@ -1,0 +1,17 @@
+<svg width="640" height="640" viewBox="0 0 640 640" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dekorasi abstrak">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="640" y2="640" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1e293b"/>
+      <stop offset="1" stop-color="#64748b"/>
+    </linearGradient>
+    <radialGradient id="g2" cx="0.3" cy="0.3" r="0.8">
+      <stop stop-color="#ffffff" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <path fill="url(#g1)" d="M512 132c54 47 84 128 73 203-11 75-63 144-133 178-70 34-158 33-221-9C168 462 128 379 132 305c4-74 52-145 119-181C318 88 458 85 512 132Z"/>
+  <path fill="url(#g2)" d="M512 132c54 47 84 128 73 203-11 75-63 144-133 178-70 34-158 33-221-9C168 462 128 379 132 305c4-74 52-145 119-181C318 88 458 85 512 132Z"/>
+  <circle cx="205" cy="180" r="10" fill="#ffffff" fill-opacity="0.5"/>
+  <circle cx="470" cy="430" r="14" fill="#ffffff" fill-opacity="0.35"/>
+  <circle cx="430" cy="200" r="6" fill="#ffffff" fill-opacity="0.6"/>
+</svg>

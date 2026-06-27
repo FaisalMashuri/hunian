@@ -1,0 +1,17 @@
+{
+  "name": "hunian-extraction-benchmark",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Benchmark akurasi ekstraksi listing properti -> JSON. Gate GO/NO-GO Slice 2.",
+  "scripts": {
+    "bench": "node run.mjs --model all",
+    "bench:openai": "node run.mjs --model openai",
+    "bench:anthropic": "node run.mjs --model anthropic",
+    "bench:rule": "node run.mjs --model rule"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "openai": "^4.77.0"
+  }
+}

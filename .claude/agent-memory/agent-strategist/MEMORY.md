@@ -1,0 +1,3 @@
+- [MVP Build Order — Compare First](project-mvp-sequencing.md) — Compare must be first sprint, not last; input/AI extraction is commodity without validated compare
+- [Hunian Core Positioning](project-hunian-positioning.md) — Decision tool not marketplace; moat = structured survey data; hero = trade-off forward compare; metric = cycle completion rate 60%
+- [Slice 2 Strategic Analysis](../STR/slice2-strategy.md) — Survey fisik (S2-2) = true moat; pilot subset = S2-0+S2-2+S2-5+S2-4; defer Apt/Kost; foto listing = feature parity trap

@@ -1,0 +1,3 @@
+- [Hunian MVP Scope Decisions](project-hunian-mvp-scope.md) — scope yang dipotong dari MVP asli, thinnest viable cycle, urutan 3 slice
+- [Faisal Builder Context](user-faisal-context.md) — solo dev, runway terbatas, butuh rekomendasi scope yang ketat dan cepat dieksekusi
+- [Slice 2 Prioritisasi PM](slice2-prioritisasi.md) — tabel value/dep/effort S2-0→S2-8, urutan optimal, definisi MVP, rekomendasi 4 scope terbuka

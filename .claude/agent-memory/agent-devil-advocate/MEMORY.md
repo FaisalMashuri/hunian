@@ -1,0 +1,3 @@
+- [MVP Scope & Build Sequencing](project-mvp-scope-decisions.md) — Keputusan scope MVP Hunian, build order, metric cycle completion rate, dead zone survei, stack TL (2026-06-26)
+- [Slice 1 UX Spec Challenges](project-slice1-ux-challenges.md) — 7 tantangan DA terhadap spec UI/UX Slice 1: 3 HIGH blocking (onboarding friction, copy-paste akurasi, KM manual NULL score), 4 MEDIUM (2026-06-26)
+- [Slice 2 Planning Challenges](slice2-challenge.md) — 6 tantangan aktif (survey 2D-vs-6D, show-vs-score biaya all-in, v2.0 migration, schema creep), 2 dicabut DA (S2-4 negosiasi, POI), 4 gate keputusan Faisal (2026-06-27)

@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hunian — Putuskan, Jangan Hanya Mencatat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #F0EEE8;
+    --surface:   #FFFFFF;
+    --primary:   #0B4F6C;
+    --primary-light: #E8F4F8;
+    --accent:    #E8621A;
+    --accent-light: #FEF0E8;
+    --text:      #1A1917;
+    --secondary: #6B6A66;
+    --muted:     #9E9D99;
+    --border:    #E4E3DF;
+    --success:   #16A34A;
+    --success-bg: #F0FDF4;
+    --warning:   #D97706;
+    --warning-bg: #FFFBEB;
+    --danger:    #DC2626;
+    --danger-bg: #FFF5F5;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(240, 238, 232, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 0;
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+
+  .nav-logo-icon {
+    width: 28px; height: 28px;
+    background: var(--primary);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .nav-logo-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .nav-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: #0E6789; }
+
+  /* HERO */
+  .hero {
+    padding: 80px 0 64px;
+    overflow: hidden;
+  }
+
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: var(--accent-light);
+    border: 1px solid #F5C4A8;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero-headline {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: clamp(34px, 4vw, 52px);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  .hero-headline em {
+    font-style: normal;
+    color: var(--primary);
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--secondary);
+    line-height: 1.65;
+    margin-bottom: 36px;
+    max-width: 460px;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 12px rgba(232,98,26,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(232,98,26,0.35); }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--secondary);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .btn-ghost:hover { color: var(--text); }
+
+  .hero-note {
+    margin-top: 16px;
+    font-size: 12.5px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* COMPARE PREVIEW CARD */
+  .compare-preview {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(15,14,12,0.10), 0 4px 12px rgba(15,14,12,0.06);
+    overflow: hidden;
+  }
+
+  .cp-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .cp-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .cp-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    background: var(--primary-light);
+    color: var(--primary);
+    border-radius: 6px;
+  }
+
+  .cp-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .cp-table th {
+    padding: 10px 14px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--secondary);
+    text-align: left;
+    background: #F7F6F3;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cp-table th.col-cand {
+    color: var(--text);
+    font-size: 12.5px;
+  }
+
+  .cp-table td {
+    padding: 10px 14px;
+    font-size: 12.5px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .cp-table tr:last-child td { border-bottom: none; }
+
+  .cp-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .chip-green { background: var(--success-bg); color: var(--success); }
+  .chip-yellow { background: var(--warning-bg); color: var(--warning); }
+  .chip-red { background: var(--danger-bg); color: var(--danger); }
+
+  .mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; }
+
+  .cp-tradeoff {
+    padding: 14px 18px;
+    background: #F7F6F3;
+    border-top: 1px solid var(--border);
+  }
+
+  .cp-tradeoff-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+  }
+
+  .tradeoff-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 7px;
+    font-size: 12px;
+    color: var(--secondary);
+    line-height: 1.4;
+  }
+
+  .tradeoff-item:last-child { margin-bottom: 0; }
+
+  .tradeoff-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  /* PAIN SECTION */
+  .pain {
+    padding: 72px 0;
+  }
+
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .pain-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+  }
+
+  .pain-icon {
+    font-size: 28px;
+    margin-bottom: 14px;
+  }
+
+  .pain-text {
+    font-size: 15px;
+    color: var(--secondary);
+    line-height: 1.6;
+  }
+
+  .pain-text strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* REFRAME */
+  .reframe {
+    padding: 72px 0;
+    text-align: center;
+  }
+
+  .reframe-inner {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .reframe-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .reframe-headline {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 3.5vw, 38px);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+
+  .reframe-sub {
+    font-size: 16px;
+    color: var(--secondary);
+    line-height: 1.7;
+  }
+
+  .reframe-divider {
+    width: 48px;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 9999px;
+    margin: 32px auto;
+  }
+
+  /* HOW IT WORKS */
+  .how {
+    padding: 72px 0;
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 12px;
+  }
+
+  .section-headline {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 3vw, 36px);
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 48px;
+    max-width: 500px;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .step {
+    position: relative;
+  }
+
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--primary-light);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+
+  .step-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .step-desc {
+    font-size: 14px;
+    color: var(--secondary);
+    line-height: 1.6;
+  }
+
+  .step-examples {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .step-tag {
+    font-size: 11.5px;
+    padding: 3px 9px;
+    background: #F0EEE8;
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    color: var(--secondary);
+    font-weight: 500;
+  }
+
+  /* FEATURE COMPARE */
+  .feature {
+    padding: 72px 0;
+  }
+
+  .feature-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 72px;
+    align-items: center;
+  }
+
+  .feature-copy { }
+
+  .feature-headline {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 3vw, 34px);
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .feature-sub {
+    font-size: 15px;
+    color: var(--secondary);
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+
+  .feature-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--secondary);
+    line-height: 1.5;
+  }
+
+  .feature-list li::before {
+    content: '✓';
+    font-weight: 700;
+    color: var(--success);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* BIG COMPARE CARD */
+  .big-compare {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 16px 32px rgba(15,14,12,0.08);
+    overflow: hidden;
+  }
+
+  .bc-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    background: #FAFAF9;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .bc-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+
+  .bc-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+    margin-left: 4px;
+  }
+
+  .bc-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .bc-table th {
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    background: #F7F6F3;
+  }
+
+  .bc-table th.winner {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  .bc-table td {
+    padding: 11px 16px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    color: var(--secondary);
+    vertical-align: middle;
+  }
+
+  .bc-table td.row-label {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 12.5px;
+  }
+
+  .bc-table tr:last-child td { border-bottom: none; }
+
+  .bc-tradeoff {
+    padding: 16px 18px;
+    background: linear-gradient(135deg, #EBF7FA 0%, #F0FDF4 100%);
+    border-top: 1px solid var(--border);
+  }
+
+  .bc-tradeoff-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--primary);
+    margin-bottom: 10px;
+  }
+
+  .bc-tradeoff-text {
+    font-size: 13px;
+    color: var(--secondary);
+    line-height: 1.6;
+  }
+
+  .bc-tradeoff-text strong { color: var(--text); }
+
+  /* STORY / SOCIAL PROOF */
+  .story {
+    padding: 72px 0;
+  }
+
+  .story-inner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px 56px;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .story-quote {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.55;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .story-quote em {
+    font-style: normal;
+    color: var(--primary);
+  }
+
+  .story-attr {
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .story-attr strong {
+    color: var(--secondary);
+    display: block;
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+
+  .story-stat-box {
+    background: #F7F6F3;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+  }
+
+  .story-stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 44px;
+    font-weight: 600;
+    color: var(--primary);
+    line-height: 1;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .story-stat-label {
+    font-size: 13px;
+    color: var(--secondary);
+    line-height: 1.5;
+  }
+
+  /* CTA SECTION */
+  .cta-section {
+    padding: 80px 0 100px;
+    text-align: center;
+  }
+
+  .cta-card {
+    background: var(--primary);
+    border-radius: 24px;
+    padding: 64px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+  }
+
+  .cta-card::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -40px;
+    width: 250px; height: 250px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+  }
+
+  .cta-headline {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: clamp(28px, 4vw, 42px);
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-sub {
+    font-size: 16px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 36px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 36px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(232,98,26,0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+    z-index: 1;
+  }
+  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,98,26,0.45); }
+
+  .cta-note {
+    margin-top: 14px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .footer-note {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+    .pain-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: 1fr; gap: 32px; }
+    .feature-inner { grid-template-columns: 1fr; gap: 40px; }
+    .story-inner { grid-template-columns: 1fr; padding: 32px 24px; }
+    .cta-card { padding: 40px 24px; }
+    footer { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <div class="nav-logo-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/>
+          </svg>
+        </div>
+        <span class="nav-logo-text">Hunian</span>
+      </a>
+      <a href="#cta" class="nav-cta">
+        Coba Gratis
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <div class="hero-eyebrow">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+          Decision Support untuk Hunian
+        </div>
+        <h1 class="hero-headline">
+          Sudah lihat<br>
+          banyak kandidat.<br>
+          <em>Masih bingung</em><br>
+          mana yang dipilih?
+        </h1>
+        <p class="hero-sub">
+          Hunian membantu kamu memutuskan — bukan sekadar menyimpan daftar. Dari kandidat yang sudah kamu temukan sendiri, Hunian bantu evaluasi mana yang benar-benar layak untuk situasimu.
+        </p>
+        <div class="hero-actions">
+          <a href="#cta" class="btn-primary">
+            Mulai Gratis
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+          <a href="#how" class="btn-ghost">
+            Lihat cara kerjanya
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </a>
+        </div>
+        <p class="hero-note">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Gratis · Tidak perlu kartu kredit
+        </p>
+      </div>
+
+      <!-- Compare Preview -->
+      <div class="compare-preview">
+        <div class="cp-header">
+          <span class="cp-title">Perbandingan Kandidat</span>
+          <span class="cp-badge">3 kandidat aktif</span>
+        </div>
+        <table class="cp-table">
+          <thead>
+            <tr>
+              <th style="width:30%">Dimensi</th>
+              <th class="col-cand" style="background:#EBF7FA; color:#0B4F6C;">Jatiwaringin</th>
+              <th class="col-cand">Skandinavia</th>
+              <th class="col-cand">Kost Melati</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cp-label">Harga/bln</td>
+              <td><span class="mono" style="color:#16A34A;">3,2 jt</span></td>
+              <td><span class="mono" style="color:#D97706;">4,1 jt</span></td>
+              <td><span class="mono" style="color:#16A34A;">1,7 jt</span></td>
+            </tr>
+            <tr>
+              <td class="cp-label">Jarak</td>
+              <td><span class="chip chip-yellow">6,4 km</span></td>
+              <td><span class="chip chip-green">3,1 km</span></td>
+              <td><span class="chip chip-red">12 km</span></td>
+            </tr>
+            <tr>
+              <td class="cp-label">Survey</td>
+              <td><span class="chip chip-green">★★★★☆</span></td>
+              <td><span class="chip chip-green">★★★★★</span></td>
+              <td><span class="chip chip-yellow">★★★☆☆</span></td>
+            </tr>
+            <tr>
+              <td class="cp-label">Deal Breaker</td>
+              <td><span style="color:#16A34A; font-weight:600; font-size:12px;">✓ Clear</span></td>
+              <td><span style="color:#DC2626; font-weight:600; font-size:12px;">✗ 1 flag</span></td>
+              <td><span style="color:#16A34A; font-weight:600; font-size:12px;">✓ Clear</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="cp-tradeoff">
+          <div class="cp-tradeoff-label">Trade-off utama</div>
+          <div class="tradeoff-item">
+            <div class="tradeoff-dot" style="background:#0B4F6C;"></div>
+            <span><strong style="color:#1A1917;">Pilih Jatiwaringin</strong> → hemat Rp 900rb/bln, tapi 3 km lebih jauh</span>
+          </div>
+          <div class="tradeoff-item">
+            <div class="tradeoff-dot" style="background:#D97706;"></div>
+            <span><strong style="color:#1A1917;">Pilih Skandinavia</strong> → paling dekat, tapi ada deal breaker belum resolved</span>
+          </div>
+          <div class="tradeoff-item">
+            <div class="tradeoff-dot" style="background:#9E9D99;"></div>
+            <span><strong style="color:#1A1917;">Pilih Kost Melati</strong> → paling murah, tapi jarak 12 km melebihi targetmu</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN -->
+<section class="pain">
+  <div class="container">
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-icon">😩</div>
+        <p class="pain-text"><strong>Yang murah terlalu jauh. Yang dekat terlalu mahal.</strong> Yang bagus sudah diambil orang sebelum sempat disurvey.</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">🧠</div>
+        <p class="pain-text">Sudah survey <strong>5–8 tempat, tapi semua keliatan mirip-mirip</strong> di kepala. Susah ingat mana yang punya parkir, mana yang ownernya responsif.</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">😰</div>
+        <p class="pain-text">Takut salah pilih, jadi <strong>terus nunda-nunda keputusan</strong> sampai kandidat terbaik sudah diambil orang lain.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REFRAME -->
+<section class="reframe">
+  <div class="container">
+    <div class="reframe-inner">
+      <p class="reframe-label">Masalah sebenarnya</p>
+      <h2 class="reframe-headline">Bukan kurang informasi.<br>Terlalu banyak opsi tanpa cara membandingkannya.</h2>
+      <div class="reframe-divider"></div>
+      <p class="reframe-sub">Marketplace sudah bagus untuk menemukan kandidat. Tapi tidak ada yang membantumu <em>memutuskan</em> dari kandidat yang sudah kamu temukan. Hunian ada untuk mengisi gap itu.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="container">
+    <p class="section-label">Cara kerja</p>
+    <h2 class="section-headline">Tiga langkah dari bingung ke yakin</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3 class="step-title">Masukkan kandidat yang sudah kamu temukan</h3>
+        <p class="step-desc">Copy deskripsi dari WhatsApp, OLX, Mamikos, atau isi manual. AI ekstrak datanya otomatis — kamu tinggal review dan lengkapi.</p>
+        <div class="step-examples">
+          <span class="step-tag">WhatsApp</span>
+          <span class="step-tag">OLX</span>
+          <span class="step-tag">Mamikos</span>
+          <span class="step-tag">Facebook</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3 class="step-title">Survey dan lengkapi saat kunjungan</h3>
+        <p class="step-desc">Bukan form panjang. Rating bintang untuk 6 dimensi penting, selesai dalam 2–3 menit. Sistem langsung perbarui evaluasi.</p>
+        <div class="step-examples">
+          <span class="step-tag">Kebersihan ★★★★</span>
+          <span class="step-tag">Parkir ★★★</span>
+          <span class="step-tag">Owner ★★★★★</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3 class="step-title">Bandingkan dan putuskan dengan yakin</h3>
+        <p class="step-desc">Bukan ranking angka. Hunian menunjukkan trade-off nyata antar kandidat — apa yang kamu korbankan jika memilih masing-masing.</p>
+        <div class="step-examples">
+          <span class="step-tag">Trade-off jelas</span>
+          <span class="step-tag">Deal breaker terdeteksi</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE: COMPARE -->
+<section class="feature">
+  <div class="container">
+    <div class="feature-inner">
+      <div class="feature-copy">
+        <p class="section-label">Fitur utama</p>
+        <h2 class="feature-headline">Compare yang jujur tentang trade-off</h2>
+        <p class="feature-sub">Marketplace hanya menampilkan opsi. Hunian menunjukkan <em>apa yang kamu korbankan</em> jika memilih masing-masing — supaya keputusanmu berdasarkan trade-off yang kamu pahami, bukan angka yang terlihat paling tinggi.</p>
+        <ul class="feature-list">
+          <li>Deal breaker langsung terdeteksi dan di-flag — tidak perlu tunggu sampai sudah terlanjur suka</li>
+          <li>Kandidat yang didominasi kandidat lain otomatis diidentifikasi</li>
+          <li>Evaluasi diperbarui setiap kali ada data baru — termasuk setelah survey</li>
+          <li>Semua verdict bisa ditelusuri ke bukti yang konkret</li>
+        </ul>
+      </div>
+
+      <div class="big-compare">
+        <div class="bc-header">
+          <div class="bc-dot" style="background:#FF5F56;"></div>
+          <div class="bc-dot" style="background:#FFBD2E;"></div>
+          <div class="bc-dot" style="background:#27C93F;"></div>
+          <span class="bc-title">Hunian · Compare</span>
+        </div>
+        <table class="bc-table">
+          <thead>
+            <tr>
+              <th style="width:32%">—</th>
+              <th class="winner">Jatiwaringin ✓</th>
+              <th>Skandinavia</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="row-label">Harga all-in</td>
+              <td><span class="mono" style="color:#16A34A;">Rp 3.200.000</span></td>
+              <td><span class="mono" style="color:#D97706;">Rp 4.100.000</span></td>
+            </tr>
+            <tr>
+              <td class="row-label">vs budget ideal</td>
+              <td><span class="chip chip-green">91% ideal ✓</span></td>
+              <td><span class="chip chip-yellow">117% ideal ~</span></td>
+            </tr>
+            <tr>
+              <td class="row-label">Jarak kantor</td>
+              <td><span style="color:#D97706; font-size:12.5px;">6,4 km ~</span></td>
+              <td><span style="color:#16A34A; font-size:12.5px;">3,1 km ✓</span></td>
+            </tr>
+            <tr>
+              <td class="row-label">Kondisi survey</td>
+              <td><span class="chip chip-green">★★★★☆</span></td>
+              <td><span class="chip chip-green">★★★★★</span></td>
+            </tr>
+            <tr>
+              <td class="row-label">Deal Breaker</td>
+              <td><span style="color:#16A34A; font-weight:700; font-size:12px;">✓ Tidak ada</span></td>
+              <td><span style="color:#DC2626; font-weight:700; font-size:12px;">✗ Parkir tidak ada</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="bc-tradeoff">
+          <div class="bc-tradeoff-title">Pilih Jatiwaringin berarti:</div>
+          <p class="bc-tradeoff-text">
+            <strong>✓ Hemat Rp 900rb/bulan</strong> dibanding Skandinavia<br>
+            <strong>✓ Tidak ada deal breaker aktif</strong><br>
+            <strong>~ 3 km lebih jauh</strong> dari kantor dibanding Skandinavia
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STORY -->
+<section class="story">
+  <div class="container">
+    <div class="story-inner">
+      <div>
+        <p class="story-quote">
+          "Saya bikin Hunian karena mengalami sendiri betapa stresnya cari kontrakan di Bekasi. Setelah 3 minggu, 11 survei, dan spreadsheet yang makin berantakan, saya sadar masalahnya bukan kurang data — <em>saya tidak punya cara untuk membandingkan dengan jujur.</em>"
+        </p>
+        <div class="story-attr">
+          <strong>Faisal, Pembangun Hunian</strong>
+          Backend Engineer · Bekasi
+        </div>
+      </div>
+      <div class="story-stat-box">
+        <div class="story-stat-num">11</div>
+        <div class="story-stat-label">hunian disurvey sebelum akhirnya memilih satu dengan yakin</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <div class="container">
+    <div class="cta-card">
+      <h2 class="cta-headline">Berhenti mencatat.<br>Mulai memutuskan.</h2>
+      <p class="cta-sub">Gratis untuk digunakan. Tidak perlu kartu kredit.</p>
+      <a href="#" class="cta-btn">
+        Coba Hunian Sekarang
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+      <p class="cta-note">Masukkan kandidat pertamamu dalam 2 menit</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="container">
+  <footer>
+    <span class="footer-logo">Hunian</span>
+    <span class="footer-note">Decision support untuk hunian sewa · 2026</span>
+  </footer>
+</div>
+
+</body>
+</html>

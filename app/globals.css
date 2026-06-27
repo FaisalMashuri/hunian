@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Warna & font ikut UX (docs/UX-DESIGN.md C): primer teal-700, background stone-50, teks zinc. */
+@layer base {
+  :root {
+    --background: 40 11% 95%; /* mockup --bg #F4F3F0 (warm) */
+    --foreground: 240 6% 10%; /* zinc-900 */
+    --muted: 240 5% 96%; /* zinc-100 */
+    --muted-foreground: 240 4% 46%; /* zinc-500 */
+    --border: 40 9% 88%; /* mockup --border #E4E3DF */
+    --input: 40 9% 88%;
+    --ring: 175 77% 26%; /* teal-700 */
+    --primary: 175 77% 26%; /* teal-700 #0F766E */
+    --primary-foreground: 0 0% 100%;
+    --radius: 0.75rem;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Focus ring keyboard-only (NFR-9/WCAG 2.4.7) — Preflight menghapus outline default. */
+  a:focus-visible,
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px hsl(var(--background)),
+      0 0 0 4px hsl(var(--ring));
+    border-radius: 0.5rem;
+  }
+}

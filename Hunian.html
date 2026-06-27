@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  ::placeholder{color:var(--faint)}
+  input,textarea,button{font-family:inherit}
+  ::-webkit-scrollbar{height:8px;width:8px}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  @keyframes pop{0%{transform:scale(.7);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+  @media (max-width:768px){
+    .l-hero{grid-template-columns:1fr !important;gap:34px !important}
+    .l-grid3{grid-template-columns:1fr !important}
+    .l-flow5{grid-template-columns:1fr 1fr !important;gap:24px 14px !important}
+  }
+</style>
+</helmet>
+<div style="--paper:#F6F2EB;--card:#FFFFFF;--ink:#241F18;--soft:#766C5D;--faint:#A9A091;--line:#E8E2D5;--clay:#BF5430;--clay-d:#A1421F;--clay-bg:#F8E9E1;--good:#3E7C58;--ok:#BC8A2C;--bad:#B14B39;--good-bg:#E7F0E9;--ok-bg:#F7ECD6;--bad-bg:#F6E2DC;--disp:'Bricolage Grotesque';--body:'Hanken Grotesk';--mono:'JetBrains Mono';min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility">
+
+  <!-- ================= LANDING ================= -->
+  <sc-if value="{{ isLanding }}" hint-placeholder-val="{{ true }}">
+  <div style="animation:fadeUp .4s ease both">
+    <nav style="max-width:1120px;margin:0 auto;padding:22px 24px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;border-radius:11px;background:var(--clay);display:flex;align-items:flex-end;justify-content:center;gap:3px;padding-bottom:9px">
+          <div style="width:6px;height:11px;background:#fff;border-radius:3px 3px 0 0;opacity:.8"></div>
+          <div style="width:6px;height:17px;background:#fff;border-radius:3px 3px 0 0"></div>
+        </div>
+        <span style="font:700 21px/1 var(--disp);letter-spacing:-.01em">Hunian</span>
+      </div>
+      <button onClick="{{ goLogin }}" style="background:var(--ink);color:#fff;border:none;border-radius:11px;padding:11px 18px;font:600 15px/1 var(--body);cursor:pointer">Masuk</button>
+    </nav>
+
+    <header class="l-hero" style="max-width:1120px;margin:0 auto;padding:40px 24px 26px;display:grid;grid-template-columns:1.02fr .98fr;gap:52px;align-items:center">
+      <div style="min-width:0">
+        <div style="display:inline-flex;align-items:center;gap:8px;background:var(--clay-bg);color:var(--clay-d);border-radius:999px;padding:7px 13px;font:600 13px/1 var(--body);margin-bottom:22px">Workspace keputusan sewa</div>
+        <h1 style="font:700 clamp(36px,5vw,58px)/1.05 var(--disp);letter-spacing:-.025em;margin:0 0 20px">Cari rumah itu gampang.<br>Yang sulit adalah <span style="color:var(--clay)">memilih satu.</span></h1>
+        <p style="font:400 19px/1.55 var(--body);color:var(--soft);margin:0 0 30px;max-width:500px;text-wrap:pretty">Kandidatmu berserakan di WhatsApp, OLX, dan Mamikos. Hunian membantu kamu <strong style="color:var(--ink);font-weight:600">membandingkan dan memutuskan dengan yakin</strong> — bukan sekadar menyimpan listing.</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+          <button onClick="{{ goLogin }}" style="display:inline-flex;align-items:center;gap:10px;background:var(--clay);color:#fff;border:none;border-radius:12px;padding:15px 22px;font:600 16px/1 var(--body);cursor:pointer" style-hover="background:var(--clay-d)">Tempel listing pertamamu →</button>
+          <span style="font:500 13.5px/1.3 var(--body);color:var(--faint)">Gratis · masuk dengan Google</span>
+        </div>
+      </div>
+
+      <!-- hero visual: COMPARE -->
+      <div style="position:relative;min-width:0;padding-top:10px">
+        <div style="position:absolute;top:-4px;left:50%;transform:translateX(-50%);z-index:3;background:var(--ink);color:#fff;border-radius:999px;padding:8px 16px;font:600 12.5px/1 var(--body);box-shadow:0 10px 20px -8px rgba(36,31,24,.55)">Mana yang kamu pilih?</div>
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 28px 56px -30px rgba(36,31,24,.45)">
+          <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch">
+            <div style="border:1.5px solid var(--good);border-radius:15px;padding:13px;background:var(--good-bg)">
+              <div style="height:58px;border-radius:10px;background:repeating-linear-gradient(45deg,#E2DBCD,#E2DBCD 7px,#EAE4D8 7px,#EAE4D8 14px);margin-bottom:11px"></div>
+              <div style="font:600 14px/1.2 var(--disp);margin-bottom:8px">Rumah A · Tebet</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;align-items:center;gap:6px;font:600 13px/1.2 var(--body);color:var(--good)"><span>✓</span> Rp 3,5 jt/bln</div>
+                <div style="display:flex;align-items:center;gap:6px;font:500 13px/1.2 var(--body);color:var(--soft)"><span style="color:var(--ok)">~</span> 6 km ke kantor</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:center"><span style="width:30px;height:30px;border-radius:50%;background:var(--paper);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font:700 12px/1 var(--disp);color:var(--faint)">vs</span></div>
+            <div style="border:1.5px solid var(--line);border-radius:15px;padding:13px;background:var(--card)">
+              <div style="height:58px;border-radius:10px;background:repeating-linear-gradient(45deg,#E2DBCD,#E2DBCD 7px,#EAE4D8 7px,#EAE4D8 14px);margin-bottom:11px"></div>
+              <div style="font:600 14px/1.2 var(--disp);margin-bottom:8px">Rumah B · Pancoran</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;align-items:center;gap:6px;font:600 13px/1.2 var(--body);color:var(--good)"><span>✓</span> 3 km ke kantor</div>
+                <div style="display:flex;align-items:center;gap:6px;font:500 13px/1.2 var(--body);color:var(--soft)"><span style="color:var(--ok)">~</span> Rp 600rb lebih mahal</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px;background:var(--paper);border-radius:12px;padding:13px 15px;font:500 13.5px/1.5 var(--body);color:var(--ink);text-wrap:pretty">Pilih <strong style="color:var(--clay-d)">A</strong> → hemat Rp 600rb tiap bulan, tapi 15 menit lebih jauh. Trade-off-nya jelas — kamu yang putuskan.</div>
+        </div>
+      </div>
+    </header>
+
+    <section style="max-width:1120px;margin:0 auto;padding:58px 24px 14px;text-align:center">
+      <h2 style="font:700 clamp(26px,3.4vw,38px)/1.15 var(--disp);letter-spacing:-.02em;margin:0 0 12px">Berhenti membandingkan di kepala.</h2>
+      <p style="font:400 17px/1.5 var(--body);color:var(--soft);margin:0 auto 40px;max-width:540px;text-wrap:pretty">Tujuh listing di WhatsApp, tiga tab OLX, satu catatan di HP. Hunian merapikan semuanya jadi satu tempat untuk memutuskan.</p>
+      <div class="l-grid3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;text-align:left">
+        <sc-for list="{{ valueProps }}" as="vp" hint-placeholder-count="3">
+          <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px">
+            <div style="width:40px;height:40px;border-radius:11px;background:var(--good-bg);color:var(--good);display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:16px">✓</div>
+            <h3 style="font:600 18px/1.3 var(--disp);margin:0 0 9px;letter-spacing:-.01em">{{ vp.title }}</h3>
+            <p style="font:400 14.5px/1.55 var(--body);color:var(--soft);margin:0;text-wrap:pretty">{{ vp.body }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section style="max-width:1120px;margin:0 auto;padding:46px 24px 18px">
+      <div style="background:var(--ink);border-radius:24px;padding:44px 40px;color:#fff">
+        <div style="font:600 13px/1 var(--body);color:var(--clay);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Cara kerjanya</div>
+        <h2 style="font:700 clamp(24px,3vw,32px)/1.15 var(--disp);letter-spacing:-.02em;margin:0 0 30px;max-width:520px">Dari tumpukan chat jadi satu keputusan.</h2>
+        <div class="l-flow5" style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px">
+          <sc-for list="{{ flowSteps }}" as="fs" hint-placeholder-count="5">
+            <div>
+              <div style="width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.08);color:var(--clay);display:flex;align-items:center;justify-content:center;font:700 14px/1 var(--disp);margin-bottom:12px">{{ fs.n }}</div>
+              <div style="font:600 16px/1.25 var(--disp);margin-bottom:6px">{{ fs.title }}</div>
+              <div style="font:400 13.5px/1.45 var(--body);color:#B9B1A4">{{ fs.body }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="margin-top:30px;border-top:1px solid rgba(255,255,255,.1);padding-top:22px">
+          <span style="font:500 14px/1.55 var(--body);color:#D8D1C5">AI hanya merapikan datanya. Skornya rule-based dan bisa kamu telusuri — <strong style="color:#fff;font-weight:600">keputusan tetap di tanganmu.</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <section style="max-width:1120px;margin:0 auto;padding:48px 24px 26px">
+      <div style="text-align:center;margin-bottom:30px">
+        <div style="font:600 13px/1 var(--body);color:var(--clay-d);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Inti Hunian</div>
+        <h2 style="font:700 clamp(26px,3.4vw,38px)/1.15 var(--disp);letter-spacing:-.02em;margin:0 0 12px">Yang tidak diberikan marketplace</h2>
+        <p style="font:400 17px/1.5 var(--body);color:var(--soft);margin:0 auto;max-width:560px;text-wrap:pretty">Mamikos & OLX hebat untuk <em>menemukan</em>. Hunian dibuat untuk <strong style="color:var(--ink)">memilih</strong> — membandingkan trade-off antar kandidat yang sudah kamu kumpulkan.</p>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--line);border-radius:20px;padding:8px;box-shadow:0 28px 56px -34px rgba(36,31,24,.4);max-width:740px;margin:0 auto;overflow-x:auto">
+        <table style="border-collapse:collapse;width:100%;min-width:540px">
+          <thead><tr>
+            <th style="text-align:left;padding:16px 16px 12px;font:600 12px/1 var(--body);color:var(--faint)">Trade-off</th>
+            <th style="text-align:left;padding:14px 16px 12px;border-left:1px solid var(--line)"><div style="font:600 15px/1.2 var(--disp)">Rumah A</div><div style="font:800 18px/1 var(--disp);color:var(--good);margin-top:5px">91 <span style="font:600 10px/1 var(--body);color:var(--faint)">skor</span></div></th>
+            <th style="text-align:left;padding:14px 16px 12px;border-left:1px solid var(--line)"><div style="font:600 15px/1.2 var(--disp)">Rumah B</div><div style="font:800 18px/1 var(--disp);color:var(--good);margin-top:5px">87 <span style="font:600 10px/1 var(--body);color:var(--faint)">skor</span></div></th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td style="padding:13px 16px;border-top:1px solid var(--line);font:600 13px/1.3 var(--body);color:var(--soft)">Harga / bln</td>
+              <td style="padding:13px 16px;border-top:1px solid var(--line);border-left:1px solid var(--line)"><div style="display:flex;align-items:center;gap:7px"><span style="font:700 13px/1 var(--body);color:var(--good)">✓</span><span style="font:600 14px/1.2 var(--body)">Rp 3,5 jt</span></div></td>
+              <td style="padding:13px 16px;border-top:1px solid var(--line);border-left:1px solid var(--line)"><div style="display:flex;align-items:center;gap:7px"><span style="font:700 13px/1 var(--body);color:var(--ok)">~</span><span style="font:600 14px/1.2 var(--body)">Rp 3,8 jt</span></div></td>
+            </tr>
+            <tr>
+              <td style="padding:13px 16px;border-top:1px solid var(--line);font:600 13px/1.3 var(--body);color:var(--soft)">Lokasi</td>
+              <td style="padding:13px 16px;border-top:1px solid var(--line);border-left:1px solid var(--line)"><div style="display:flex;align-items:center;gap:7px"><span style="font:700 13px/1 var(--body);color:var(--ok)">~</span><span style="font:600 14px/1.2 var(--body)">4,2 km</span></div></td>
+              <td style="padding:13px 16px;border-top:1px solid var(--line);border-left:1px solid var(--line)"><div style="display:flex;align-items:center;gap:7px"><span style="font:700 13px/1 var(--body);color:var(--good)">✓</span><span style="font:600 14px/1.2 var(--body)">2,1 km</span></div></td>
+            </tr>
+            <tr>
+              <td style="padding:13px 16px;border-top:1px solid var(--line);font:600 13px/1.3 var(--body);color:var(--soft)">Fasilitas</td>
+              <td style="padding:13px 16px;border-top:1px solid var(--line);border-left:1px solid var(--line)"><div style="display:flex;align-items:center;gap:7px"><span style="font:700 13px/1 var(--body);color:var(--ok)">~</span><span style="font:600 14px/1.2 var(--body)">Sebagian</span></div></td>
+              <td style="padding:13px 16px;border-top:1px solid var(--line);border-left:1px solid var(--line)"><div style="display:flex;align-items:center;gap:7px"><span style="font:700 13px/1 var(--body);color:var(--bad)">✗</span><span style="font:600 14px/1.2 var(--body)">Kosongan</span></div></td>
+            </tr>
+            <tr>
+              <td style="padding:13px 16px;border-top:1px solid var(--line);font:600 13px/1.3 var(--body);color:var(--soft)">Deal breaker</td>
+              <td style="padding:13px 16px;border-top:1px solid var(--line);border-left:1px solid var(--line)"><div style="display:flex;align-items:center;gap:7px"><span style="font:700 13px/1 var(--body);color:var(--good)">✓</span><span style="font:600 14px/1.2 var(--body);color:var(--good)">Aman</span></div></td>
+              <td style="padding:13px 16px;border-top:1px solid var(--line);border-left:1px solid var(--line)"><div style="display:flex;align-items:center;gap:7px"><span style="font:700 13px/1 var(--body);color:var(--bad)">⚑</span><span style="font:600 14px/1.2 var(--body);color:var(--bad)">Tanpa carport</span></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="text-align:center;margin-top:38px">
+        <button onClick="{{ goLogin }}" style="display:inline-flex;align-items:center;gap:10px;background:var(--clay);color:#fff;border:none;border-radius:13px;padding:16px 28px;font:600 17px/1 var(--body);cursor:pointer" style-hover="background:var(--clay-d)">Tempel listing pertamamu →</button>
+        <div style="font:500 13.5px/1.3 var(--body);color:var(--faint);margin-top:14px">Komplementer terhadap listing aggregator, bukan kompetitor.</div>
+      </div>
+    </section>
+
+    <footer style="max-width:1120px;margin:0 auto;padding:18px 24px 50px;text-align:center">
+      <span style="font:500 13px/1 var(--body);color:var(--faint)">Hunian · prototype Slice 1 — Kontrakan</span>
+    </footer>
+  </div>
+  </sc-if>
+
+  <!-- ================= LOGIN ================= -->
+  <sc-if value="{{ isLogin }}">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .4s ease both">
+    <div style="width:100%;max-width:400px;text-align:center">
+      <div style="width:54px;height:54px;border-radius:16px;background:var(--clay);display:flex;align-items:flex-end;justify-content:center;gap:5px;padding-bottom:15px;margin:0 auto 22px">
+        <div style="width:9px;height:16px;background:#fff;border-radius:4px 4px 0 0;opacity:.8"></div>
+        <div style="width:9px;height:25px;background:#fff;border-radius:4px 4px 0 0"></div>
+      </div>
+      <h1 style="font:700 28px/1.15 var(--disp);letter-spacing:-.02em;margin:0 0 10px">Masuk ke Hunian</h1>
+      <p style="font:400 15.5px/1.5 var(--body);color:var(--soft);margin:0 0 28px">Login wajib untuk menyimpan kandidat & preferensi kamu. Datamu hanya bisa diakses olehmu.</p>
+      <button onClick="{{ doLogin }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:11px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px;font:600 16px/1 var(--body);color:var(--ink);cursor:pointer;box-shadow:0 2px 8px -4px rgba(36,31,24,.2)" style-hover="border-color:var(--soft)">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.8-.1-1.5-.2-2.2H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.7h3.6c2.1-2 3.2-4.9 3.2-8.1z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.7l-3.6-2.7c-1 .7-2.3 1.1-3.6 1.1-2.8 0-5.1-1.9-6-4.4H2.3v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M6 14.3a6.6 6.6 0 0 1 0-4.2V7.3H2.3a11 11 0 0 0 0 9.8z"/><path fill="#EA4335" d="M12 5.5c1.6 0 3 .5 4.1 1.6l3.1-3.1A11 11 0 0 0 2.3 7.3L6 10.1c.9-2.6 3.2-4.6 6-4.6z"/></svg>
+        Lanjut dengan Google
+      </button>
+      <p style="font:400 12.5px/1.5 var(--body);color:var(--faint);margin:18px 0 0">Dengan masuk kamu setuju datamu ditangani sesuai prinsip privasi Hunian.</p>
+      <button onClick="{{ goLanding }}" style="background:none;border:none;color:var(--soft);font:500 14px/1 var(--body);cursor:pointer;margin-top:22px">← Kembali</button>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ================= EXTRACTING ================= -->
+  <sc-if value="{{ isExtracting }}">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .3s ease both">
+    <div style="width:100%;max-width:380px;text-align:center">
+      <div style="width:46px;height:46px;border:3px solid var(--clay-bg);border-top-color:var(--clay);border-radius:50%;margin:0 auto 26px;animation:spin .8s linear infinite"></div>
+      <h2 style="font:700 22px/1.2 var(--disp);letter-spacing:-.01em;margin:0 0 6px">Mengekstrak listing…</h2>
+      <p style="font:400 14.5px/1.5 var(--body);color:var(--soft);margin:0 0 26px">GPT-4o mini + pre-processing lokal. Field yang tak diketahui dibiarkan kosong, bukan ditebak.</p>
+      <div style="text-align:left;display:flex;flex-direction:column;gap:13px">
+        <sc-for list="{{ extractSteps }}" as="es" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;background:{{ es.bg }};color:{{ es.fg }};border:1px solid {{ es.bd }}">{{ es.icon }}</span>
+            <span style="font:500 15px/1.3 var(--body);color:{{ es.txt }}">{{ es.label }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ================= APP SHELL ================= -->
+  <sc-if value="{{ isApp }}">
+  <div style="max-width:{{ appMaxW }};margin:0 auto;padding:0 18px 110px">
+    <header style="position:sticky;top:0;z-index:20;background:rgba(246,242,235,.86);backdrop-filter:blur(10px);margin:0 -18px;padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line)">
+      <sc-if value="{{ showBack }}">
+        <button onClick="{{ onBack }}" style="width:36px;height:36px;border:1px solid var(--line);background:var(--card);border-radius:10px;cursor:pointer;font-size:17px;color:var(--ink);display:flex;align-items:center;justify-content:center;flex:0 0 auto" style-hover="border-color:var(--soft)">←</button>
+      </sc-if>
+      <div style="min-width:0;flex:1">
+        <div style="font:700 17px/1.15 var(--disp);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ appTitle }}</div>
+        <div style="font:500 12.5px/1.2 var(--body);color:var(--faint)">{{ appSub }}</div>
+      </div>
+      <div style="width:30px;height:30px;border-radius:50%;background:var(--clay-bg);color:var(--clay-d);display:flex;align-items:center;justify-content:center;font:700 13px/1 var(--body);flex:0 0 auto">F</div>
+    </header>
+
+    <!-- ---------- ONBOARDING ---------- -->
+    <sc-if value="{{ isOnb }}">
+    <div style="padding-top:22px;animation:fadeUp .35s ease both">
+      <div style="display:flex;gap:7px;margin-bottom:26px">
+        <sc-for list="{{ onbDots }}" as="d" hint-placeholder-count="3">
+          <div style="height:5px;flex:1;border-radius:99px;background:{{ d.color }}"></div>
+        </sc-for>
+      </div>
+
+      <!-- step 0: budget -->
+      <sc-if value="{{ isStep0 }}">
+      <div>
+        <h2 style="font:700 26px/1.15 var(--disp);letter-spacing:-.02em;margin:0 0 8px">Berapa budget sewamu?</h2>
+        <p style="font:400 15.5px/1.5 var(--body);color:var(--soft);margin:0 0 28px">Dua angka: yang ideal dan batas maksimal. Kami pakai ini sebagai zona budget saat menilai harga.</p>
+        <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><span style="font:600 14px/1 var(--body);color:var(--soft)">Budget ideal</span><span style="font:700 20px/1 var(--disp);color:var(--clay-d)">{{ budgetIdealText }}</span></div>
+          <input type="range" min="1500000" max="8000000" step="100000" value="{{ onb.budgetIdeal }}" onInput="{{ setBudgetIdeal }}" style="width:100%;accent-color:var(--clay);margin:6px 0 22px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px"><span style="font:600 14px/1 var(--body);color:var(--soft)">Budget maksimal</span><span style="font:700 20px/1 var(--disp);color:var(--ink)">{{ budgetMaxText }}</span></div>
+          <input type="range" min="1500000" max="8000000" step="100000" value="{{ onb.budgetMax }}" onInput="{{ setBudgetMax }}" style="width:100%;accent-color:var(--ink);margin:6px 0 20px">
+          <div style="height:12px;background:var(--paper);border-radius:99px;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;bottom:0;left:{{ zoneLeft }};width:{{ zoneWidth }};background:var(--clay-bg);border-left:2px solid var(--clay);border-right:2px solid var(--ink)"></div>
+          </div>
+          <div style="font:500 12.5px/1.4 var(--body);color:var(--faint);margin-top:10px">Zona budget kamu — harga di dalam zona ini menang poin, di atasnya turun cepat.</div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- step 1: tujuan + transport -->
+      <sc-if value="{{ isStep1 }}">
+      <div>
+        <h2 style="font:700 26px/1.15 var(--disp);letter-spacing:-.02em;margin:0 0 8px">Ke mana kamu sering pergi?</h2>
+        <p style="font:400 15.5px/1.5 var(--body);color:var(--soft);margin:0 0 24px">Lokasi tujuan utama dan cara kamu ke sana. Dipakai untuk menilai kedekatan tiap kandidat.</p>
+        <label style="font:600 14px/1 var(--body);color:var(--soft);display:block;margin-bottom:8px">Lokasi tujuan utama</label>
+        <input value="{{ onb.tujuan }}" onInput="{{ setTujuan }}" placeholder="mis. Kantor — Kuningan, Jaksel" style="width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;font:500 15.5px/1.2 var(--body);color:var(--ink);outline:none;margin-bottom:14px" style-focus="border-color:var(--clay)">
+        <div style="height:128px;border-radius:14px;border:1px solid var(--line);background:repeating-linear-gradient(45deg,#EFE9DE,#EFE9DE 10px,#F2EDE3 10px,#F2EDE3 20px);position:relative;overflow:hidden;margin-bottom:22px">
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
+            <div style="width:18px;height:18px;border-radius:50% 50% 50% 0;background:var(--clay);transform:rotate(-45deg);margin:0 auto 8px;box-shadow:0 4px 10px -3px rgba(191,84,48,.6)"></div>
+            <span style="font:500 11.5px/1 var(--mono);color:var(--soft);background:rgba(246,242,235,.8);padding:3px 8px;border-radius:6px">peta · pin tujuan</span>
+          </div>
+        </div>
+        <label style="font:600 14px/1 var(--body);color:var(--soft);display:block;margin-bottom:10px">Moda transport</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <sc-for list="{{ transportOpts }}" as="t" hint-placeholder-count="4">
+            <button onClick="{{ t.onToggle }}" style="display:flex;align-items:center;gap:9px;padding:13px 14px;border-radius:12px;cursor:pointer;font:600 15px/1 var(--body);background:{{ t.bg }};border:1.5px solid {{ t.border }};color:{{ t.color }}">
+              <span style="font-size:17px">{{ t.icon }}</span>{{ t.label }}
+            </button>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- step 2: prioritas + dealbreaker -->
+      <sc-if value="{{ isStep2 }}">
+      <div>
+        <h2 style="font:700 26px/1.15 var(--disp);letter-spacing:-.02em;margin:0 0 8px">Apa yang paling penting?</h2>
+        <p style="font:400 15.5px/1.5 var(--body);color:var(--soft);margin:0 0 22px">Pilih prioritasmu — kami ubah jadi bobot skor. Kamu tak pernah melihat angka persen, hanya bintang.</p>
+        <div style="display:flex;flex-direction:column;gap:11px;margin-bottom:30px">
+          <sc-for list="{{ priorityOpts }}" as="p" hint-placeholder-count="3">
+            <button onClick="{{ p.onToggle }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;padding:15px 16px;border-radius:13px;cursor:pointer;background:{{ p.bg }};border:1.5px solid {{ p.border }}">
+              <div style="min-width:0">
+                <div style="font:600 16px/1.2 var(--body);color:{{ p.titleColor }};margin-bottom:3px">{{ p.label }}</div>
+                <div style="font:400 13px/1.3 var(--body);color:var(--soft)">{{ p.desc }}</div>
+              </div>
+              <span style="font-size:15px;letter-spacing:1px;color:var(--clay);flex:0 0 auto">{{ p.stars }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <h3 style="font:700 18px/1.2 var(--disp);margin:0 0 6px">Deal breaker</h3>
+        <p style="font:400 14px/1.45 var(--body);color:var(--soft);margin:0 0 14px">Kandidat yang melanggar akan ditandai (flag), bukan otomatis dihapus.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:9px">
+          <sc-for list="{{ dealbreakerOpts }}" as="db" hint-placeholder-count="4">
+            <button onClick="{{ db.onToggle }}" style="display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:99px;cursor:pointer;font:600 14px/1 var(--body);background:{{ db.bg }};border:1.5px solid {{ db.border }};color:{{ db.color }}">{{ db.mark }} {{ db.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <div style="position:fixed;left:0;right:0;bottom:0;background:linear-gradient(transparent,var(--paper) 26%);padding:24px 18px;z-index:25">
+        <div style="max-width:480px;margin:0 auto">
+          <button onClick="{{ onbNext }}" style="width:100%;background:var(--clay);color:#fff;border:none;border-radius:13px;padding:16px;font:600 16.5px/1 var(--body);cursor:pointer" style-hover="background:var(--clay-d)">{{ onbNextLabel }}</button>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ---------- INPUT ---------- -->
+    <sc-if value="{{ isInput }}">
+    <div style="padding-top:22px;animation:fadeUp .35s ease both">
+      <div style="display:flex;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:20px">
+        <button onClick="{{ setModePaste }}" style="flex:1;padding:11px;border:none;border-radius:9px;cursor:pointer;font:600 14.5px/1 var(--body);background:{{ pasteTabBg }};color:{{ pasteTabColor }};box-shadow:{{ pasteTabShadow }}">Tempel teks</button>
+        <button onClick="{{ setModeForm }}" style="flex:1;padding:11px;border:none;border-radius:9px;cursor:pointer;font:600 14.5px/1 var(--body);background:{{ formTabBg }};color:{{ formTabColor }};box-shadow:{{ formTabShadow }}">Form manual</button>
+      </div>
+
+      <sc-if value="{{ isPaste }}">
+      <div>
+        <h2 style="font:700 23px/1.18 var(--disp);letter-spacing:-.01em;margin:0 0 6px">Tempel deskripsi listing</h2>
+        <p style="font:400 14.5px/1.5 var(--body);color:var(--soft);margin:0 0 16px">Dari WhatsApp, OLX, Mamikos, Facebook — format berantakan tak masalah.</p>
+        <textarea value="{{ pasteText }}" onInput="{{ setPaste }}" placeholder="Tempel teks listing di sini…" style="width:100%;min-height:200px;resize:vertical;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;font:400 14px/1.65 var(--mono);color:var(--ink);outline:none" style-focus="border-color:var(--clay)"></textarea>
+        <button onClick="{{ startExtract }}" style="width:100%;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:9px;background:var(--clay);color:#fff;border:none;border-radius:13px;padding:16px;font:600 16.5px/1 var(--body);cursor:pointer" style-hover="background:var(--clay-d)">✦ Ekstrak dengan AI</button>
+        <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin-top:14px;font:500 12.5px/1.3 var(--body);color:var(--faint)">Harga, periode & lokasi dinormalisasi otomatis · &lt; 5 detik</div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isForm }}">
+      <div>
+        <h2 style="font:700 23px/1.18 var(--disp);letter-spacing:-.01em;margin:0 0 6px">Isi manual</h2>
+        <p style="font:400 14.5px/1.5 var(--body);color:var(--soft);margin:0 0 18px">Field <span style="color:var(--bad)">●</span> wajib · <span style="color:var(--ok)">●</span> opsional. Tanpa ekstraksi AI.</p>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <sc-for list="{{ formFields }}" as="ff" hint-placeholder-count="5">
+            <div>
+              <label style="display:flex;align-items:center;gap:7px;font:600 13.5px/1 var(--body);color:var(--soft);margin-bottom:7px"><span style="color:{{ ff.dot }};font-size:9px">●</span>{{ ff.label }}</label>
+              <input placeholder="{{ ff.placeholder }}" style="width:100%;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:12px 13px;font:500 15px/1.2 var(--body);color:var(--ink);outline:none" style-focus="border-color:var(--clay)">
+            </div>
+          </sc-for>
+        </div>
+        <button onClick="{{ startExtract }}" style="width:100%;margin-top:20px;background:var(--clay);color:#fff;border:none;border-radius:13px;padding:16px;font:600 16.5px/1 var(--body);cursor:pointer" style-hover="background:var(--clay-d)">Lanjut ke review →</button>
+      </div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- ---------- REVIEW ---------- -->
+    <sc-if value="{{ isReview }}">
+    <div style="padding-top:22px;animation:fadeUp .35s ease both">
+      <div style="background:var(--clay-bg);border-radius:13px;padding:13px 15px;display:flex;gap:11px;align-items:flex-start;margin-bottom:18px">
+        <span style="font-size:16px;flex:0 0 auto">✓</span>
+        <span style="font:500 13.5px/1.45 var(--body);color:var(--clay-d)">Ini <strong>verifikasi</strong>, bukan isi dari nol. Periksa field bertanda <span style="color:var(--ok)">⚠</span> dan koreksi yang perlu.</span>
+      </div>
+      <h2 style="font:700 22px/1.2 var(--disp);letter-spacing:-.01em;margin:0 0 4px">{{ draftTitle }}</h2>
+      <div style="font:500 13px/1 var(--body);color:var(--faint);margin-bottom:16px">Sumber: {{ draftSource }}</div>
+
+      <details style="margin-bottom:18px;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden">
+        <summary style="cursor:pointer;padding:13px 15px;font:600 13.5px/1 var(--body);color:var(--soft);list-style:none">Lihat teks sumber</summary>
+        <div style="padding:0 15px 15px;font:400 12.5px/1.6 var(--mono);color:var(--soft);white-space:pre-wrap">{{ draftRaw }}</div>
+      </details>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ draftFields }}" as="fld" hint-placeholder-count="8">
+          <div style="display:flex;align-items:center;gap:12px;background:{{ fld.rowBg }};border:1px solid {{ fld.rowBorder }};border-radius:12px;padding:11px 13px">
+            <span style="font-size:14px;color:{{ fld.iconColor }};flex:0 0 auto">{{ fld.icon }}</span>
+            <label style="font:600 13.5px/1.2 var(--body);color:var(--soft);flex:0 0 42%;min-width:0">{{ fld.label }}</label>
+            <input value="{{ fld.value }}" onInput="{{ fld.onChange }}" placeholder="{{ fld.placeholder }}" style="flex:1;min-width:0;background:transparent;border:none;border-bottom:1px solid var(--line);padding:5px 2px;font:600 15px/1.2 var(--body);color:var(--ink);outline:none;text-align:right" style-focus="border-bottom-color:var(--clay)">
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="position:fixed;left:0;right:0;bottom:0;background:linear-gradient(transparent,var(--paper) 26%);padding:24px 18px;z-index:25">
+        <div style="max-width:480px;margin:0 auto">
+          <button onClick="{{ saveDraft }}" style="width:100%;background:var(--clay);color:#fff;border:none;border-radius:13px;padding:16px;font:600 16.5px/1 var(--body);cursor:pointer" style-hover="background:var(--clay-d)">Simpan kandidat & skor →</button>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ---------- LIST ---------- -->
+    <sc-if value="{{ isList }}">
+    <div style="padding-top:22px;animation:fadeUp .35s ease both">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <h2 style="font:700 24px/1.15 var(--disp);letter-spacing:-.02em;margin:0">Kandidat kamu</h2>
+        <span style="font:600 13px/1 var(--body);color:var(--faint)">{{ candCount }} hunian</span>
+      </div>
+      <p style="font:400 14px/1.5 var(--body);color:var(--soft);margin:0 0 18px">Pilih <strong>2 atau lebih</strong> untuk membandingkan trade-off-nya.</p>
+
+      <div style="display:flex;flex-direction:column;gap:13px">
+        <sc-for list="{{ candCards }}" as="c" hint-placeholder-count="3">
+          <div onClick="{{ c.toggleSel }}" style="background:var(--card);border:1.5px solid {{ c.cardBorder }};border-radius:16px;padding:16px;cursor:pointer;box-shadow:{{ c.cardShadow }};transition:border-color .15s">
+            <div style="display:flex;gap:12px;align-items:flex-start">
+              <div style="width:22px;height:22px;border-radius:7px;border:1.5px solid {{ c.checkBorder }};background:{{ c.checkBg }};color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex:0 0 auto;margin-top:2px">{{ c.check }}</div>
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+                  <div style="min-width:0">
+                    <div style="font:600 17px/1.2 var(--disp);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.judul }}</div>
+                    <div style="font:500 12.5px/1 var(--body);color:var(--faint);margin-top:4px">{{ c.sumber }} · {{ c.statusLabel }}</div>
+                  </div>
+                  <div style="text-align:right;flex:0 0 auto">
+                    <div style="font:800 22px/1 var(--disp);color:{{ c.scoreColor }}">{{ c.overall }}</div>
+                    <div style="font:600 10px/1 var(--body);color:var(--faint);letter-spacing:.04em">SKOR</div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:14px;flex-wrap:wrap;margin:11px 0 12px">
+                  <span style="font:600 14px/1 var(--body);color:var(--ink)">{{ c.hargaText }}</span>
+                  <span style="font:500 13.5px/1 var(--body);color:var(--soft)">{{ c.specLine }}</span>
+                  <span style="font:500 13.5px/1 var(--body);color:var(--soft)">{{ c.jarakText }}</span>
+                </div>
+                <div style="display:flex;gap:8px">
+                  <sc-for list="{{ c.dims }}" as="dm" hint-placeholder-count="3">
+                    <div style="flex:1">
+                      <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font:500 11px/1 var(--body);color:var(--faint)">{{ dm.label }}</span><span style="font:600 11px/1 var(--body);color:{{ dm.color }}">{{ dm.mark }}</span></div>
+                      <div style="height:5px;background:var(--paper);border-radius:99px;overflow:hidden"><div style="height:100%;width:{{ dm.barW }};background:{{ dm.color }};border-radius:99px"></div></div>
+                    </div>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ c.hasFlag }}">
+                  <div style="margin-top:12px;display:inline-flex;align-items:center;gap:6px;background:var(--bad-bg);color:var(--bad);border-radius:8px;padding:5px 10px;font:600 12px/1.2 var(--body)">⚑ {{ c.flagText }}</div>
+                </sc-if>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <button onClick="{{ goInput }}" style="width:100%;margin-top:14px;background:var(--card);border:1.5px dashed var(--line);border-radius:14px;padding:15px;font:600 15px/1 var(--body);color:var(--soft);cursor:pointer" style-hover="border-color:var(--clay);color:var(--clay-d)">＋ Tambah kandidat</button>
+
+      <div style="position:fixed;left:0;right:0;bottom:0;background:linear-gradient(transparent,var(--paper) 26%);padding:22px 18px;z-index:25">
+        <div style="max-width:480px;margin:0 auto">
+          <button onClick="{{ goCompare }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:9px;border:none;border-radius:13px;padding:16px;font:600 16px/1 var(--body);cursor:{{ compareCursor }};background:{{ compareBg }};color:{{ compareColor }}">{{ compareLabel }}</button>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ---------- COMPARE ---------- -->
+    <sc-if value="{{ isCompare }}">
+    <div style="padding-top:22px;animation:fadeUp .35s ease both">
+      <h2 style="font:700 24px/1.15 var(--disp);letter-spacing:-.02em;margin:0 0 5px">Bandingkan trade-off</h2>
+      <p style="font:400 14px/1.5 var(--body);color:var(--soft);margin:0 0 18px">Skor ditampilkan kecil — yang penting <strong>apa yang kamu korbankan</strong> tiap pilihan.</p>
+
+      <div style="overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--card)">
+        <table style="border-collapse:collapse;width:100%;min-width:{{ tableMinW }}">
+          <thead>
+            <tr>
+              <th style="position:sticky;left:0;background:var(--card);z-index:2;text-align:left;padding:14px 14px;font:600 12px/1 var(--body);color:var(--faint);border-bottom:1px solid var(--line);min-width:120px">Dimensi</th>
+              <sc-for list="{{ compareCols }}" as="col" hint-placeholder-count="3">
+                <th style="text-align:left;padding:14px 14px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);min-width:160px;vertical-align:top">
+                  <div style="font:600 15px/1.2 var(--disp);letter-spacing:-.01em">{{ col.judul }}</div>
+                  <div style="display:flex;align-items:baseline;gap:6px;margin-top:6px"><span style="font:800 17px/1 var(--disp);color:{{ col.scoreColor }}">{{ col.overall }}</span><span style="font:600 10px/1 var(--body);color:var(--faint)">skor total</span></div>
+                </th>
+              </sc-for>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ compareRows }}" as="row" hint-placeholder-count="7">
+              <tr>
+                <td style="position:sticky;left:0;background:var(--card);z-index:1;padding:13px 14px;font:600 13px/1.3 var(--body);color:var(--soft);border-bottom:1px solid var(--line);vertical-align:top">{{ row.label }}</td>
+                <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="3">
+                  <td style="padding:13px 14px;border-bottom:1px solid var(--line);border-left:1px solid var(--line);vertical-align:top">
+                    <div style="display:flex;align-items:center;gap:7px">
+                      <sc-if value="{{ cell.hasMark }}"><span style="font:700 13px/1 var(--body);color:{{ cell.markColor }};flex:0 0 auto">{{ cell.mark }}</span></sc-if>
+                      <span style="font:600 14.5px/1.25 var(--body);color:{{ cell.color }}">{{ cell.val }}</span>
+                    </div>
+                    <sc-if value="{{ cell.hasSub }}"><div style="font:500 11.5px/1.2 var(--body);color:var(--faint);margin-top:3px">{{ cell.sub }}</div></sc-if>
+                  </td>
+                </sc-for>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="font:700 17px/1.2 var(--disp);margin:26px 0 12px">Kalau kamu pilih…</h3>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <sc-for list="{{ tradeoffs }}" as="to" hint-placeholder-count="3">
+          <div style="background:var(--card);border:1.5px solid {{ to.border }};border-radius:15px;padding:16px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px">
+              <div style="font:600 16px/1.2 var(--disp);letter-spacing:-.01em">{{ to.judul }}</div>
+              <sc-if value="{{ to.isTop }}"><span style="font:700 11px/1 var(--body);background:var(--clay-bg);color:var(--clay-d);padding:5px 9px;border-radius:99px">SKOR TERTINGGI</span></sc-if>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px">
+              <span style="font:500 13px/1.4 var(--body);color:var(--good);background:var(--good-bg);padding:5px 10px;border-radius:8px">＋ {{ to.strong }}</span>
+              <span style="font:500 13px/1.4 var(--body);color:var(--bad);background:var(--bad-bg);padding:5px 10px;border-radius:8px">－ {{ to.weak }}</span>
+              <sc-if value="{{ to.hasFlag }}"><span style="font:500 13px/1.4 var(--body);color:var(--bad);background:var(--bad-bg);padding:5px 10px;border-radius:8px">⚑ {{ to.flagText }}</span></sc-if>
+            </div>
+            <button onClick="{{ to.pick }}" style="width:100%;background:{{ to.btnBg }};color:{{ to.btnColor }};border:1.5px solid {{ to.btnBorder }};border-radius:11px;padding:13px;font:600 15px/1 var(--body);cursor:pointer">Pilih ini sebagai keputusan</button>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ---------- DECIDED ---------- -->
+    <sc-if value="{{ isDecided }}">
+    <div style="padding-top:40px;text-align:center;animation:fadeUp .4s ease both">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--good-bg);color:var(--good);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 22px;animation:pop .5s ease both">✓</div>
+      <h2 style="font:700 27px/1.15 var(--disp);letter-spacing:-.02em;margin:0 0 8px">Keputusan dibuat</h2>
+      <p style="font:400 15.5px/1.5 var(--body);color:var(--soft);margin:0 0 26px;max-width:380px;margin-left:auto;margin-right:auto">Siklus selesai — dari kandidat pertama sampai memilih satu. Inilah metrik yang Hunian kejar.</p>
+      <div style="background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;text-align:left;max-width:420px;margin:0 auto 22px;box-shadow:0 14px 34px -22px rgba(36,31,24,.4)">
+        <div style="font:600 12px/1 var(--body);color:var(--clay-d);letter-spacing:.05em;margin-bottom:10px">PILIHANMU</div>
+        <div style="font:700 20px/1.2 var(--disp);letter-spacing:-.01em;margin-bottom:12px">{{ decidedTitle }}</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px">
+          <span style="font:600 15px/1 var(--body)">{{ decidedHarga }}</span>
+          <span style="font:500 14px/1 var(--body);color:var(--soft)">{{ decidedSpec }}</span>
+        </div>
+        <div style="font:500 14px/1.55 var(--body);color:var(--soft);background:var(--paper);border-radius:11px;padding:13px;text-wrap:pretty">{{ decidedReason }}</div>
+      </div>
+      <button onClick="{{ startOver }}" style="background:var(--ink);color:#fff;border:none;border-radius:12px;padding:14px 24px;font:600 15.5px/1 var(--body);cursor:pointer">Mulai pencarian baru</button>
+    </div>
+    </sc-if>
+
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:860}}">
+class Component extends DCLogic {
+  PASTE = `Disewa rumah minimalis Bintaro sektor 9, 3 kamar tidur + 1 kamar pembantu, 2 kamar mandi, carport 2 mobil, FULL FURNISHED, 4,8jt/bulan nego tipis, deposit 1 bulan, listrik 2200, jet pump, lingkungan aman one gate system. Lokasi agak jauh dari pusat kota. Serius WA 0857-xxxx-xxxx`;
+
+  state = {
+    screen: 'landing',
+    onbStep: 0,
+    onb: {
+      budgetIdeal: 3500000, budgetMax: 4500000,
+      tujuan: 'Kantor — Kuningan, Jaksel',
+      transport: 'motor',
+      prioritas: ['harga', 'lokasi'],
+      dealbreakers: ['banjir', 'carport'],
+    },
+    inputMode: 'paste',
+    pasteText: '',
+    extractStep: 0,
+    draft: null,
+    edits: {},
+    candidates: [],
+    compareSel: [],
+    decidedId: null,
+  };
+
+  componentDidMount() {
+    this.setState({ pasteText: this.PASTE, candidates: this.seed() });
+  }
+
+  seed() {
+    return [
+      { id: 'a', judul: 'Rumah 2KT — Tebet Barat', sumber: 'WhatsApp broker', status: 'tersedia',
+        raw: `Disewakan cepat rumah 2 lantai di Tebet Barat. 2 kamar tidur, 1 kamar mandi, carport muat 1 mobil. 3,5jt/bln nego dikit, deposit 2 bln. Listrik 1300w, air sumur + PAM. Furnish sebagian (AC 2 unit, kitchen set). Akses jalan masuk 1 mobil. Minat lgsg WA 0812-xxxx`,
+        f: { hargaBln: 3500000, periode: 'bulan', hargaText: '3,5jt/bln', deposit: 7000000, depositText: '2 bulan',
+          kamarTidur: 2, kamarMandi: 1, carport: 1, luas: null, listrik: 1300, air: 'Sumur + PAM',
+          furnished: 'Sebagian', jarakKm: 4.2, akses: '1 mobil', rawanBanjir: false, aksesSempit: false,
+          fasilitas: ['AC 2 unit', 'Kitchen set'] } },
+      { id: 'b', judul: 'Kontrakan 3KT — Pancoran', sumber: 'OLX', status: 'disurvey',
+        raw: `Kontrakan 3 kamar di Pancoran, deket LRT Cikoko tinggal jalan kaki. 45jt/thn (masih nego), 3 kamar tidur 2 kamar mandi. Ga ada carport, parkir motor aja. Listrik 2200, air PAM. Kosongan. Cocok buat keluarga. Hub 0813-xxxx`,
+        f: { hargaBln: 3750000, periode: 'tahun', hargaText: '45jt/thn', deposit: null, depositText: null,
+          kamarTidur: 3, kamarMandi: 2, carport: 0, luas: 90, listrik: 2200, air: 'PAM',
+          furnished: 'Kosongan', jarakKm: 2.1, akses: '1 motor', rawanBanjir: false, aksesSempit: true,
+          fasilitas: ['Dekat LRT Cikoko'] } },
+    ];
+  }
+
+  bintaro() {
+    return { id: 'c', judul: 'Rumah Minimalis — Bintaro Sektor 9', sumber: 'Facebook Marketplace', status: 'tersedia',
+      raw: this.state.pasteText || this.PASTE,
+      f: { hargaBln: 4800000, periode: 'bulan', hargaText: '4,8jt/bln', deposit: 4800000, depositText: '1 bulan',
+        kamarTidur: 3, kamarMandi: 2, carport: 2, luas: null, listrik: 2200, air: 'Jet pump',
+        furnished: 'Full', jarakKm: 12.5, akses: '2 mobil', rawanBanjir: false, aksesSempit: false,
+        fasilitas: ['Full furnished', 'One gate / aman'] } };
+  }
+
+  // ----- scoring -----
+  weightOf(d) { return 1 + (this.state.onb.prioritas.includes(d) ? 2 : 0); }
+  starStr(d) { const w = this.weightOf(d); return '★'.repeat(w) + '☆'.repeat(3 - w); }
+  scoreHarga(f) {
+    const { budgetIdeal: i, budgetMax: m } = this.state.onb; const h = f.hargaBln;
+    if (h <= i) return 100;
+    if (h <= m) return Math.round(100 - 55 * (h - i) / Math.max(1, m - i));
+    return Math.max(8, Math.round(45 - (h - m) / m * 120));
+  }
+  scoreLokasi(f) { const km = f.jarakKm; if (km <= 2) return 100; if (km >= 15) return 22; return Math.round(100 - (km - 2) / 13 * 78); }
+  scoreFasilitas(f) {
+    let s = 38;
+    if (f.furnished === 'Full') s += 24; else if (f.furnished === 'Sebagian') s += 12;
+    if (f.carport >= 1) s += 12; if (f.carport >= 2) s += 8;
+    if (f.listrik >= 2200) s += 8; else if (f.listrik >= 1300) s += 4;
+    if (f.kamarMandi >= 2) s += 6;
+    s += Math.min(8, (f.fasilitas ? f.fasilitas.length : 0) * 4);
+    return Math.min(100, s);
+  }
+  scores(c) {
+    const f = c.f; const h = this.scoreHarga(f), l = this.scoreLokasi(f), fa = this.scoreFasilitas(f);
+    const wh = this.weightOf('harga'), wl = this.weightOf('lokasi'), wf = this.weightOf('fasilitas');
+    return { harga: h, lokasi: l, fasilitas: fa, overall: Math.round((h * wh + l * wl + fa * wf) / (wh + wl + wf)) };
+  }
+  flagsOf(c) {
+    const f = c.f, dbs = this.state.onb.dealbreakers, out = [];
+    if (dbs.includes('banjir') && f.rawanBanjir) out.push('Rawan banjir');
+    if (dbs.includes('carport') && f.carport === 0) out.push('Tanpa carport');
+    if (dbs.includes('akses') && f.aksesSempit) out.push('Akses jalan sempit');
+    if (dbs.includes('kamar2') && f.kamarTidur < 2) out.push('< 2 kamar');
+    return out;
+  }
+  mark(s) { if (s >= 75) return { sym: '✓', col: 'var(--good)' }; if (s >= 45) return { sym: '~', col: 'var(--ok)' }; return { sym: '✗', col: 'var(--bad)' }; }
+  scoreCol(s) { return s >= 75 ? 'var(--good)' : s >= 45 ? 'var(--ok)' : 'var(--bad)'; }
+  rp(n) { return n == null ? '—' : 'Rp ' + n.toLocaleString('id-ID'); }
+  rpShort(n) { if (n == null) return '—'; const jt = n / 1000000; return 'Rp ' + (Number.isInteger(jt) ? jt : jt.toFixed(1).replace('.', ',')) + ' jt'; }
+  statusLabel(s) { return s === 'disurvey' ? 'Sudah Disurvey' : s === 'tersewa' ? 'Sudah Tersewa' : 'Tersedia'; }
+  tujuanShort() { return (this.state.onb.tujuan || 'tujuan').split('—').pop().trim() || 'tujuan'; }
+
+  // ----- nav -----
+  go(s) { this.setState({ screen: s }); window.scrollTo(0, 0); }
+  goLanding = () => this.go('landing');
+  goLogin = () => this.go('login');
+  doLogin = () => { this.setState({ screen: 'onboarding', onbStep: 0 }); window.scrollTo(0, 0); };
+  goInput = () => this.go('input');
+  setModePaste = () => this.setState({ inputMode: 'paste' });
+  setModeForm = () => this.setState({ inputMode: 'form' });
+  setPaste = (e) => this.setState({ pasteText: e.target.value });
+  setBudgetIdeal = (e) => { const v = +e.target.value; this.setState(s => ({ onb: { ...s.onb, budgetIdeal: v, budgetMax: Math.max(v, s.onb.budgetMax) } })); };
+  setBudgetMax = (e) => { const v = +e.target.value; this.setState(s => ({ onb: { ...s.onb, budgetMax: v, budgetIdeal: Math.min(v, s.onb.budgetIdeal) } })); };
+  setTujuan = (e) => this.setState(s => ({ onb: { ...s.onb, tujuan: e.target.value } }));
+  onbNext = () => {
+    const st = this.state.onbStep;
+    if (st < 2) { this.setState({ onbStep: st + 1 }); window.scrollTo(0, 0); }
+    else this.go('list');
+  };
+  onBack = () => {
+    const s = this.state.screen;
+    if (s === 'login') return this.go('landing');
+    if (s === 'onboarding') { if (this.state.onbStep > 0) { this.setState(p => ({ onbStep: p.onbStep - 1 })); window.scrollTo(0,0);} else this.go('login'); return; }
+    if (s === 'input') return this.go('list');
+    if (s === 'review') return this.go('input');
+    if (s === 'compare') return this.go('list');
+    if (s === 'decided') return this.go('list');
+    this.go('list');
+  };
+
+  startExtract = () => {
+    this.setState({ screen: 'extracting', extractStep: 0 });
+    window.scrollTo(0, 0);
+    [1, 2, 3].forEach(n => setTimeout(() => this.setState({ extractStep: n }), n * 850));
+    setTimeout(() => { this.setState({ screen: 'review', draft: this.bintaro(), edits: {} }); window.scrollTo(0, 0); }, 3300);
+  };
+
+  saveDraft = () => {
+    const d = this.state.draft; if (!d) return;
+    const nums = ['hargaBln', 'deposit', 'kamarTidur', 'kamarMandi', 'carport', 'luas', 'listrik', 'jarakKm'];
+    const merged = { ...d.f };
+    Object.entries(this.state.edits).forEach(([k, v]) => {
+      if (nums.includes(k)) { const n = parseFloat(String(v).replace(/[^0-9.]/g, '')); merged[k] = isNaN(n) ? merged[k] : n; }
+      else merged[k] = v;
+    });
+    const cand = { ...d, f: merged };
+    this.setState(s => {
+      const exists = s.candidates.some(c => c.id === cand.id);
+      const candidates = exists ? s.candidates.map(c => c.id === cand.id ? cand : c) : [...s.candidates, cand];
+      const sel = s.compareSel.includes(cand.id) ? s.compareSel : [...s.compareSel, cand.id].slice(-3);
+      return { candidates, compareSel: sel, draft: null, edits: {}, screen: 'list' };
+    });
+    window.scrollTo(0, 0);
+  };
+
+  toggleCompare(id) {
+    this.setState(s => {
+      let sel = s.compareSel.includes(id) ? s.compareSel.filter(x => x !== id) : [...s.compareSel, id];
+      if (sel.length > 3) sel = sel.slice(-3);
+      return { compareSel: sel };
+    });
+  }
+  goCompare = () => { if (this.state.compareSel.length >= 2) this.go('compare'); };
+  pick(id) { this.setState(s => ({ decidedId: id, screen: 'decided', candidates: s.candidates.map(c => c.id === id ? { ...c, status: 'tersewa' } : c) })); window.scrollTo(0, 0); }
+  startOver = () => { this.setState({ decidedId: null, compareSel: [], candidates: this.seed(), pasteText: this.PASTE }); this.go('list'); };
+
+  togglePriority(id) { this.setState(s => { const has = s.onb.prioritas.includes(id); return { onb: { ...s.onb, prioritas: has ? s.onb.prioritas.filter(x => x !== id) : [...s.onb.prioritas, id] } }; }); }
+  toggleDealbreaker(id) { this.setState(s => { const has = s.onb.dealbreakers.includes(id); return { onb: { ...s.onb, dealbreakers: has ? s.onb.dealbreakers.filter(x => x !== id) : [...s.onb.dealbreakers, id] } }; }); }
+  setTransport(id) { this.setState(s => ({ onb: { ...s.onb, transport: id } })); }
+
+  renderVals() {
+    const s = this.state, scr = s.screen, onb = s.onb;
+    const isApp = ['onboarding', 'input', 'review', 'list', 'compare', 'decided'].includes(scr);
+    const pct = n => ((n - 1500000) / (8000000 - 1500000)) * 100;
+
+    // header
+    const titles = { onboarding: 'Atur preferensi', input: 'Tambah kandidat', review: 'Periksa hasil ekstraksi', list: 'Kandidat kamu', compare: 'Bandingkan', decided: 'Keputusan' };
+    const subs = { onboarding: 'Langkah ' + (s.onbStep + 1) + ' dari 3', input: 'Kontrakan / Rumah', review: 'Verifikasi, bukan input dari nol', list: s.candidates.length + ' hunian terkumpul', compare: s.compareSel.length + ' kandidat dipilih', decided: 'Siklus selesai' };
+
+    // candidate cards
+    const buildCand = (c) => {
+      const sc = this.scores(c), flags = this.flagsOf(c);
+      const dims = [
+        { key: 'harga', label: 'Harga', s: sc.harga }, { key: 'lokasi', label: 'Lokasi', s: sc.lokasi }, { key: 'fasilitas', label: 'Fasilitas', s: sc.fasilitas },
+      ].map(d => { const m = this.mark(d.s); return { label: d.label, mark: m.sym, color: m.col, barW: d.s + '%' }; });
+      const sel = s.compareSel.includes(c.id);
+      return {
+        id: c.id, judul: c.judul, sumber: c.sumber, statusLabel: this.statusLabel(c.status),
+        overall: sc.overall, scoreColor: this.scoreCol(sc.overall),
+        hargaText: this.rpShort(c.f.hargaBln) + '/bln',
+        specLine: c.f.kamarTidur + ' KT · ' + c.f.kamarMandi + ' KM · ' + (c.f.carport > 0 ? c.f.carport + ' carport' : 'tanpa carport'),
+        jarakText: c.f.jarakKm + ' km ke tujuan',
+        dims, flags, hasFlag: flags.length > 0, flagText: flags.length + ' flag · ' + flags.join(', '),
+        toggleSel: () => this.toggleCompare(c.id),
+        check: sel ? '✓' : '', checkBg: sel ? 'var(--clay)' : 'transparent', checkBorder: sel ? 'var(--clay)' : 'var(--line)',
+        cardBorder: sel ? 'var(--clay)' : 'var(--line)', cardShadow: sel ? '0 8px 22px -14px rgba(191,84,48,.5)' : '0 2px 6px -4px rgba(36,31,24,.12)',
+      };
+    };
+    const candCards = s.candidates.map(buildCand);
+
+    // compare
+    const selCands = s.compareSel.map(id => s.candidates.find(c => c.id === id)).filter(Boolean);
+    const compareCols = selCands.map(c => { const sc = this.scores(c); return { judul: c.judul, overall: sc.overall, scoreColor: this.scoreCol(sc.overall) }; });
+    const cell = (val, opts = {}) => ({ val, color: opts.color || 'var(--ink)', hasMark: !!opts.mark, mark: opts.mark, markColor: opts.markColor, hasSub: !!opts.sub, sub: opts.sub });
+    const rowDefs = [
+      { label: 'Harga / bulan', fn: c => { const m = this.mark(this.scoreHarga(c.f)); return cell(this.rpShort(c.f.hargaBln), { mark: m.sym, markColor: m.col, sub: 'skor ' + this.scoreHarga(c.f) + (c.f.periode !== 'bulan' ? ' · asli ' + c.f.hargaText : '') }); } },
+      { label: 'Lokasi', fn: c => { const m = this.mark(this.scoreLokasi(c.f)); return cell(c.f.jarakKm + ' km', { mark: m.sym, markColor: m.col, sub: 'ke ' + this.tujuanShort() }); } },
+      { label: 'Fasilitas', fn: c => { const m = this.mark(this.scoreFasilitas(c.f)); return cell(c.f.furnished, { mark: m.sym, markColor: m.col, sub: c.f.fasilitas.length + ' fasilitas' }); } },
+      { label: 'Kamar', fn: c => cell(c.f.kamarTidur + ' tidur · ' + c.f.kamarMandi + ' mandi') },
+      { label: 'Carport', fn: c => c.f.carport > 0 ? cell(c.f.carport + ' mobil') : cell('Tidak ada', { color: 'var(--bad)' }) },
+      { label: 'Deposit', fn: c => c.f.deposit ? cell(this.rpShort(c.f.deposit), { sub: c.f.depositText }) : cell('Tidak disebut', { color: 'var(--faint)' }) },
+      { label: 'Deal breaker', fn: c => { const fl = this.flagsOf(c); return fl.length ? cell(fl.join(', '), { color: 'var(--bad)', mark: '⚑', markColor: 'var(--bad)' }) : cell('Aman', { color: 'var(--good)', mark: '✓', markColor: 'var(--good)' }); } },
+    ];
+    const compareRows = rowDefs.map(r => ({ label: r.label, cells: selCands.map(r.fn) }));
+
+    let topId = null, topScore = -1;
+    selCands.forEach(c => { const o = this.scores(c).overall; if (o > topScore) { topScore = o; topId = c.id; } });
+    const tradeoffs = selCands.map(c => {
+      const sc = this.scores(c); const flags = this.flagsOf(c);
+      const dimArr = [{ k: 'Harga', s: sc.harga }, { k: 'Lokasi', s: sc.lokasi }, { k: 'Fasilitas', s: sc.fasilitas }];
+      const strong = dimArr.reduce((a, b) => b.s > a.s ? b : a);
+      const weak = dimArr.reduce((a, b) => b.s < a.s ? b : a);
+      const isTop = c.id === topId;
+      return {
+        judul: c.judul, isTop, strong: strong.k + ' unggul (' + strong.s + ')', weak: weak.k + ' dikorbankan (' + weak.s + ')',
+        hasFlag: flags.length > 0, flagText: flags.join(', '),
+        border: isTop ? 'var(--clay)' : 'var(--line)',
+        pick: () => this.pick(c.id),
+        btnBg: isTop ? 'var(--clay)' : 'var(--card)', btnColor: isTop ? '#fff' : 'var(--ink)', btnBorder: isTop ? 'var(--clay)' : 'var(--line)',
+      };
+    });
+
+    // review fields
+    const d = s.draft; let draftFields = [];
+    if (d) {
+      const val = k => s.edits[k] !== undefined ? s.edits[k] : d.f[k];
+      const mk = (k, label, ph) => {
+        const raw = val(k); const known = raw !== null && raw !== undefined && raw !== '';
+        return { key: k, label, value: raw == null ? '' : String(raw), placeholder: ph || 'Belum diketahui — isi manual',
+          icon: known ? '✓' : '⚠', iconColor: known ? 'var(--good)' : 'var(--ok)',
+          rowBg: known ? 'var(--card)' : 'var(--ok-bg)', rowBorder: known ? 'var(--line)' : 'var(--ok)',
+          onChange: (e) => this.setState(st => ({ edits: { ...st.edits, [k]: e.target.value } })) };
+      };
+      draftFields = [
+        mk('hargaBln', 'Harga sewa (Rp/bln)'), mk('hargaText', 'Harga asli (teks)'), mk('deposit', 'Deposit (Rp)'),
+        mk('kamarTidur', 'Kamar tidur'), mk('kamarMandi', 'Kamar mandi'), mk('carport', 'Carport (mobil)'),
+        mk('luas', 'Luas bangunan (m²)'), mk('listrik', 'Listrik (watt)'), mk('air', 'Sumber air'),
+        mk('furnished', 'Furnished'), mk('jarakKm', 'Jarak ke tujuan (km)'),
+      ];
+    }
+
+    // onboarding views
+    const transportOpts = [
+      { id: 'motor', label: 'Motor', icon: '🛵' }, { id: 'mobil', label: 'Mobil', icon: '🚗' },
+      { id: 'krl', label: 'KRL / Transit', icon: '🚆' }, { id: 'jalan', label: 'Jalan kaki', icon: '🚶' },
+    ].map(t => { const on = onb.transport === t.id; return { ...t, onToggle: () => this.setTransport(t.id), bg: on ? 'var(--clay-bg)' : 'var(--card)', border: on ? 'var(--clay)' : 'var(--line)', color: on ? 'var(--clay-d)' : 'var(--ink)' }; });
+    const priorityOpts = [
+      { id: 'harga', label: 'Harga terjangkau', desc: 'Tetap di dalam zona budget' },
+      { id: 'lokasi', label: 'Lokasi strategis', desc: 'Dekat dengan tujuan utama' },
+      { id: 'fasilitas', label: 'Fasilitas lengkap', desc: 'Furnished, carport, listrik besar' },
+    ].map(p => { const on = onb.prioritas.includes(p.id); return { ...p, onToggle: () => this.togglePriority(p.id), stars: this.starStr(p.id), bg: on ? 'var(--clay-bg)' : 'var(--card)', border: on ? 'var(--clay)' : 'var(--line)', titleColor: on ? 'var(--clay-d)' : 'var(--ink)' }; });
+    const dealbreakerOpts = [
+      { id: 'banjir', label: 'Rawan banjir' }, { id: 'carport', label: 'Tanpa carport' },
+      { id: 'akses', label: 'Akses jalan sempit' }, { id: 'kamar2', label: 'Kurang 2 kamar' },
+    ].map(db => { const on = onb.dealbreakers.includes(db.id); return { ...db, onToggle: () => this.toggleDealbreaker(db.id), mark: on ? '✕' : '＋', bg: on ? 'var(--bad-bg)' : 'var(--card)', border: on ? 'var(--bad)' : 'var(--line)', color: on ? 'var(--bad)' : 'var(--soft)' }; });
+
+    const extractLabels = ['Membaca teks listing', 'Normalisasi format & angka', 'Menyusun data terstruktur'];
+    const extractSteps = extractLabels.map((label, i) => {
+      const done = i < s.extractStep, active = i === s.extractStep;
+      return { label, icon: done ? '✓' : active ? '·' : '', bg: done ? 'var(--good)' : active ? 'var(--clay-bg)' : 'var(--paper)', fg: done ? '#fff' : 'var(--clay-d)', bd: done ? 'var(--good)' : active ? 'var(--clay)' : 'var(--line)', txt: done || active ? 'var(--ink)' : 'var(--faint)' };
+    });
+
+    const dec = s.candidates.find(c => c.id === s.decidedId);
+    let decidedTitle = '', decidedHarga = '', decidedSpec = '', decidedReason = '';
+    if (dec) {
+      const sc = this.scores(dec); const dimArr = [{ k: 'harga', s: sc.harga }, { k: 'lokasi', s: sc.lokasi }, { k: 'fasilitas', s: sc.fasilitas }];
+      const strong = dimArr.reduce((a, b) => b.s > a.s ? b : a); const weak = dimArr.reduce((a, b) => b.s < a.s ? b : a);
+      decidedTitle = dec.judul; decidedHarga = this.rpShort(dec.f.hargaBln) + '/bln';
+      decidedSpec = dec.f.kamarTidur + ' KT · ' + dec.f.kamarMandi + ' KM · ' + this.tujuanShort();
+      decidedReason = 'Kamu memilih ini terutama karena ' + strong.k + ' yang kuat — sambil sadar mengorbankan ' + weak.k + '. Status diset “Sudah Tersewa”.';
+    }
+
+    const canCompare = s.compareSel.length >= 2;
+
+    return {
+      isLanding: scr === 'landing', isLogin: scr === 'login', isExtracting: scr === 'extracting', isApp,
+      isOnb: scr === 'onboarding', isInput: scr === 'input', isReview: scr === 'review', isList: scr === 'list', isCompare: scr === 'compare', isDecided: scr === 'decided',
+      goLanding: this.goLanding, goLogin: this.goLogin, doLogin: this.doLogin, goInput: this.goInput, startExtract: this.startExtract, saveDraft: this.saveDraft, goCompare: this.goCompare, startOver: this.startOver, onBack: this.onBack, onbNext: this.onbNext,
+      setModePaste: this.setModePaste, setModeForm: this.setModeForm, setPaste: this.setPaste, setBudgetIdeal: this.setBudgetIdeal, setBudgetMax: this.setBudgetMax, setTujuan: this.setTujuan,
+
+      valueProps: [
+        { title: 'Tidak perlu copy ke Excel', body: 'Tempel teks listing apa adanya. Hunian yang merapikannya jadi data yang siap dibandingkan.' },
+        { title: 'Tidak perlu hitung ulang harga', body: '"45jt/thn", "3,5jt", "deposit 2 bulan" — semua dinormalisasi otomatis ke angka per bulan.' },
+        { title: 'Tidak perlu bingung pilih mana', body: 'Lihat jelas apa yang kamu korbankan tiap pilihan, lengkap dengan flag deal breaker.' },
+      ],
+      flowSteps: [
+        { n: '1', title: 'Tempel listing', body: 'Dari WA, OLX, Mamikos' },
+        { n: '2', title: 'AI merapikan data', body: 'Teks berantakan → rapi' },
+        { n: '3', title: 'Tambah kandidat lain', body: 'Kumpulkan di satu tempat' },
+        { n: '4', title: 'Bandingkan', body: 'Lihat trade-off-nya' },
+        { n: '5', title: 'Pilih dengan yakin', body: 'Sadar apa yang dikorbankan' },
+      ],
+
+      appMaxW: scr === 'compare' ? '920px' : '480px',
+      showBack: scr !== 'list' || true, appTitle: titles[scr] || '', appSub: subs[scr] || '',
+
+      onbStep: s.onbStep, isStep0: s.onbStep === 0, isStep1: s.onbStep === 1, isStep2: s.onbStep === 2,
+      onbDots: [0, 1, 2].map(i => ({ color: i <= s.onbStep ? 'var(--clay)' : 'var(--line)' })),
+      onbNextLabel: s.onbStep < 2 ? 'Lanjut' : 'Selesai — lihat kandidat',
+      onb, budgetIdealText: this.rpShort(onb.budgetIdeal), budgetMaxText: this.rpShort(onb.budgetMax),
+      zoneLeft: pct(onb.budgetIdeal) + '%', zoneWidth: Math.max(0, pct(onb.budgetMax) - pct(onb.budgetIdeal)) + '%',
+      transportOpts, priorityOpts, dealbreakerOpts,
+
+      inputMode: s.inputMode, isPaste: s.inputMode === 'paste', isForm: s.inputMode === 'form', pasteText: s.pasteText,
+      pasteTabBg: s.inputMode === 'paste' ? 'var(--card)' : 'transparent', pasteTabColor: s.inputMode === 'paste' ? 'var(--ink)' : 'var(--soft)', pasteTabShadow: s.inputMode === 'paste' ? '0 1px 4px -2px rgba(36,31,24,.25)' : 'none',
+      formTabBg: s.inputMode === 'form' ? 'var(--card)' : 'transparent', formTabColor: s.inputMode === 'form' ? 'var(--ink)' : 'var(--soft)', formTabShadow: s.inputMode === 'form' ? '0 1px 4px -2px rgba(36,31,24,.25)' : 'none',
+      formFields: [
+        { label: 'Judul / lokasi', placeholder: 'mis. Rumah 2KT Tebet', dot: 'var(--bad)' },
+        { label: 'Harga sewa', placeholder: 'mis. 3.500.000', dot: 'var(--bad)' },
+        { label: 'Periode', placeholder: 'bulan / 3 bulan / tahun', dot: 'var(--bad)' },
+        { label: 'Kamar tidur', placeholder: 'mis. 2', dot: 'var(--bad)' },
+        { label: 'Carport', placeholder: 'mis. 1 mobil', dot: 'var(--ok)' },
+        { label: 'Kontak', placeholder: 'mis. 0812-xxxx', dot: 'var(--ok)' },
+      ],
+
+      draftTitle: d ? d.judul : '', draftSource: d ? d.sumber : '', draftRaw: d ? d.raw : '', draftFields,
+
+      candCards, candCount: s.candidates.length,
+      compareLabel: canCompare ? 'Bandingkan ' + s.compareSel.length + ' kandidat →' : 'Pilih min. 2 untuk bandingkan',
+      compareBg: canCompare ? 'var(--clay)' : 'var(--line)', compareColor: canCompare ? '#fff' : 'var(--faint)', compareCursor: canCompare ? 'pointer' : 'not-allowed',
+
+      compareCols, compareRows, tradeoffs, tableMinW: (140 + selCands.length * 160) + 'px',
+
+      extractSteps,
+      decidedTitle, decidedHarga, decidedSpec, decidedReason,
+    };
+  }
+}
+</script>
+</body>
+</html>

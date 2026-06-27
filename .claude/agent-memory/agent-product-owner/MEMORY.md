@@ -1,0 +1,3 @@
+- [Prinsip Inti Hunian](project_hunian_vision_principles.md) — Hero feature, north star metric, batasan arsitektural, rule AI tidak mengambil keputusan
+- [Keputusan Slice 1 MVP](project_slice1_decisions.md) — Verdict T-006 SYN, semua isu RESOLVED oleh Faisal 2026-06-26 (metric cycle completion, deal breaker flag minimal, auth Google wajib)
+- [Gate Slice 2 MVP](project_slice2_gate.md) — Status UNCERTAIN, 2 gate BLOCKING: G1 bobot Kondisi+Owner (vision conflict), G2 migration sign-off

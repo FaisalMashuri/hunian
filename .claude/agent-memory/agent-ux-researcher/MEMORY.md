@@ -1,0 +1,2 @@
+- [T-002 Drop-off Analysis](project_t002_drop-off-analysis.md) — tiga titik drop-off berbahaya di flow MVP + rekomendasi sequencing untuk target completion rate 60%
+- [Slice 2 Behavior Analysis](../UX/slice2-behavior.md) — decision-shaping vs theater, form survey low-friction, retensi siklus, risiko Apt/Kost, mitigasi data parsial

@@ -1,0 +1,5 @@
+- [Hunian MVP Scope & Decisions](project-hunian-mvp.md) — Slice 1 definition, metric (session depth proxy), auth/transport calls, per 2026-06-26
+- [Hunian Tech Stack](project-hunian-stack.md) — Next.js/Supabase/GPT-4o mini stack, conditional AI benchmark required before S2
+- [User: Faisal Mashuri](user-faisal.md) — solo builder Hunian, needs actionable output without extra meetings
+- [Hunian UI/UX Slice 1 Decisions](project-hunian-uiux-slice1.md) — 8 layar final, scoring formula NULL renorm, equal-weight defaults, extraction gate, 3 human gates for Faisal
+- [Slice 2 Planning Synthesis](../SYN/slice2-synthesis.md) — MVP=S2-0+S2-2+S2-4+S2-5(display)+events; 6D langsung; one-shot migration; 2 Faisal gates; 2026-06-26

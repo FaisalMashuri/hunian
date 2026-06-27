@@ -1,0 +1,3 @@
+- [Hunian MVP Context](project-hunian-mvp-context.md) — website-first housing decision tool, solo builder Faisal, cycle completion rate as PMF metric
+- [T-004 Tech Stack Decisions](project-hunian-t004-decisions.md) — GPT-4o mini for AI, Google Maps for geocoding, sticky vs fakeable decisions, slice estimates
+- [Slice 2 Feasibility](../TL/slice2-feasibility.md) — dependency map, effort estimates, 4 scope decisions (survey/JSONB/biaya/POI), 10 technical traps
