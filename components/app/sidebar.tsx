@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { NAV_ITEMS } from "./nav-icons";
 
@@ -17,13 +18,7 @@ export function Sidebar({
     <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col overflow-y-auto border-r border-[#E4E3DF] bg-white sm:flex">
       {/* Logo */}
       <div className="flex items-center gap-2.5 border-b border-[#E4E3DF] px-5 py-[18px]">
-        <span className="grid h-7 w-7 place-items-center rounded-lg bg-teal-700 text-white">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-            <path d="M3 10.5 12 3l9 7.5" />
-            <path d="M5 9.5V21h14V9.5" />
-            <path d="M9 21v-6h6v6" />
-          </svg>
-        </span>
+        <Image src="/icon.png" alt="Hunian" width={28} height={28} priority className="h-7 w-7 object-contain" />
         <span className="text-[17px] font-extrabold tracking-tight text-zinc-900">Hunian</span>
       </div>
 

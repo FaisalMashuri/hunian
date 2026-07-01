@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { auth } from "@/auth";
 import { FadeIn, Stagger, StaggerItem, HoverLift } from "@/components/motion/motion";
 
@@ -41,10 +42,14 @@ const STEPS = [
 function Logo({ className = "" }: { className?: string }) {
   return (
     <span className={`inline-flex items-center gap-2.5 ${className}`}>
-      <span className="flex h-9 w-9 items-end justify-center gap-[3px] rounded-[11px] bg-teal-700 pb-[9px]">
-        <span className="h-[11px] w-[6px] rounded-t-[3px] bg-white/80" />
-        <span className="h-[17px] w-[6px] rounded-t-[3px] bg-white" />
-      </span>
+      <Image
+        src="/icon.png"
+        alt="Hunian"
+        width={40}
+        height={40}
+        priority
+        className="h-9 w-9 object-contain"
+      />
       <span className="text-xl font-extrabold tracking-tight text-zinc-900">Hunian</span>
     </span>
   );
