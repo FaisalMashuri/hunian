@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { saveSurveyAction, type SurveyDataPatch, type SurveyInput } from "./actions";
+import { OwnerQuestions } from "./owner-questions";
 import { uploadPhotoAction, deletePhotoAction } from "../photo-actions";
 import { FURNISHED_STATUSES, type FurnishedStatus } from "@/lib/types/db";
 import { LocationAutocomplete } from "@/app/onboarding/location-autocomplete";
@@ -150,6 +151,9 @@ export function SurveyClient({ initial }: { initial: SurveyInitial }) {
       <div className="mx-auto max-w-[720px] px-4 py-7 sm:px-6">
         <h1 className="mb-1.5 text-[22px] font-extrabold tracking-tight text-zinc-900">Hasil Survey Lapangan</h1>
         <p className="mb-5 text-[13.5px] text-zinc-500">Isi dari kunjungan langsung — melengkapi data yang belum ada <strong>dan</strong> menilai kondisi. Skor dihitung ulang otomatis (menambah aspek Kondisi &amp; Owner).</p>
+
+        {/* AI ADVISOR — pertanyaan untuk pemilik (bantu sebelum/saat survei) */}
+        <OwnerQuestions candidateId={initial.id} title={initial.title} />
 
         {/* PART A — Lengkapi data */}
         <div className="mb-4 overflow-hidden rounded-2xl border border-[#E4E3DF] bg-white shadow-sm">

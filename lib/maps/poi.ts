@@ -8,6 +8,7 @@ import "server-only";
 
 export type PoiCategory =
   | "transport"
+  | "parking"
   | "grocery"
   | "health"
   | "education"
@@ -91,6 +92,8 @@ function buildQuery(lat: number, lng: number, radiusM: number): string {
     `nwr["railway"~"^(station|halt|tram_stop)$"](around:${a});`,
     `nwr["amenity"="bus_station"](around:${a});`,
     `nwr["aeroway"="aerodrome"](around:${a});`,
+    `nwr["amenity"="parking"](around:${a});`,
+    `nwr["amenity"="motorcycle_parking"](around:${a});`,
     `nwr["shop"~"^(convenience|supermarket|mall|department_store)$"](around:${a});`,
     `nwr["amenity"="marketplace"](around:${a});`,
     `nwr["amenity"~"^(hospital|clinic|pharmacy|doctors)$"](around:${a});`,
@@ -116,6 +119,10 @@ function classify(tags: OverpassTags): { category: PoiCategory; emoji: string; s
   if (tags.railway === "station" || tags.railway === "halt") return { category: "transport", emoji: "🚉", sub: "Stasiun" };
   if (tags.railway === "tram_stop") return { category: "transport", emoji: "🚊", sub: "Pemberhentian trem" };
   if (amenity === "bus_station") return { category: "transport", emoji: "🚏", sub: "Terminal bus" };
+
+  // Parkir / penitipan kendaraan
+  if (amenity === "motorcycle_parking") return { category: "parking", emoji: "🏍️", sub: "Parkir/penitipan motor" };
+  if (amenity === "parking") return { category: "parking", emoji: "🅿️", sub: "Parkir/penitipan mobil" };
 
   // Belanja (termasuk pasar & mall)
   if (shop === "convenience") return { category: "grocery", emoji: "🏪", sub: "Minimarket" };

@@ -1,11 +1,13 @@
 import "server-only";
 import { cache } from "react";
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { visibleOwnerIds, sharedOwnersFor } from "@/lib/authz/candidate";
 import { CandidateStatus } from "@/lib/types/db";
 import { budgetZone, type BudgetZone } from "@/lib/pricing";
 import { deriveVerdict, type VerdictInput } from "@/lib/scoring/verdict";
 import { dataCoverage } from "@/lib/scoring/score";
 import { relativeId } from "@/lib/format/relative";
+import { loadCoverPhotos } from "@/lib/photos";
 import type { Periode } from "@/lib/constants/periode";
 import { type CardData } from "./candidate-card";
 import { type InsightData } from "./dashboard-client";
@@ -42,25 +44,32 @@ export const loadDashboardData = cache(async function loadDashboardData(
   ideal: number | null,
   max: number | null,
 ): Promise<DashboardData> {
+  // Collaboration C-1: dashboard menampilkan kandidat sendiri + kandidat yang dibagikan partner.
+  const [ownerIds, sharedOwners] = await Promise.all([visibleOwnerIds(userId), sharedOwnersFor(userId)]);
+  const ownerNameById = new Map(sharedOwners.map((o) => [o.ownerId, o.ownerName ?? o.ownerEmail]));
+
   const { data: candidates } = await supabaseAdmin
     .from("candidates")
     .select(
-      "id, title, property_type, status, harga_efektif_bulanan, periode_asli, score_total, score_harga, score_lokasi, score_fasilitas, score_kondisi, score_owner, kamar_tidur, kamar_mandi, luas_bangunan_m2, furnished, carport, dapur, deposit, alamat, kontak_owner, created_at",
+      "id, user_id, title, property_type, status, harga_efektif_bulanan, periode_asli, score_total, score_harga, score_lokasi, score_fasilitas, score_kondisi, score_owner, kamar_tidur, kamar_mandi, luas_bangunan_m2, furnished, carport, dapur, deposit, alamat, kontak_owner, created_at",
     )
-    .eq("user_id", userId)
+    .in("user_id", ownerIds)
     .order("created_at", { ascending: false });
 
   const rows = candidates ?? [];
   const ids = rows.map((c) => c.id as string);
 
-  // Commute + flags independen setelah `ids` diketahui → fetch paralel (sebelumnya serial).
+  // Commute + flags + foto sampul independen setelah `ids` diketahui → fetch paralel.
   const distById: Record<string, number | null> = {};
   const flagById: Record<string, number> = {};
+  let coverByCand: Record<string, string> = {};
   if (ids.length > 0) {
-    const [{ data: commutes }, { data: flags }] = await Promise.all([
+    const [{ data: commutes }, { data: flags }, covers] = await Promise.all([
       supabaseAdmin.from("candidate_commute").select("candidate_id, distance_km").in("candidate_id", ids),
       supabaseAdmin.from("candidate_deal_breaker_flags").select("candidate_id").in("candidate_id", ids),
+      loadCoverPhotos(ids),
     ]);
+    coverByCand = covers;
     for (const c of commutes ?? []) {
       const k = c.candidate_id as string;
       if (distById[k] == null) distById[k] = (c.distance_km as number) ?? null;
@@ -73,21 +82,27 @@ export const loadDashboardData = cache(async function loadDashboardData(
 
   const now = new Date();
 
-  // Pool verdict (kandidat aktif) untuk cek dominasi.
+  // Pool verdict (kandidat aktif) untuk cek dominasi — DIKELOMPOKKAN per owner:
+  // skor kandidat partner dihitung terhadap pool partner, bukan dicampur dengan punya kita.
   const activeRows = rows.filter((c) => c.status !== "sudah_tersewa");
-  const verdictPool: VerdictInput[] = activeRows.map((c) => ({
-    id: c.id as string,
-    title: c.title as string,
-    score_total: (c.score_total as number) ?? null,
-    score_harga: (c.score_harga as number) ?? null,
-    score_lokasi: (c.score_lokasi as number) ?? null,
-    score_fasilitas: (c.score_fasilitas as number) ?? null,
-    distanceKm: distById[c.id as string] ?? null,
-    flagCount: flagById[c.id as string] ?? 0,
-  }));
+  const poolByOwner: Record<string, VerdictInput[]> = {};
+  for (const c of activeRows) {
+    const owner = c.user_id as string;
+    (poolByOwner[owner] ??= []).push({
+      id: c.id as string,
+      title: c.title as string,
+      score_total: (c.score_total as number) ?? null,
+      score_harga: (c.score_harga as number) ?? null,
+      score_lokasi: (c.score_lokasi as number) ?? null,
+      score_fasilitas: (c.score_fasilitas as number) ?? null,
+      distanceKm: distById[c.id as string] ?? null,
+      flagCount: flagById[c.id as string] ?? 0,
+    });
+  }
 
   const toCard = (c: Record<string, unknown>): CardData => {
     const id = c.id as string;
+    const ownerId = c.user_id as string;
     const perBulan = (c.harga_efektif_bulanan as number) ?? null;
     const distanceKm = distById[id] ?? null;
     const filled = COMPLETE_FIELDS.filter((f) => c[f] != null).length;
@@ -125,8 +140,10 @@ export const loadDashboardData = cache(async function loadDashboardData(
       coverageTotal: cov.total,
       needsData: score == null || distanceKm == null,
       alamat: (c.alamat as string) ?? null,
-      verdict: deriveVerdict(vi, verdictPool),
+      verdict: deriveVerdict(vi, poolByOwner[ownerId] ?? []),
       activity: "Ditambah " + relativeId((c.created_at as string) ?? null, now),
+      sharedBy: ownerId === userId ? null : ownerNameById.get(ownerId) ?? "partner",
+      photoUrl: coverByCand[id] ?? null,
     };
   };
 

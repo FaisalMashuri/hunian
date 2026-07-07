@@ -4,7 +4,8 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { updatePreferencesAction, type PrefsInput } from "./actions";
 import { signOutAction } from "@/components/app/actions";
-import { TRANSPORTS, PRIORITIES, DEAL_BREAKERS, toggle, computeWeights } from "@/app/onboarding/options";
+import { TRANSPORTS, DEAL_BREAKERS, toggle, PRIO_EMOJI, normalizeRanking } from "@/app/onboarding/options";
+import { PriorityRanking } from "@/app/onboarding/priority-ranking";
 import { LocationAutocomplete } from "@/app/onboarding/location-autocomplete";
 import type { TransportMode } from "@/lib/types/db";
 
@@ -25,7 +26,6 @@ const rp = (n: number | null) => (n == null ? "—" : "Rp " + new Intl.NumberFor
 const DB_EMOJI: Record<string, string> = {
   no_parkir_motor: "🅿️", km_di_luar: "🚿", no_memasak: "🍳", bayar_setahun_dimuka: "📅", no_dapur: "🏠", lantai_3_tanpa_lift: "🛗", no_pasutri: "💑",
 };
-const PRIO_EMOJI: Record<string, string> = { harga: "💰", lokasi: "📍", fasilitas: "🛋️", kondisi: "🛡️", owner: "👤" };
 // Opsi prioritas yang BELUM jadi dimensi skor tersendiri (tercakup di survei/kelak) — tampil disabled.
 const SOON_PRIOS = [
   { emoji: "🤫", label: "Ketenangan / tidak bising" },
@@ -38,11 +38,6 @@ const daysLeftOf = (d: string | null): number | null => {
   if (Number.isNaN(t.getTime())) return null;
   return Math.ceil((t.getTime() - Date.now()) / 86_400_000);
 };
-
-function Stars({ w }: { w: number }) {
-  const n = Math.min(5, Math.max(0, Math.round(w * 5)));
-  return <span className="tracking-tight"><span className="text-amber-500">{"★".repeat(n)}</span><span className="text-zinc-300">{"★".repeat(5 - n)}</span></span>;
-}
 
 const fieldInput = "w-full rounded-[9px] border-[1.5px] border-[#E4E3DF] bg-white px-3 py-2.5 text-[13.5px] text-zinc-900 outline-none transition-colors focus:border-teal-700 placeholder:text-zinc-400";
 const prefixWrap = "flex items-stretch overflow-hidden rounded-[9px] border-[1.5px] border-[#E4E3DF] bg-white transition-colors focus-within:border-teal-700";
@@ -64,13 +59,13 @@ export function SettingsContent({
   const [budgetMax, setBudgetMax] = useState(initial.budgetMax);
   const [tujuan, setTujuan] = useState(initial.tujuan);
   const [transportModes, setTransportModes] = useState<TransportMode[]>(initial.transportModes);
-  const [priorities, setPriorities] = useState<string[]>(initial.priorities);
+  const [priorities, setPriorities] = useState<string[]>(normalizeRanking(initial.priorities));
   const [dealBreakers, setDealBreakers] = useState<string[]>(initial.dealBreakers);
   const [customDBs, setCustomDBs] = useState<string[]>(initial.customDealBreakers);
   const [customInput, setCustomInput] = useState("");
   const [deadline, setDeadline] = useState<string | null>(initial.deadline);
 
-  const w = computeWeights(priorities);
+  const ranked = normalizeRanking(priorities);
   const dl = daysLeftOf(deadline);
 
   const toast = (m: string) => { setToastMsg(m); setTimeout(() => setToastMsg(null), 2800); };
@@ -161,34 +156,13 @@ export function SettingsContent({
 
           {/* PRIORITAS */}
           <SettingRow open={open === "prioritas"} onToggle={() => togglePanel("prioritas")} icon="⭐" iconBg="#FEF3C7" label="Prioritas Pencarian"
-            summary={<>{(["harga", "lokasi", "fasilitas"] as const).map((k, i) => (<span key={k} className="flex items-center gap-1 text-[12.5px]">{i > 0 && <Dot />}{PRIO_EMOJI[k]} <Stars w={k === "harga" ? w.harga : k === "lokasi" ? w.lokasi : w.fasilitas} /></span>))}<Impact cls="bg-teal-50 text-teal-700">⬟ Semua skor</Impact></>}
+            summary={<><span className="flex items-center gap-1 text-[14px]">{ranked.map((id, i) => (<span key={id} className="flex items-center gap-1">{i > 0 && <span className="text-zinc-300">›</span>}{PRIO_EMOJI[id]}</span>))}</span><Impact cls="bg-teal-50 text-teal-700">⬟ Semua skor</Impact></>}
             footer={<Footer note="Skor semua hunian aktif dihitung ulang" onCancel={() => setOpen(null)} onSave={() => save("prioritas")} pending={pending} saveLabel="Simpan Prioritas" />}>
-            <p className="mb-3.5 text-[13px] text-zinc-500">Pilih semua yang penting bagimu. Sistem generate bobot otomatis — tak perlu isi persen.</p>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-              {PRIORITIES.map((p) => {
-                const on = priorities.includes(p.id);
-                return (
-                  <button key={p.id} type="button" onClick={() => setPriorities((cur) => toggle(cur, p.id))} className={`flex items-center gap-2.5 rounded-[10px] border-[1.5px] px-3.5 py-2.5 text-left transition-colors ${on ? "border-teal-700 bg-teal-50" : "border-[#E4E3DF] bg-white hover:border-[#D1D0CC]"}`}>
-                    <span className={`grid h-[18px] w-[18px] place-items-center rounded-[5px] border-2 text-[11px] font-bold text-white ${on ? "border-teal-700 bg-teal-700" : "border-[#E4E3DF] bg-white"}`}>{on ? "✓" : ""}</span>
-                    <span className="text-[13px] font-semibold text-zinc-900">{PRIO_EMOJI[p.id]} {p.label}</span>
-                  </button>
-                );
-              })}
-              {SOON_PRIOS.map((p) => (
-                <div key={p.label} className="flex cursor-not-allowed items-center gap-2.5 rounded-[10px] border-[1.5px] border-[#E4E3DF] bg-[#FAFAF9] px-3.5 py-2.5 opacity-60">
-                  <span className="grid h-[18px] w-[18px] place-items-center rounded-[5px] border-2 border-[#E4E3DF] bg-white" />
-                  <span className="flex-1 text-[13px] font-semibold text-zinc-500">{p.emoji} {p.label}</span>
-                  <span className="rounded-full bg-amber-50 px-1.5 py-0.5 text-[9.5px] font-bold uppercase text-amber-700">Segera</span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-3 rounded-[10px] border border-[#E4E3DF] bg-white p-3.5">
-              <div className="mb-2 text-[11px] font-bold uppercase tracking-wider text-zinc-400">Preview Prioritasmu (5 aspek)</div>
-              {[{ k: "harga", e: "💰", l: "Harga", w: w.harga }, { k: "lokasi", e: "📍", l: "Lokasi", w: w.lokasi }, { k: "fasilitas", e: "🛋️", l: "Fasilitas", w: w.fasilitas }, { k: "kondisi", e: "🛡️", l: "Kondisi & lingkungan", w: w.kondisi }, { k: "owner", e: "👤", l: "Owner", w: w.owner }].map((d) => (
-                <div key={d.k} className="mb-1 flex items-center justify-between text-[13px] last:mb-0"><span className="text-zinc-500">{d.e} {d.l}</span><Stars w={d.w} /></div>
-              ))}
-              <p className="mt-2 text-[11.5px] text-zinc-400">Kondisi &amp; Owner mempengaruhi skor setelah hunian disurvey. Yang tidak dipilih dapat bobot sisa dibagi rata.</p>
-            </div>
+            <p className="mb-3.5 text-[13px] text-zinc-500">Susun urutan aspek dari yang <strong>paling menentukan</strong> (atas) ke paling tidak — pakai panah ↑↓ atau geser. Sistem yang atur bobotnya.</p>
+            <PriorityRanking value={priorities} onChange={setPriorities} />
+            {SOON_PRIOS.length > 0 && (
+              <p className="mt-3 text-[11.5px] text-zinc-400">Segera jadi aspek tersendiri: {SOON_PRIOS.map((p) => `${p.emoji} ${p.label}`).join(" · ")}.</p>
+            )}
           </SettingRow>
 
           {/* DEAL BREAKER */}
@@ -266,7 +240,7 @@ export function SettingsContent({
             </div>
           </div>
           <AccountRow icon="📦" iconBg="#EDE9FE" label="Ekspor Data" sub="Download semua hunian sebagai spreadsheet" right="Segera hadir ›" onClick={() => toast("Fitur ekspor data akan segera hadir")} />
-          <AccountRow icon="🔗" iconBg="#DBEAFE" label="Bagikan Daftar" sub="Ajak pasangan atau keluarga melihat shortlist-mu" right="Segera hadir ›" onClick={() => toast("Fitur berbagi akan segera hadir")} />
+          <AccountRow icon="👥" iconBg="#EDE9FE" label="Kolaborasi" sub="Ajak pasangan/keluarga melihat & analisis shortlist bareng" right="Kelola ›" onClick={() => router.push("/kolaborasi")} />
           <AccountRow icon="🔒" iconBg="#F4F3F0" label="Kebijakan Privasi" sub="Bagaimana data kamu digunakan" right="›" onClick={() => toast("Kebijakan privasi akan segera hadir")} />
           <AccountRow icon="🚪" iconBg="#FFF1F2" label="Keluar dari Akun" sub="Datamu tetap tersimpan dan bisa diakses saat masuk lagi" right="Keluar ›" danger onClick={() => setLogoutOpen(true)} />
         </div>

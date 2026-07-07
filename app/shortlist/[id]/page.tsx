@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { auth } from "@/auth";
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { resolveCandidateAccess } from "@/lib/authz/candidate";
 import { CandidateStatus, type PropertyType } from "@/lib/types/db";
 import { tsFields } from "@/app/input/type-specific";
 import type { Periode } from "@/lib/constants/periode";
@@ -22,6 +23,7 @@ import { DetailMenu } from "./detail-menu";
 import { NegotiationControl } from "./negotiation-control";
 import { TimelineNote } from "./timeline-note";
 import { PoiGate } from "./poi-section";
+import { CommentsSection } from "./comments-section";
 import { MapSkeleton, PhotoSkeleton, PoiSkeleton } from "./skeletons";
 
 const rp = (n: number | null) => (n == null ? "—" : "Rp " + new Intl.NumberFormat("id-ID").format(n));
@@ -118,11 +120,18 @@ export default async function CandidateDetailPage({
   const userId = session?.user?.id;
   if (!userId) redirect("/login");
 
+  // Collaboration C-1: akses = owner ATAU partner yang di-share (read-only). ownerId = pemilik data.
+  const access = await resolveCandidateAccess(userId, id);
+  if (!access) notFound();
+  const ownerId = access.ownerId;
+  const isOwner = access.isOwner;
+  const canEdit = access.role === "owner" || access.role === "editor"; // editor boleh ubah, viewer tidak
+
   const { data: c } = await supabaseAdmin
     .from("candidates")
     .select("*")
     .eq("id", id)
-    .eq("user_id", userId)
+    .eq("user_id", ownerId)
     .maybeSingle();
   if (!c) notFound();
 
@@ -132,7 +141,7 @@ export default async function CandidateDetailPage({
     supabaseAdmin
       .from("user_preferences")
       .select("budget_ideal, budget_max, dest_address, dest_lat, dest_lng, deadline_pindah, transport_modes")
-      .eq("user_id", userId)
+      .eq("user_id", ownerId)
       .maybeSingle(),
     supabaseAdmin
       .from("candidate_commute")
@@ -149,12 +158,12 @@ export default async function CandidateDetailPage({
       .from("candidate_events")
       .select("event_type, source, event_data, occurred_at")
       .eq("candidate_id", id)
-      .eq("user_id", userId)
+      .eq("user_id", ownerId)
       .order("occurred_at", { ascending: true }),
     supabaseAdmin
       .from("candidates")
       .select("id, title, status, score_total, score_harga, score_lokasi, score_fasilitas")
-      .eq("user_id", userId)
+      .eq("user_id", ownerId)
       .neq("status", "sudah_tersewa"),
   ]);
 
@@ -357,7 +366,7 @@ export default async function CandidateDetailPage({
               <span className="hidden sm:inline">WhatsApp</span>
             </a>
           )}
-          <DetailMenu id={id} />
+          {canEdit && <DetailMenu id={id} />}
         </div>
       </div>
 
@@ -367,7 +376,7 @@ export default async function CandidateDetailPage({
           <span className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
           {s.label}
         </span>
-        <a href="#status" className="rounded-lg border border-[#E4E3DF] px-2.5 py-1 text-xs text-zinc-500 transition-colors hover:bg-[#F4F3F0]">Ubah Status</a>
+        {canEdit && <a href="#status" className="rounded-lg border border-[#E4E3DF] px-2.5 py-1 text-xs text-zinc-500 transition-colors hover:bg-[#F4F3F0]">Ubah Status</a>}
         {addedDate && (
           <>
             <span className="h-3.5 w-px bg-[#E4E3DF]" />
@@ -398,6 +407,18 @@ export default async function CandidateDetailPage({
       </div>
 
       <div className="mx-auto max-w-[1200px] px-4 pb-28 pt-6 sm:px-6">
+        {/* BANNER READ-ONLY — kandidat milik partner (Collaboration C-1) */}
+        {!isOwner && (
+          <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-violet-200 bg-violet-50 px-4 py-2.5 text-[12.5px] text-violet-800">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+            {canEdit ? (
+              <span>Hunian ini dibagikan oleh partnermu sebagai <strong>editor</strong> — kamu bisa melihat, membandingkan, mengisi survei &amp; mengubah datanya. Hanya pemiliknya yang bisa menghapus.</span>
+            ) : (
+              <span>Hunian ini dibagikan oleh partnermu — kamu bisa <strong>melihat &amp; membandingkan</strong>, tapi hanya pemiliknya yang bisa mengubah datanya.</span>
+            )}
+          </div>
+        )}
+
         {/* HEADER PROPERTI */}
         <div className="rounded-2xl border border-[#E4E3DF] bg-white p-5 shadow-sm sm:p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -421,7 +442,7 @@ export default async function CandidateDetailPage({
                   </div>
                 </>
               )}
-              <NegotiationControl id={id} hargaAkhir={(c.harga_akhir_bulanan as number | null) ?? null} />
+              {canEdit && <NegotiationControl id={id} hargaAkhir={(c.harga_akhir_bulanan as number | null) ?? null} />}
             </div>
           </div>
 
@@ -443,7 +464,7 @@ export default async function CandidateDetailPage({
         {/* GALERI FOTO — di-stream (signed URL Storage tak memblok scaffold) */}
         <div className="mt-5">
           <Suspense fallback={<PhotoSkeleton />}>
-            <PhotoSection candidateId={id} />
+            <PhotoSection candidateId={id} canEdit={canEdit} />
           </Suspense>
         </div>
 
@@ -480,12 +501,12 @@ export default async function CandidateDetailPage({
               ))}
             </div>
 
-            {/* PENJELASAN AI */}
-            <ExplainPanel candidateId={id} />
+            {/* PENJELASAN AI — owner/editor (aksi memfilter user_id pemilik) */}
+            {canEdit && <ExplainPanel candidateId={id} />}
 
             {/* PETA — di-stream (geocode + Directions tak lagi memblok render) */}
             <Suspense fallback={<MapSkeleton />}>
-              <MapSection candidate={homeInput} prefs={prefs} commute={commute} userId={userId} />
+              <MapSection candidate={homeInput} prefs={prefs} commute={commute} userId={ownerId} />
             </Suspense>
           </div>
 
@@ -536,7 +557,7 @@ export default async function CandidateDetailPage({
               )}
               <div className="flex items-center justify-between gap-2 border-t border-[#E4E3DF] px-[18px] py-2.5">
                 <span className="text-[11px] text-zinc-400">{surveyed ? "5 aspek · termasuk hasil survei" : "Kunjungi tempatnya untuk aktifkan 2 penilaian tambahan"}</span>
-                <RescoreButton id={id} />
+                {canEdit && <RescoreButton id={id} />}
               </div>
             </div>
 
@@ -596,7 +617,7 @@ export default async function CandidateDetailPage({
 
         {/* AKSES & LINGKUNGAN SEKITAR — POI nyata dari OpenStreetMap (streaming, tak memblok render) */}
         <Suspense fallback={<PoiSkeleton />}>
-          <PoiGate candidate={homeInput} userId={userId} />
+          <PoiGate candidate={homeInput} userId={ownerId} />
         </Suspense>
 
         {/* HASIL SURVEY — Slice 2 (nyata bila sudah disurvey) */}
@@ -636,9 +657,9 @@ export default async function CandidateDetailPage({
           </div>
         ) : (
           <div className="rounded-2xl border border-dashed border-[#E4E3DF] bg-white p-6 text-center shadow-sm">
-            <p className="text-sm font-medium text-zinc-700">Kamu belum mengunjungi tempat ini</p>
-            <p className="mx-auto mt-1 max-w-sm text-xs text-zinc-400">Setelah kunjungan langsung, isi kesan dan kondisi yang kamu lihat. Hunian akan segera perbarui evaluasinya — termasuk nilai kondisi fisik dan penilaian owner.</p>
-            <Link href={`/shortlist/${id}/survey`} className="mt-4 inline-flex h-10 items-center justify-center rounded-xl bg-teal-700 px-5 text-sm font-semibold text-white transition-colors hover:bg-teal-800">Isi Hasil Kunjungan →</Link>
+            <p className="text-sm font-medium text-zinc-700">{canEdit ? "Belum ada hasil survei" : "Belum ada hasil survei"}</p>
+            <p className="mx-auto mt-1 max-w-sm text-xs text-zinc-400">{canEdit ? "Setelah kunjungan langsung, isi kesan dan kondisi yang kamu lihat. Hunian akan segera perbarui evaluasinya — termasuk nilai kondisi fisik dan penilaian owner." : "Belum ada yang mengisi hasil survei lapangan."}</p>
+            {canEdit && <Link href={`/shortlist/${id}/survey`} className="mt-4 inline-flex h-10 items-center justify-center rounded-xl bg-teal-700 px-5 text-sm font-semibold text-white transition-colors hover:bg-teal-800">Isi Hasil Kunjungan →</Link>}
           </div>
         )}
 
@@ -663,10 +684,18 @@ export default async function CandidateDetailPage({
               </div>
             </div>
           )}
-          <div className="mt-4 border-t border-[#E4E3DF] pt-3">
-            <TimelineNote id={id} />
-          </div>
+          {canEdit && (
+            <div className="mt-4 border-t border-[#E4E3DF] pt-3">
+              <TimelineNote id={id} />
+            </div>
+          )}
         </div>
+
+        {/* DISKUSI BERSAMA — Collaboration C-2 (owner & partner) */}
+        <SectionHeader title="Diskusi" note="bareng partner" />
+        <Suspense fallback={<div className="rounded-2xl border border-[#E4E3DF] bg-white p-5 shadow-sm"><div className="h-16 animate-pulse rounded-lg bg-[#F4F3F0]" /></div>}>
+          <CommentsSection candidateId={id} currentUserId={userId} />
+        </Suspense>
 
         {/* INFORMASI LENGKAP */}
         <SectionHeader title="Informasi Lengkap" />
@@ -735,7 +764,7 @@ export default async function CandidateDetailPage({
                   </div>
                 ))
               )}
-              <Link href={`/shortlist/${id}/edit`} className="mt-2.5 inline-block text-[13px] font-semibold text-teal-700 hover:underline">Lengkapi data →</Link>
+              {canEdit && <Link href={`/shortlist/${id}/edit`} className="mt-2.5 inline-block text-[13px] font-semibold text-teal-700 hover:underline">Lengkapi data →</Link>}
             </div>
           </div>
         </div>
@@ -756,22 +785,26 @@ export default async function CandidateDetailPage({
           </details>
         ) : null}
 
-        {/* STATUS & HAPUS (target anchor #status) */}
-        <div id="status" className="mt-4 scroll-mt-20">
-          <StatusChanger candidateId={id} status={status} />
-        </div>
+        {/* STATUS & HAPUS (target anchor #status) — editor boleh ubah status; hapus owner-only */}
+        {canEdit && (
+          <div id="status" className="mt-4 scroll-mt-20">
+            <StatusChanger candidateId={id} status={status} canDelete={isOwner} />
+          </div>
+        )}
       </div>
 
-      {/* FOOTER ACTION BAR */}
-      <DetailActionBar
-        id={id}
-        title={c.title as string}
-        score={scoreTotal}
-        verdictLabel={verdict.label}
-        daysLeft={daysLeft}
-        archived={status === "sudah_tersewa"}
-        surveyed={surveyed}
-      />
+      {/* FOOTER ACTION BAR — owner/editor (status/survei/bandingkan) */}
+      {canEdit && (
+        <DetailActionBar
+          id={id}
+          title={c.title as string}
+          score={scoreTotal}
+          verdictLabel={verdict.label}
+          daysLeft={daysLeft}
+          archived={status === "sudah_tersewa"}
+          surveyed={surveyed}
+        />
+      )}
 
       {/* Bottom nav hanya di layar kecil */}
       <BottomNav />

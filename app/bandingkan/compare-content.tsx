@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { visibleOwnerIds } from "@/lib/authz/candidate";
 import { CompareClient, type CompareCandidate } from "./compare-client";
 import type { Periode } from "@/lib/constants/periode";
 
@@ -41,12 +42,14 @@ export async function CompareContent({
   budget: { ideal: number | null; max: number | null };
   weights: { harga: number; lokasi: number; fasilitas: number };
 }) {
+  // Collaboration C-1: bisa membandingkan kandidat sendiri + kandidat yang dibagikan partner.
+  const ownerIds = await visibleOwnerIds(userId);
   const { data: cands } = await supabaseAdmin
     .from("candidates")
     .select(
       "id, title, harga_efektif_bulanan, harga_sewa_bulanan, deposit, score_total, score_harga, score_lokasi, score_fasilitas, score_kondisi, score_owner, kamar_tidur, kamar_mandi, luas_bangunan_m2, furnished, carport, dapur, alamat, kontak_owner, periode_asli, biaya_listrik",
     )
-    .eq("user_id", userId)
+    .in("user_id", ownerIds)
     .neq("status", "sudah_tersewa")
     .order("score_total", { ascending: false, nullsFirst: false });
 

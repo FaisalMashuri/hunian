@@ -29,10 +29,32 @@ export function IconSettings({ active }: { active: boolean }) {
   );
 }
 
+export function IconPartner({ active }: { active: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.3 : 2} strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  );
+}
+
+export function IconMap({ active }: { active: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.3 : 2} strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
+      <path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z" />
+      <path d="M15 5.764v15" />
+      <path d="M9 3.236v15" />
+    </svg>
+  );
+}
+
 export type NavItem = { href: string; label: string; Icon: (p: { active: boolean }) => React.ReactElement };
 
 export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", Icon: IconHome },
+  { href: "/peta", label: "Peta", Icon: IconMap },
   { href: "/bandingkan", label: "Bandingkan", Icon: IconCompare },
   { href: "/pengaturan", label: "Pengaturan", Icon: IconSettings },
 ];

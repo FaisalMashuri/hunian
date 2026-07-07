@@ -118,7 +118,7 @@ function Lightbox({ photos, index, onClose, onNav }: { photos: Photo[]; index: n
   );
 }
 
-function Thumb({ photo, onOpen, priority, sizes }: { photo: Photo; onOpen: () => void; priority?: boolean; sizes: string }) {
+function Thumb({ photo, onOpen, priority, sizes, canEdit }: { photo: Photo; onOpen: () => void; priority?: boolean; sizes: string; canEdit: boolean }) {
   return (
     <div className="group relative h-full w-full cursor-pointer overflow-hidden rounded-[10px] bg-zinc-100" onClick={onOpen}>
       {/* next/image: lazy + preload hero (priority) untuk LCP; `unoptimized` karena signed URL Supabase rotasi tiap jam. */}
@@ -134,20 +134,23 @@ function Thumb({ photo, onOpen, priority, sizes }: { photo: Photo; onOpen: () =>
       {photo.source === "survey" && (
         <span className="absolute bottom-1.5 left-1.5 z-[2] rounded-md bg-[#E8621A]/85 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-white backdrop-blur">Survey</span>
       )}
-      <DeleteBtn id={photo.id} />
+      {canEdit && <DeleteBtn id={photo.id} />}
     </div>
   );
 }
 
 // ── Galeri foto listing (grid hero + add)
-export function PhotoGallery({ candidateId, photos }: { candidateId: string; photos: Photo[] }) {
+export function PhotoGallery({ candidateId, photos, canEdit = true }: { candidateId: string; photos: Photo[]; canEdit?: boolean }) {
   const up = useUploader(candidateId, "listing");
   const [lb, setLb] = useState<number | null>(null);
   const nav = (d: number) => setLb((i) => (i == null ? i : (i + d + photos.length) % photos.length));
 
+  // Partner (read-only) tanpa foto → jangan tampilkan tile upload; cukup sembunyikan galeri.
+  if (photos.length === 0 && !canEdit) return null;
+
   return (
     <div>
-      <input ref={up.inputRef} type="file" accept="image/*" multiple className="hidden" onChange={up.onPick} />
+      {canEdit && <input ref={up.inputRef} type="file" accept="image/*" multiple className="hidden" onChange={up.onPick} />}
       {photos.length === 0 ? (
         <button type="button" onClick={up.trigger} disabled={up.pending} className="flex h-40 w-full flex-col items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-[#D1D0CC] bg-[#FAFAF9] text-zinc-400 transition-colors hover:border-teal-400 hover:text-teal-700 disabled:opacity-50">
           {up.pending ? <span className="h-6 w-6 animate-spin rounded-full border-2 border-teal-200 border-t-teal-700" /> : <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><rect width="18" height="18" x="3" y="3" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg>}
@@ -162,10 +165,11 @@ export function PhotoGallery({ candidateId, photos }: { candidateId: string; pho
                 onOpen={() => setLb(i)}
                 priority={i === 0}
                 sizes={i === 0 ? "(max-width: 640px) 100vw, 50vw" : "(max-width: 640px) 50vw, 25vw"}
+                canEdit={canEdit}
               />
             </div>
           ))}
-          <AddTile trigger={up.trigger} pending={up.pending} label="Tambah foto" />
+          {canEdit && <AddTile trigger={up.trigger} pending={up.pending} label="Tambah foto" />}
         </div>
       )}
       {up.err && <p className="mt-2 text-[12px] text-rose-600">{up.err}</p>}
