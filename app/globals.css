@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Google Website Translator — sembunyikan UI bawaan (banner atas & widget),
+   kita pakai tombol translate sendiri. Cegah body ter-geser turun. */
+.goog-te-banner-frame,
+.skiptranslate iframe.goog-te-banner-frame,
+#goog-gt-tt,
+.goog-te-balloon-frame {
+  display: none !important;
+}
+body {
+  top: 0 !important;
+}
+/* Jangan display:none pada #google_translate_element — bisa menggagalkan init.
+   Cukup disembunyikan visual via class .sr-only di komponennya. */
+/* Hilangkan highlight kuning pada teks yang diterjemahkan. */
+.goog-text-highlight {
+  background: none !important;
+  box-shadow: none !important;
+}
+
 /* Warna & font ikut UX (docs/UX-DESIGN.md C): primer teal-700, background stone-50, teks zinc. */
 @layer base {
   :root {
@@ -45,7 +64,9 @@
 @layer components {
   .nav-progress {
     position: fixed;
-    inset: 0 0 auto 0;
+    top: 2.25rem; /* di bawah top bar translate (h-9 = 36px) */
+    left: 0;
+    right: 0;
     z-index: 100;
     height: 3px;
     overflow: hidden;
@@ -154,5 +175,46 @@
   }
   .hn-mk__pin--pop {
     animation: none;
+  }
+}
+
+/* ── Landing page redesign: animasi & scroll-reveal ── */
+.glass-nav {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-hero-text { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-hero-desc { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards; opacity: 0; }
+.animate-hero-cta { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards; opacity: 0; }
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+.animate-float { animation: float 6s ease-in-out infinite; }
+@keyframes pulse-subtle {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.9; }
+}
+.animate-pulse-subtle { animation: pulse-subtle 3s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .animate-hero-text, .animate-hero-desc, .animate-hero-cta, .animate-float, .animate-pulse-subtle {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

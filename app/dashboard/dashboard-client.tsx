@@ -109,7 +109,7 @@ export function DashboardClient({
   return (
     <>
       {/* Topbar — sticky, mepet ujung ke ujung (flush ke sidebar & tepi kanan) */}
-      <div className="sticky top-0 z-20 flex h-14 items-center justify-between gap-3 border-b border-[#E4E3DF] bg-white/95 px-4 backdrop-blur sm:h-[54px] sm:px-6">
+      <div className="sticky top-9 z-20 flex h-14 items-center justify-between gap-3 border-b border-[#E4E3DF] bg-white/95 px-4 backdrop-blur sm:h-[54px] sm:px-6">
         <div className="min-w-0">
           <div className="truncate text-[15px] font-extrabold tracking-tight text-zinc-900 sm:text-[17px]">{title}</div>
           <div className="truncate text-[11.5px] text-zinc-500 sm:text-[12.5px]">{sub}</div>
