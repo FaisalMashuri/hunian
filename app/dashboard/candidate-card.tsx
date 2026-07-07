@@ -26,7 +26,19 @@ export type CardData = {
   alamat: string | null;
   verdict: { kind: VerdictKind; label: string; reason: string };
   activity: string;
+  sharedBy?: string | null; // nama owner bila kandidat ini dibagikan ke kita (bukan milik sendiri)
 };
+
+// Badge "dibagikan oleh X" untuk kandidat milik partner (Collaboration C-1).
+const SharedBadge = ({ by }: { by: string }) => (
+  <span
+    className="inline-flex shrink-0 items-center gap-[3px] rounded-full bg-violet-50 px-[7px] py-[1.5px] text-[10px] font-semibold text-violet-700"
+    title={`Dibagikan oleh ${by} — kamu hanya bisa melihat`}
+  >
+    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+    {by}
+  </span>
+);
 
 const STATUS_META: Record<CandidateStatus, { label: string; dot: string; cls: string }> = {
   tersedia: { label: "Tersedia", dot: "bg-emerald-500", cls: "bg-emerald-50 text-emerald-700" },
@@ -95,6 +107,7 @@ export function CandidateCard({
   const s = STATUS_META[c.status];
   const vm = VERDICT_META[c.verdict.kind];
   const archived = c.status === "sudah_tersewa";
+  const shared = !!c.sharedBy; // kandidat milik partner → read-only bagi kita
   const dbFlag = c.flagCount > 0 && !archived;
   const selectable = !archived && !!onToggle;
 
@@ -137,6 +150,7 @@ export function CandidateCard({
           <div className="truncate text-[14px] font-bold text-zinc-900">{c.title}</div>
           <div className="mt-0.5 flex items-center gap-1.5">
             <span className={`shrink-0 rounded-[4px] px-[5px] py-[1.5px] text-[9px] font-bold uppercase tracking-[0.05em] ${TYPE_CLS[c.property_type] ?? "bg-zinc-200 text-zinc-700"}`}>{c.property_type}</span>
+            {c.sharedBy && <SharedBadge by={c.sharedBy} />}
             {c.alamat && <span className="truncate text-[11.5px] text-zinc-500">{c.alamat}</span>}
           </div>
         </div>
@@ -178,6 +192,7 @@ export function CandidateCard({
           <h3 className="truncate text-[14px] font-bold leading-[1.25] text-zinc-900">{c.title}</h3>
           <div className="mt-[3px] flex items-center gap-[5px]">
             <span className={`shrink-0 rounded-[4px] px-[5px] py-[1.5px] text-[9px] font-bold uppercase tracking-[0.05em] ${TYPE_CLS[c.property_type] ?? "bg-zinc-200 text-zinc-700"}`}>{c.property_type}</span>
+            {c.sharedBy && <SharedBadge by={c.sharedBy} />}
             {c.alamat && <span className="truncate text-[11.5px] text-zinc-500">{c.alamat}</span>}
           </div>
         </div>
@@ -240,7 +255,7 @@ export function CandidateCard({
           <span className={`h-[5px] w-[5px] rounded-full ${s.dot}`} />{s.label}
         </span>
         <div className="ml-auto flex gap-[4px]" data-stop>
-          {archived ? (
+          {shared ? null : archived ? (
             <button type="button" onClick={(e) => { e.stopPropagation(); archive(); }} disabled={pending} className="rounded-[6px] border border-[#E4E3DF] px-[10px] py-[4px] text-[11.5px] font-medium text-zinc-600 transition-colors hover:bg-[#F4F3F0] disabled:opacity-50">{pending ? "…" : "Pulihkan"}</button>
           ) : c.needsData ? (
             <button type="button" onClick={(e) => { e.stopPropagation(); router.push(`/shortlist/${c.id}/edit`); }} className="rounded-[6px] border border-[#E4E3DF] px-[10px] py-[4px] text-[11.5px] font-medium text-zinc-600 transition-colors hover:bg-[#F4F3F0]">Lengkapi</button>

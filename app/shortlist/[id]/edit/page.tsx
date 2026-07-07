@@ -1,6 +1,7 @@
 import { redirect, notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { resolveCandidateAccess } from "@/lib/authz/candidate";
 import { EditCandidate } from "./edit-client";
 import type { ExtractedDraft } from "@/lib/extraction/types";
 import type { FurnishedStatus, PropertyType } from "@/lib/types/db";
@@ -18,13 +19,18 @@ export default async function EditCandidatePage({
   const userId = session?.user?.id;
   if (!userId) redirect("/login");
 
+  // Collaboration: owner atau editor boleh mengedit. Data dibaca dari milik owner.
+  const access = await resolveCandidateAccess(userId, id);
+  if (!access || (access.role !== "owner" && access.role !== "editor")) notFound();
+  const ownerId = access.ownerId;
+
   const { data: c } = await supabaseAdmin
     .from("candidates")
     .select(
       "title, harga_sewa_bulanan, periode_asli, deposit, kamar_tidur, kamar_mandi, luas_bangunan_m2, furnished, carport, dapur, alamat, kontak_owner, deskripsi, property_type, type_specific_data",
     )
     .eq("id", id)
-    .eq("user_id", userId)
+    .eq("user_id", ownerId)
     .maybeSingle();
   if (!c) notFound();
 

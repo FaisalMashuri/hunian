@@ -1,6 +1,7 @@
 import { redirect, notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { resolveCandidateAccess } from "@/lib/authz/candidate";
 import { SurveyClient, type SurveyInitial } from "./survey-client";
 import { loadCandidatePhotos } from "@/lib/photos";
 import type { FurnishedStatus } from "@/lib/types/db";
@@ -11,13 +12,18 @@ export default async function SurveyPage({ params }: { params: Promise<{ id: str
   const userId = session?.user?.id;
   if (!userId) redirect("/login");
 
+  // Collaboration: owner atau editor boleh mengisi survei. Data dibaca dari milik owner.
+  const access = await resolveCandidateAccess(userId, id);
+  if (!access || (access.role !== "owner" && access.role !== "editor")) notFound();
+  const ownerId = access.ownerId;
+
   const { data: c } = await supabaseAdmin
     .from("candidates")
     .select(
       "title, kamar_tidur, kamar_mandi, furnished, carport, dapur, luas_bangunan_m2, deposit, alamat, biaya_ipl, kontak_owner",
     )
     .eq("id", id)
-    .eq("user_id", userId)
+    .eq("user_id", ownerId)
     .maybeSingle();
   if (!c) notFound();
 
@@ -28,7 +34,7 @@ export default async function SurveyPage({ params }: { params: Promise<{ id: str
     .from("candidates")
     .select("biaya_listrik_nominal, biaya_air_nominal")
     .eq("id", id)
-    .eq("user_id", userId)
+    .eq("user_id", ownerId)
     .maybeSingle();
   if (bn) {
     listrikNominal = (bn.biaya_listrik_nominal as number | null) ?? null;

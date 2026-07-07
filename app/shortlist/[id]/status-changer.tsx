@@ -14,9 +14,11 @@ const LABELS: Record<CandidateStatus, string> = {
 export function StatusChanger({
   candidateId,
   status,
+  canDelete = true,
 }: {
   candidateId: string;
   status: CandidateStatus;
+  canDelete?: boolean;
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -52,6 +54,7 @@ export function StatusChanger({
         ))}
       </div>
 
+      {canDelete && (
       <div className="mt-4 border-t border-zinc-100 pt-4">
         {confirming ? (
           <div className="flex items-center gap-2">
@@ -79,6 +82,7 @@ export function StatusChanger({
           </button>
         )}
       </div>
+      )}
     </div>
   );
 }

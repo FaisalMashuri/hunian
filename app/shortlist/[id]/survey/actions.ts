@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { assertCandidateAccess } from "@/lib/authz/candidate";
 import { rescoreCandidate } from "@/lib/scoring/rescore";
 import { scoreKondisiFromSurvey, scoreOwnerFromSurvey, type SurveyRatings } from "@/lib/scoring/score";
 import type { FurnishedStatus } from "@/lib/types/db";
@@ -50,14 +51,10 @@ export async function saveSurveyAction(candidateId: string, input: SurveyInput):
   const userId = session?.user?.id;
   if (!userId) return { ok: false, error: "Sesi berakhir. Masuk lagi." };
 
-  // Verifikasi kepemilikan (RLS di-bypass service role → filter user_id WAJIB).
-  const { data: owned } = await supabaseAdmin
-    .from("candidates")
-    .select("id")
-    .eq("id", candidateId)
-    .eq("user_id", userId)
-    .maybeSingle();
-  if (!owned) return { ok: false, error: "Hunian tidak ditemukan." };
+  // Collaboration: editor (atau owner) boleh isi survei. Operasi memakai ownerId (data pemilik).
+  const access = await assertCandidateAccess(userId, candidateId, "editor").catch(() => null);
+  if (!access) return { ok: false, error: "Kamu tidak punya akses untuk mengisi survei hunian ini." };
+  const ownerId = access.ownerId;
 
   // 1) Lengkapi data objektif (hanya field yang user isi).
   const patch: Record<string, unknown> = {};
@@ -74,7 +71,7 @@ export async function saveSurveyAction(candidateId: string, input: SurveyInput):
     .from("candidates")
     .update({ ...patch, score_kondisi: sKondisi, score_owner: sOwner, status: "sudah_disurvey" })
     .eq("id", candidateId)
-    .eq("user_id", userId);
+    .eq("user_id", ownerId);
   if (updErr) return { ok: false, error: `Gagal menyimpan: ${updErr.message}` };
 
   // 4) Upsert hasil survei (1 baris per kandidat).
@@ -103,12 +100,12 @@ export async function saveSurveyAction(candidateId: string, input: SurveyInput):
 
   // 5) Catat event (timeline S2-3 mengonsumsi ini nanti).
   const events: Record<string, unknown>[] = [
-    { candidate_id: candidateId, user_id: userId, event_type: "survey_completed", source: "manual", event_data: { ratings: input.ratings } },
+    { candidate_id: candidateId, user_id: ownerId, event_type: "survey_completed", source: "manual", event_data: { ratings: input.ratings } },
   ];
-  if (dataChanged) events.push({ candidate_id: candidateId, user_id: userId, event_type: "data_updated", source: "manual", event_data: { fields: Object.keys(patch) } });
+  if (dataChanged) events.push({ candidate_id: candidateId, user_id: ownerId, event_type: "data_updated", source: "manual", event_data: { fields: Object.keys(patch) } });
   await supabaseAdmin.from("candidate_events").insert(events);
 
   // 6) Re-score kandidat ini → total 5D + scoring_version v2 (jarak di-refetch bila alamat berubah).
-  const r = await rescoreCandidate(userId, candidateId, { recomputeDistance: alamatChanged });
+  const r = await rescoreCandidate(ownerId, candidateId, { recomputeDistance: alamatChanged });
   return { ok: true, locationWarning: r.locationWarning };
 }

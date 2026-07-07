@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { assertCandidateAccess, type AccessRole } from "@/lib/authz/candidate";
 import { explainCandidate } from "@/lib/explain/explain";
 import { rescoreCandidate } from "@/lib/scoring/rescore";
 import { insertCandidateEvent } from "@/lib/events";
@@ -9,12 +10,25 @@ import { CANDIDATE_STATUSES, type CandidateStatus } from "@/lib/types/db";
 import { listUnknowns } from "@/lib/extraction/unknowns";
 import type { ExtractedDraft } from "@/lib/extraction/types";
 
-export type ExplainResult = { ok: true; text: string } | { ok: false; error: string };
+// Collaboration: resolusi akses terpusat. Mengembalikan userId (aktor) + ownerId (pemilik data).
+// Semua operasi DB memakai ownerId (kandidat, prefs, skor milik owner). requiredRole default "editor".
+type Ctx = { ok: false; error: string } | { ok: true; userId: string; ownerId: string };
 
-export async function explainAction(candidateId: string): Promise<ExplainResult> {
+async function ctx(candidateId: string, requiredRole: AccessRole = "editor"): Promise<Ctx> {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId) return { ok: false, error: "Sesi berakhir." };
+  const access = await assertCandidateAccess(userId, candidateId, requiredRole).catch(() => null);
+  if (!access) return { ok: false, error: "Kamu tidak punya akses untuk mengubah hunian ini." };
+  return { ok: true, userId, ownerId: access.ownerId };
+}
+
+export type ExplainResult = { ok: true; text: string } | { ok: false; error: string };
+
+export async function explainAction(candidateId: string): Promise<ExplainResult> {
+  const c0 = await ctx(candidateId, "viewer"); // baca → viewer cukup (owner/editor/viewer)
+  if (!c0.ok) return { ok: false, error: c0.error };
+  const { ownerId } = c0;
 
   const { data: c } = await supabaseAdmin
     .from("candidates")
@@ -22,14 +36,14 @@ export async function explainAction(candidateId: string): Promise<ExplainResult>
       "title, score_total, score_harga, score_lokasi, score_fasilitas, harga_efektif_bulanan, deposit, kamar_tidur, kamar_mandi, luas_bangunan_m2, furnished, carport, dapur",
     )
     .eq("id", candidateId)
-    .eq("user_id", userId)
+    .eq("user_id", ownerId)
     .maybeSingle();
   if (!c) return { ok: false, error: "Hunian tidak ditemukan." };
 
   const { data: prefs } = await supabaseAdmin
     .from("user_preferences")
     .select("budget_ideal, budget_max")
-    .eq("user_id", userId)
+    .eq("user_id", ownerId)
     .maybeSingle();
   const { data: commute } = await supabaseAdmin
     .from("candidate_commute")
@@ -81,50 +95,42 @@ export async function updateStatusAction(
   candidateId: string,
   status: CandidateStatus,
 ): Promise<ActionResult> {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) return { ok: false, error: "Sesi berakhir." };
   if (!CANDIDATE_STATUSES.includes(status)) return { ok: false, error: "Status tidak valid." };
+  const c0 = await ctx(candidateId);
+  if (!c0.ok) return { ok: false, error: c0.error };
+  const { ownerId } = c0;
 
   const { error } = await supabaseAdmin
     .from("candidates")
     .update({ status })
     .eq("id", candidateId)
-    .eq("user_id", userId);
+    .eq("user_id", ownerId);
   if (error) return { ok: false, error: error.message };
-  await insertCandidateEvent(userId, candidateId, "status_changed", { to: status }, "manual");
+  await insertCandidateEvent(ownerId, candidateId, "status_changed", { to: status }, "manual");
   return { ok: true };
 }
 
 // S2-3: catatan manual di timeline.
 export async function recordNoteAction(candidateId: string, text: string): Promise<ActionResult> {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) return { ok: false, error: "Sesi berakhir." };
   if (!text.trim()) return { ok: false, error: "Catatan kosong." };
+  const c0 = await ctx(candidateId);
+  if (!c0.ok) return { ok: false, error: c0.error };
+  const { ownerId } = c0;
 
-  const { data: owned } = await supabaseAdmin
-    .from("candidates")
-    .select("id")
-    .eq("id", candidateId)
-    .eq("user_id", userId)
-    .maybeSingle();
-  if (!owned) return { ok: false, error: "Hunian tidak ditemukan." };
-
-  await insertCandidateEvent(userId, candidateId, "user_note", { text: text.trim() }, "manual");
+  await insertCandidateEvent(ownerId, candidateId, "user_note", { text: text.trim() }, "manual");
   return { ok: true };
 }
 
 export async function deleteCandidateAction(candidateId: string): Promise<ActionResult> {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) return { ok: false, error: "Sesi berakhir." };
+  const c0 = await ctx(candidateId, "owner"); // hapus = destruktif → owner-only
+  if (!c0.ok) return { ok: false, error: c0.error };
+  const { ownerId } = c0;
 
   const { error } = await supabaseAdmin
     .from("candidates")
     .delete()
     .eq("id", candidateId)
-    .eq("user_id", userId);
+    .eq("user_id", ownerId);
   if (error) return { ok: false, error: error.message };
   return { ok: true };
 }
@@ -135,19 +141,19 @@ export async function updateCandidateAction(
   draft: ExtractedDraft,
   opts?: { typeData?: Record<string, unknown> },
 ): Promise<ActionResult> {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) return { ok: false, error: "Sesi berakhir." };
   if (!draft.title?.trim()) return { ok: false, error: "Judul wajib diisi." };
   if (!draft.harga_sewa_bulanan || draft.harga_sewa_bulanan <= 0) {
     return { ok: false, error: "Harga sewa wajib diisi (lebih dari 0)." };
   }
+  const c0 = await ctx(candidateId);
+  if (!c0.ok) return { ok: false, error: c0.error };
+  const { ownerId } = c0;
 
   const { data: cur } = await supabaseAdmin
     .from("candidates")
     .select("alamat")
     .eq("id", candidateId)
-    .eq("user_id", userId)
+    .eq("user_id", ownerId)
     .maybeSingle();
   if (!cur) return { ok: false, error: "Hunian tidak ditemukan." };
   const alamatChanged = (cur.alamat ?? null) !== (draft.alamat ?? null);
@@ -171,11 +177,11 @@ export async function updateCandidateAction(
       ...(opts?.typeData ? { type_specific_data: opts.typeData } : {}),
     })
     .eq("id", candidateId)
-    .eq("user_id", userId);
+    .eq("user_id", ownerId);
   if (error) return { ok: false, error: `Gagal menyimpan: ${error.message}` };
 
-  await insertCandidateEvent(userId, candidateId, "data_updated", { via: "edit" }, "manual");
-  const r = await rescoreCandidate(userId, candidateId, { recomputeDistance: alamatChanged });
+  await insertCandidateEvent(ownerId, candidateId, "data_updated", { via: "edit" }, "manual");
+  const r = await rescoreCandidate(ownerId, candidateId, { recomputeDistance: alamatChanged });
   return { ok: true, locationWarning: r.locationWarning };
 }
 
@@ -185,16 +191,16 @@ export async function recordNegotiationAction(
   candidateId: string,
   hargaAkhirBulanan: number | null,
 ): Promise<ActionResult> {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) return { ok: false, error: "Sesi berakhir." };
   if (hargaAkhirBulanan != null && hargaAkhirBulanan <= 0) return { ok: false, error: "Harga akhir tidak valid." };
+  const c0 = await ctx(candidateId);
+  if (!c0.ok) return { ok: false, error: c0.error };
+  const { ownerId } = c0;
 
   const { data: cur } = await supabaseAdmin
     .from("candidates")
     .select("harga_sewa_bulanan, harga_akhir_bulanan")
     .eq("id", candidateId)
-    .eq("user_id", userId)
+    .eq("user_id", ownerId)
     .maybeSingle();
   if (!cur) return { ok: false, error: "Hunian tidak ditemukan." };
 
@@ -202,26 +208,25 @@ export async function recordNegotiationAction(
     .from("candidates")
     .update({ harga_akhir_bulanan: hargaAkhirBulanan })
     .eq("id", candidateId)
-    .eq("user_id", userId);
+    .eq("user_id", ownerId);
   if (error) return { ok: false, error: `Gagal menyimpan: ${error.message}` };
 
   await supabaseAdmin.from("candidate_events").insert({
     candidate_id: candidateId,
-    user_id: userId,
+    user_id: ownerId,
     event_type: "price_changed",
     source: "manual",
     event_data: { from: cur.harga_sewa_bulanan, to: hargaAkhirBulanan },
   });
 
-  const r = await rescoreCandidate(userId, candidateId);
+  const r = await rescoreCandidate(ownerId, candidateId);
   return { ok: true, locationWarning: r.locationWarning };
 }
 
 // Hitung ulang skor 1 kandidat (mis. kandidat lama tanpa jarak) — refetch jarak.
 export async function rescoreCandidateAction(candidateId: string): Promise<ActionResult> {
-  const session = await auth();
-  const userId = session?.user?.id;
-  if (!userId) return { ok: false, error: "Sesi berakhir." };
-  const r = await rescoreCandidate(userId, candidateId, { recomputeDistance: true });
+  const c0 = await ctx(candidateId);
+  if (!c0.ok) return { ok: false, error: c0.error };
+  const r = await rescoreCandidate(c0.ownerId, candidateId, { recomputeDistance: true });
   return { ok: true, locationWarning: r.locationWarning };
 }
