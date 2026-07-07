@@ -41,6 +41,9 @@ export async function updatePreferencesAction(input: PrefsInput): Promise<PrefsR
       budget_ideal: input.budgetIdeal,
       budget_max: input.budgetMax,
       dest_address: newDest,
+      // Tujuan berubah → koordinat lama tak valid. Kosongkan agar map-section geocode ulang ke alamat baru
+      // (kalau tidak dikosongkan, peta & rute tetap memakai koordinat kantor LAMA).
+      ...(destChanged ? { dest_lat: null, dest_lng: null } : {}),
       transport_modes: input.transportModes,
       priority_selection: input.priorities,
       weight_harga: w.harga,
@@ -67,6 +70,17 @@ export async function updatePreferencesAction(input: PrefsInput): Promise<PrefsR
   ];
   if (dbRows.length > 0) {
     await supabaseAdmin.from("user_deal_breakers").insert(dbRows);
+  }
+
+  // Tujuan berubah → rute & durasi tempuh tersimpan (candidate_commute.route_summary) mengarah ke
+  // kantor LAMA. Kosongkan untuk SEMUA kandidat user agar di-generate ulang ke kantor baru saat
+  // peta detail/POI atau /peta dibuka. (Jarak & skor dihitung ulang oleh rescore di bawah.)
+  if (destChanged) {
+    const { data: cs } = await supabaseAdmin.from("candidates").select("id").eq("user_id", userId);
+    const cids = (cs ?? []).map((c) => c.id as string);
+    if (cids.length > 0) {
+      await supabaseAdmin.from("candidate_commute").update({ route_summary: null, duration_min: null }).in("candidate_id", cids);
+    }
   }
 
   // Auto re-score semua kandidat (jarak hanya dipanggil ulang bila tujuan berubah).

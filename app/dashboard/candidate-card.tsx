@@ -1,6 +1,7 @@
 "use client";
 
 import { useTransition } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { CandidateStatus } from "@/lib/types/db";
 import type { Periode } from "@/lib/constants/periode";
@@ -27,6 +28,7 @@ export type CardData = {
   verdict: { kind: VerdictKind; label: string; reason: string };
   activity: string;
   sharedBy?: string | null; // nama owner bila kandidat ini dibagikan ke kita (bukan milik sendiri)
+  photoUrl?: string | null; // foto sampul (signed URL) — null bila belum ada foto
 };
 
 // Badge "dibagikan oleh X" untuk kandidat milik partner (Collaboration C-1).
@@ -38,6 +40,19 @@ const SharedBadge = ({ by }: { by: string }) => (
     <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
     {by}
   </span>
+);
+
+// Thumbnail foto sampul untuk list view (foto atau placeholder ikon).
+const CardThumb = ({ url, title, size }: { url: string | null; title: string; size: number }) => (
+  <div className="relative shrink-0 overflow-hidden rounded-lg bg-[#eceae5]" style={{ width: size, height: size }}>
+    {url ? (
+      <Image src={url} alt={title} fill unoptimized sizes={`${size}px`} className="object-cover" />
+    ) : (
+      <span className="grid h-full w-full place-items-center text-zinc-300">
+        <svg width={Math.round(size * 0.45)} height={Math.round(size * 0.45)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><rect width="18" height="18" x="3" y="3" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg>
+      </span>
+    )}
+  </div>
 );
 
 const STATUS_META: Record<CandidateStatus, { label: string; dot: string; cls: string }> = {
@@ -145,6 +160,7 @@ export function CandidateCard({
         className={`flex cursor-pointer items-center gap-3 rounded-[10px] border bg-white px-4 py-3 shadow-sm transition-all hover:shadow-md ${selected ? "border-teal-600 ring-2 ring-teal-100" : dbFlag ? "border-l-[3px] border-l-amber-500" : "border-[#E4E3DF]"} ${archived ? "opacity-60" : ""}`}
       >
         {selectable && <div data-stop>{CheckBtn}</div>}
+        <CardThumb url={c.photoUrl ?? null} title={c.title} size={40} />
         <span className={`h-[7px] w-[7px] shrink-0 rounded-full ${s.dot}`} />
         <div className="min-w-0 flex-[2]">
           <div className="truncate text-[14px] font-bold text-zinc-900">{c.title}</div>
@@ -184,6 +200,17 @@ export function CandidateCard({
       className={`relative flex h-full cursor-pointer flex-col overflow-hidden rounded-[14px] border bg-white text-left shadow-sm transition-all hover:-translate-y-px hover:shadow-md ${selected ? "border-teal-600 ring-2 ring-teal-100" : dbFlag ? "border-l-[3px] border-l-amber-500" : "border-[#E4E3DF]"} ${archived ? "opacity-60" : ""}`}
     >
       {selectable && <div className="absolute right-[10px] top-[10px] z-10" data-stop>{CheckBtn}</div>}
+
+      {/* Cover foto — foto bila ada, placeholder bila belum diupload */}
+      <div className="relative h-28 w-full overflow-hidden bg-gradient-to-br from-[#eceae5] to-[#e3e1db]">
+        {c.photoUrl ? (
+          <Image src={c.photoUrl} alt={c.title} fill unoptimized sizes="(max-width: 640px) 100vw, 320px" className="object-cover" />
+        ) : (
+          <span className="grid h-full w-full place-items-center text-zinc-300">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden><rect width="18" height="18" x="3" y="3" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg>
+          </span>
+        )}
+      </div>
 
       {/* Header */}
       <div className="flex items-start gap-[7px] px-[13px] pb-[9px] pt-[13px]">

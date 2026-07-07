@@ -15,6 +15,7 @@ const SUMMARY_CATEGORIES = ["transport", "grocery", "health"] as const;
 // (Muat pertama tetap pakai emoji/sub granular dari Overpass; nama POI selalu tersimpan utuh.)
 const CAT_DEFAULT: Record<PoiCategory, { emoji: string; sub: string }> = {
   transport: { emoji: "🚌", sub: "Transportasi" },
+  parking: { emoji: "🅿️", sub: "Parkir/penitipan" },
   grocery: { emoji: "🛒", sub: "Belanja" },
   health: { emoji: "🏥", sub: "Kesehatan" },
   education: { emoji: "🏫", sub: "Pendidikan" },

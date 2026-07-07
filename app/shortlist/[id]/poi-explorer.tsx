@@ -13,6 +13,7 @@ const PoiMap = dynamic(() => import("./poi-map"), {
 // Urutan + label chip filter. Hanya kategori yang ada isinya yang ditampilkan.
 const CAT_META: Record<PoiCategory, { label: string; emoji: string }> = {
   transport: { label: "Transportasi", emoji: "🚌" },
+  parking: { label: "Parkir", emoji: "🅿️" },
   grocery: { label: "Belanja", emoji: "🛒" },
   health: { label: "Kesehatan", emoji: "🏥" },
   education: { label: "Pendidikan", emoji: "🏫" },
@@ -20,7 +21,7 @@ const CAT_META: Record<PoiCategory, { label: string; emoji: string }> = {
   dining: { label: "Kuliner", emoji: "🍜" },
   highway: { label: "Tol", emoji: "🛣️" },
 };
-const CAT_ORDER: PoiCategory[] = ["transport", "grocery", "health", "education", "worship", "dining", "highway"];
+const CAT_ORDER: PoiCategory[] = ["transport", "parking", "grocery", "health", "education", "worship", "dining", "highway"];
 
 const km = (v: number) => v.toLocaleString("id-ID", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 

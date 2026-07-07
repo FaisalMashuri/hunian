@@ -7,6 +7,7 @@ import { budgetZone, type BudgetZone } from "@/lib/pricing";
 import { deriveVerdict, type VerdictInput } from "@/lib/scoring/verdict";
 import { dataCoverage } from "@/lib/scoring/score";
 import { relativeId } from "@/lib/format/relative";
+import { loadCoverPhotos } from "@/lib/photos";
 import type { Periode } from "@/lib/constants/periode";
 import { type CardData } from "./candidate-card";
 import { type InsightData } from "./dashboard-client";
@@ -58,14 +59,17 @@ export const loadDashboardData = cache(async function loadDashboardData(
   const rows = candidates ?? [];
   const ids = rows.map((c) => c.id as string);
 
-  // Commute + flags independen setelah `ids` diketahui → fetch paralel (sebelumnya serial).
+  // Commute + flags + foto sampul independen setelah `ids` diketahui → fetch paralel.
   const distById: Record<string, number | null> = {};
   const flagById: Record<string, number> = {};
+  let coverByCand: Record<string, string> = {};
   if (ids.length > 0) {
-    const [{ data: commutes }, { data: flags }] = await Promise.all([
+    const [{ data: commutes }, { data: flags }, covers] = await Promise.all([
       supabaseAdmin.from("candidate_commute").select("candidate_id, distance_km").in("candidate_id", ids),
       supabaseAdmin.from("candidate_deal_breaker_flags").select("candidate_id").in("candidate_id", ids),
+      loadCoverPhotos(ids),
     ]);
+    coverByCand = covers;
     for (const c of commutes ?? []) {
       const k = c.candidate_id as string;
       if (distById[k] == null) distById[k] = (c.distance_km as number) ?? null;
@@ -139,6 +143,7 @@ export const loadDashboardData = cache(async function loadDashboardData(
       verdict: deriveVerdict(vi, poolByOwner[ownerId] ?? []),
       activity: "Ditambah " + relativeId((c.created_at as string) ?? null, now),
       sharedBy: ownerId === userId ? null : ownerNameById.get(ownerId) ?? "partner",
+      photoUrl: coverByCand[id] ?? null,
     };
   };
 

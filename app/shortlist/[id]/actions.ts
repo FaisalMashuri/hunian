@@ -8,7 +8,20 @@ import { rescoreCandidate } from "@/lib/scoring/rescore";
 import { insertCandidateEvent } from "@/lib/events";
 import { CANDIDATE_STATUSES, type CandidateStatus } from "@/lib/types/db";
 import { listUnknowns } from "@/lib/extraction/unknowns";
+import { budgetZone, BUDGET_ZONE_META } from "@/lib/pricing";
+import { loadCandidatePois } from "@/lib/maps/poi-cache";
 import type { ExtractedDraft } from "@/lib/extraction/types";
+
+// Label deal breaker preset (untuk konteks penjelasan AI).
+const DB_LABELS_EXPLAIN: Record<string, string> = {
+  no_parkir_motor: "Tidak ada parkir motor",
+  km_di_luar: "Kamar mandi di luar",
+  no_memasak: "Tidak boleh masak",
+  bayar_setahun_dimuka: "Bayar tahunan di muka",
+  no_dapur: "Tidak ada dapur",
+  lantai_3_tanpa_lift: "Lantai >3 tanpa lift",
+  no_pasutri: "Tidak boleh pasutri",
+};
 
 // Collaboration: resolusi akses terpusat. Mengembalikan userId (aktor) + ownerId (pemilik data).
 // Semua operasi DB memakai ownerId (kandidat, prefs, skor milik owner). requiredRole default "editor".
@@ -33,24 +46,76 @@ export async function explainAction(candidateId: string): Promise<ExplainResult>
   const { data: c } = await supabaseAdmin
     .from("candidates")
     .select(
-      "title, score_total, score_harga, score_lokasi, score_fasilitas, harga_efektif_bulanan, deposit, kamar_tidur, kamar_mandi, luas_bangunan_m2, furnished, carport, dapur",
+      "title, property_type, alamat, location_lat, location_lng, harga_sewa_bulanan, harga_efektif_bulanan, deposit, periode_asli, biaya_listrik_nominal, biaya_air_nominal, biaya_ipl, score_total, score_harga, score_lokasi, score_fasilitas, score_kondisi, score_owner, kamar_tidur, kamar_mandi, luas_bangunan_m2, furnished, carport, dapur, type_specific_data",
     )
     .eq("id", candidateId)
     .eq("user_id", ownerId)
     .maybeSingle();
   if (!c) return { ok: false, error: "Hunian tidak ditemukan." };
 
-  const { data: prefs } = await supabaseAdmin
-    .from("user_preferences")
-    .select("budget_ideal, budget_max")
-    .eq("user_id", ownerId)
-    .maybeSingle();
-  const { data: commute } = await supabaseAdmin
-    .from("candidate_commute")
-    .select("distance_km")
-    .eq("candidate_id", candidateId)
-    .limit(1)
-    .maybeSingle();
+  // Semua data yang tampil di detail page → konteks penjelasan (paralel).
+  const [{ data: prefs }, { data: commute }, { data: flags }, { data: survey }] = await Promise.all([
+    supabaseAdmin.from("user_preferences").select("budget_ideal, budget_max").eq("user_id", ownerId).maybeSingle(),
+    supabaseAdmin.from("candidate_commute").select("distance_km, duration_min, transport_mode").eq("candidate_id", candidateId).limit(1).maybeSingle(),
+    supabaseAdmin.from("candidate_deal_breaker_flags").select("user_deal_breakers(deal_breaker_key, custom_text)").eq("candidate_id", candidateId),
+    supabaseAdmin.from("candidate_surveys").select("*").eq("candidate_id", candidateId).maybeSingle(),
+  ]);
+
+  // Lingkungan sekitar (POI) — best-effort, pakai cache bila ada ("dekat apa saja").
+  let poiTotal: number | null = null;
+  const nearby: string[] = [];
+  const lat = c.location_lat as number | null;
+  const lng = c.location_lng as number | null;
+  if (lat != null && lng != null) {
+    try {
+      const { pois, summary } = await loadCandidatePois(candidateId, { lat, lng });
+      poiTotal = summary.total;
+      const seen = new Set<string>();
+      for (const p of pois) { // sudah urut jarak → ambil terdekat per kategori
+        if (seen.has(p.category)) continue;
+        seen.add(p.category);
+        nearby.push(`${p.name} (${p.sub}) ~${p.routeKm ?? p.distanceKm} km`);
+        if (nearby.length >= 7) break;
+      }
+    } catch { /* POI opsional — jangan gagalkan penjelasan */ }
+  }
+
+  const perBulan = (c.harga_efektif_bulanan as number) ?? null;
+  const ideal = (prefs?.budget_ideal as number) ?? null;
+  const max = (prefs?.budget_max as number) ?? null;
+  const zone = budgetZone(perBulan, ideal, max);
+  const listrik = (c.biaya_listrik_nominal as number) ?? null;
+  const air = (c.biaya_air_nominal as number) ?? null;
+  const ipl = (c.biaya_ipl as number) ?? null;
+  const allInTotal = perBulan != null ? perBulan + (listrik ?? 0) + (air ?? 0) + (ipl ?? 0) : null;
+  const distanceKm = (commute?.distance_km as number) ?? null;
+
+  type DbRel = { deal_breaker_key: string | null; custom_text: string | null };
+  const dealBreakers = (flags ?? []).map((f) => {
+    const raw = f.user_deal_breakers as unknown as DbRel | DbRel[] | null;
+    const u = Array.isArray(raw) ? raw[0] : raw;
+    return u?.custom_text || (u?.deal_breaker_key ? DB_LABELS_EXPLAIN[u.deal_breaker_key] ?? u.deal_breaker_key : "Deal breaker");
+  });
+
+  let surveyRatings: Record<string, number | null> | null = null;
+  const surveyTags: string[] = [];
+  let surveyNote: string | null = null;
+  if (survey) {
+    const s = survey as Record<string, unknown>;
+    surveyRatings = {
+      kebersihan: (s.kebersihan_rating as number) ?? null,
+      kebisingan: (s.kebisingan_rating as number) ?? null,
+      parkir: (s.parkir_rating as number) ?? null,
+      keamanan: (s.keamanan_rating as number) ?? null,
+      kondisi_bangunan: (s.kondisi_bangunan_rating as number) ?? null,
+      owner: (s.owner_rating as number) ?? null,
+    };
+    for (const k of ["kebersihan", "kebisingan", "parkir", "keamanan", "kondisi_bangunan", "owner"]) {
+      const t = s[`${k}_tags`] as string[] | null;
+      if (Array.isArray(t)) surveyTags.push(...t);
+    }
+    surveyNote = (s.catatan_survey as string) ?? null;
+  }
 
   const unknowns = listUnknowns(
     {
@@ -62,23 +127,48 @@ export async function explainAction(candidateId: string): Promise<ExplainResult>
       luas_bangunan_m2: c.luas_bangunan_m2 as number | null,
       deposit: c.deposit as number | null,
     },
-    (commute?.distance_km as number) ?? null,
+    distanceKm,
   );
 
   try {
     const text = await explainCandidate({
       title: c.title as string,
-      scoreTotal: c.score_total as number | null,
-      scoreHarga: c.score_harga as number | null,
-      scoreLokasi: c.score_lokasi as number | null,
-      scoreFasilitas: c.score_fasilitas as number | null,
-      harga: c.harga_efektif_bulanan as number | null,
-      budgetIdeal: (prefs?.budget_ideal as number) ?? null,
-      budgetMax: (prefs?.budget_max as number) ?? null,
-      distanceKm: (commute?.distance_km as number) ?? null,
-      furnished: c.furnished as string | null,
-      carport: c.carport as boolean | null,
-      dapur: c.dapur as boolean | null,
+      propertyType: (c.property_type as string) ?? "kontrakan",
+      area: (c.alamat as string) ?? null,
+      hargaAwal: (c.harga_sewa_bulanan as number) ?? null,
+      hargaEfektif: perBulan,
+      deposit: (c.deposit as number) ?? null,
+      periode: (c.periode_asli as string) ?? null,
+      biayaListrik: listrik,
+      biayaAir: air,
+      biayaIpl: ipl,
+      allInTotal,
+      budgetIdeal: ideal,
+      budgetMax: max,
+      budgetZone: zone ? BUDGET_ZONE_META[zone].label : null,
+      scoreTotal: (c.score_total as number) ?? null,
+      scoreHarga: (c.score_harga as number) ?? null,
+      scoreLokasi: (c.score_lokasi as number) ?? null,
+      scoreFasilitas: (c.score_fasilitas as number) ?? null,
+      scoreKondisi: (c.score_kondisi as number) ?? null,
+      scoreOwner: (c.score_owner as number) ?? null,
+      kamarTidur: (c.kamar_tidur as number) ?? null,
+      kamarMandi: (c.kamar_mandi as number) ?? null,
+      luas: (c.luas_bangunan_m2 as number) ?? null,
+      furnished: (c.furnished as string) ?? null,
+      carport: (c.carport as boolean) ?? null,
+      dapur: (c.dapur as boolean) ?? null,
+      typeSpecific: (c.type_specific_data as Record<string, unknown>) ?? null,
+      distanceKm,
+      durationMin: (commute?.duration_min as number) ?? null,
+      transportMode: (commute?.transport_mode as string) ?? null,
+      poiTotal,
+      nearby,
+      surveyed: !!survey,
+      surveyRatings,
+      surveyTags,
+      surveyNote,
+      dealBreakers,
       unknowns,
     });
     return { ok: true, text };

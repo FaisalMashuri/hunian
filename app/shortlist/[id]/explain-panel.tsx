@@ -27,7 +27,7 @@ export function ExplainPanel({ candidateId }: { candidateId: string }) {
           disabled={pending}
           className="rounded-lg border border-teal-700 px-3 py-1.5 text-xs font-semibold text-teal-700 transition-colors hover:bg-teal-50 disabled:opacity-40"
         >
-          {pending ? "Menyusun…" : text ? "Buat ulang" : "✦ Jelaskan skor"}
+          {pending ? "Menganalisis…" : text ? "Buat ulang" : "✦ Analisis hunian"}
         </button>
       </div>
 
@@ -36,8 +36,8 @@ export function ExplainPanel({ candidateId }: { candidateId: string }) {
       )}
       {!text && !error && (
         <p className="mt-3 text-sm text-zinc-400">
-          AI menjelaskan skor dalam bahasa natural — faktor pendukung + yang belum diketahui. Skor
-          tetap dihitung rule, bukan AI.
+          AI merangkum hunian ini secara menyeluruh — harga &amp; biaya all-in, lokasi &amp; lingkungan
+          sekitar (dekat apa saja), fasilitas, hasil survei, dan deal breaker. Skor tetap dihitung rule, bukan AI.
         </p>
       )}
       {error && <p className="mt-3 text-sm text-rose-600">{error}</p>}
