@@ -15,7 +15,7 @@ export function Sidebar({
 }) {
   const pathname = usePathname();
   return (
-    <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col overflow-y-auto border-r border-[#E4E3DF] bg-white sm:flex">
+    <aside className="fixed bottom-0 left-0 top-9 hidden w-64 flex-col overflow-y-auto border-r border-[#E4E3DF] bg-white sm:flex">
       {/* Logo */}
       <div className="flex items-center gap-2.5 border-b border-[#E4E3DF] px-5 py-[18px]">
         <Image src="/icon.png" alt="Hunian" width={28} height={28} priority className="h-7 w-7 object-contain" />

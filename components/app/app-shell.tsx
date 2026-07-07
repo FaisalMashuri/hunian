@@ -25,7 +25,7 @@ export function AppShell({
 
       {/* Header mobile — hanya untuk halaman non-bleed (halaman bleed punya topbar sendiri) */}
       {!bleed && (
-        <header className="sticky top-0 z-20 flex h-14 items-center gap-2 border-b border-zinc-200/70 bg-stone-50/85 px-4 backdrop-blur sm:hidden">
+        <header className="sticky top-9 z-20 flex h-14 items-center gap-2 border-b border-zinc-200/70 bg-stone-50/85 px-4 backdrop-blur sm:hidden">
           <Image src="/icon.png" alt="Hunian" width={28} height={28} priority className="h-7 w-7 object-contain" />
           <span className="text-lg font-extrabold tracking-tight text-zinc-900">
             Hunian<span className="text-teal-700">.</span>

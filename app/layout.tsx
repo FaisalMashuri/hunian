@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { NavProgress } from "@/components/app/nav-progress";
 import { ServiceWorkerRegister } from "@/components/app/service-worker-register";
+import { TranslateWidget } from "@/components/app/translate-widget";
 import { siteUrl } from "@/lib/site";
 
 // Font sesuai design direction (sengaja bukan Inter). display:swap + fallback sistem.
@@ -64,9 +65,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id" className={jakarta.variable}>
-      <body className="min-h-screen bg-background font-sans text-foreground">
+      <body className="min-h-screen bg-background pt-9 font-sans text-foreground">
         <NavProgress />
         <ServiceWorkerRegister />
+        <TranslateWidget />
         {children}
       </body>
     </html>

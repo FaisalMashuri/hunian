@@ -36,7 +36,7 @@ export function EditCandidate({ id, initial, propertyType, typeData: initialType
   return (
     <div className="min-h-screen bg-[#F4F3F0] pb-24">
       {/* TOPNAV — selaras /input & detail page */}
-      <nav className="sticky top-0 z-50 flex h-[54px] items-center gap-3.5 border-b border-[#E4E3DF] bg-white/95 px-4 backdrop-blur sm:px-6">
+      <nav className="sticky top-9 z-50 flex h-[54px] items-center gap-3.5 border-b border-[#E4E3DF] bg-white/95 px-4 backdrop-blur sm:px-6">
         <Link href={`/shortlist/${id}`} className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#E4E3DF] px-3 py-1.5 text-[13px] font-medium text-zinc-500 transition-colors hover:bg-[#F4F3F0] hover:text-zinc-900">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="m15 18-6-6 6-6" /></svg>
           <span className="hidden sm:inline">Hunian</span>

@@ -28,7 +28,7 @@ export default async function KolaborasiPage() {
   return (
     <div className="min-h-screen bg-[#F4F3F0]">
       {/* TOPBAR */}
-      <div className="sticky top-0 z-30 flex h-[54px] items-center gap-3 border-b border-[#E4E3DF] bg-white/95 px-4 backdrop-blur sm:px-6">
+      <div className="sticky top-9 z-30 flex h-[54px] items-center gap-3 border-b border-[#E4E3DF] bg-white/95 px-4 backdrop-blur sm:px-6">
         <Link
           href="/dashboard"
           className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#E4E3DF] px-3 py-1.5 text-[13px] font-medium text-zinc-500 transition-colors hover:bg-[#F4F3F0] hover:text-zinc-900"
