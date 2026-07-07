@@ -56,6 +56,5 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", Icon: IconHome },
   { href: "/peta", label: "Peta", Icon: IconMap },
   { href: "/bandingkan", label: "Bandingkan", Icon: IconCompare },
-  { href: "/kolaborasi", label: "Kolaborasi", Icon: IconPartner },
   { href: "/pengaturan", label: "Pengaturan", Icon: IconSettings },
 ];

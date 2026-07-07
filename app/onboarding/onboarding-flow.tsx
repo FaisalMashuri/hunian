@@ -11,10 +11,11 @@ import {
   BUDGET_MAX,
   BUDGET_STEP,
   TRANSPORTS,
-  PRIORITIES,
+  ALL_PRIORITY_IDS,
   DEAL_BREAKERS,
   toggle,
 } from "./options";
+import { PriorityRanking } from "./priority-ranking";
 
 const STEP_TITLES = [
   "Berapa budget bulananmu?",
@@ -35,7 +36,7 @@ export function OnboardingFlow() {
   const [budgetMax, setBudgetMax] = useState(4_000_000);
   const [tujuan, setTujuan] = useState("");
   const [transportModes, setTransportModes] = useState<TransportMode[]>([]);
-  const [priorities, setPriorities] = useState<string[]>([]);
+  const [priorities, setPriorities] = useState<string[]>([...ALL_PRIORITY_IDS]);
   const [dealBreakers, setDealBreakers] = useState<string[]>([]);
 
   const setIdeal = (v: number) => {
@@ -52,7 +53,7 @@ export function OnboardingFlow() {
       ? budgetMax >= budgetIdeal
       : step === 1
         ? tujuan.trim().length > 0 && transportModes.length > 0
-        : priorities.length > 0;
+        : priorities.length === 5;
 
   const next = () => {
     setError(null);
@@ -224,42 +225,12 @@ export function OnboardingFlow() {
           {step === 2 && (
             <div className="mt-2">
               <p className="text-[15px] leading-relaxed text-zinc-600">
-                Pilih apa yang paling penting bagimu — ini akan memengaruhi cara Hunian menilai tiap
-                pilihan hunian.
+                Susun dari yang <strong>paling menentukan</strong> (atas) ke yang paling tidak — pakai
+                panah ↑↓ atau geser. Ini memengaruhi cara Hunian menilai tiap pilihan.
               </p>
 
-              <div className="mt-5 flex flex-col gap-2.5">
-                {PRIORITIES.map((p) => {
-                  const on = priorities.includes(p.id);
-                  return (
-                    <button
-                      key={p.id}
-                      onClick={() => setPriorities(toggle(priorities, p.id))}
-                      className={`flex items-center justify-between gap-3 rounded-2xl border-[1.5px] px-4 py-3.5 text-left transition-colors ${
-                        on
-                          ? "border-teal-600 bg-teal-50"
-                          : "border-zinc-200 bg-white hover:border-zinc-300"
-                      }`}
-                    >
-                      <span className="min-w-0">
-                        <span
-                          className={`block text-base font-semibold ${on ? "text-teal-900" : "text-zinc-900"}`}
-                        >
-                          {p.label}
-                        </span>
-                        <span className="block text-[13px] text-zinc-500">{p.desc}</span>
-                      </span>
-                      <span
-                        className={`flex h-6 w-6 flex-none items-center justify-center rounded-full border-2 text-xs ${
-                          on ? "border-teal-600 bg-teal-600 text-white" : "border-zinc-300 text-transparent"
-                        }`}
-                        aria-hidden
-                      >
-                        ✓
-                      </span>
-                    </button>
-                  );
-                })}
+              <div className="mt-5">
+                <PriorityRanking value={priorities} onChange={setPriorities} />
               </div>
 
               <h2 className="mt-8 text-lg font-bold tracking-tight text-zinc-900">Deal breaker</h2>

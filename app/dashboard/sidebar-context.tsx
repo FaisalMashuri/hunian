@@ -3,10 +3,6 @@ import type { BudgetZone } from "@/lib/pricing";
 
 const rpShort = (n: number | null) =>
   n == null ? "—" : "Rp " + new Intl.NumberFormat("id-ID").format(n);
-const starRow = (w: number | null) => {
-  const n = Math.min(5, Math.max(0, Math.round((w ?? 0) * 5)));
-  return { on: n, off: 5 - n };
-};
 
 const ZONE_BARS: { z: BudgetZone; label: string; color: string }[] = [
   { z: "comfort", label: "Hemat", color: "#14b8a6" },
@@ -78,19 +74,19 @@ export function SidebarContext({
       </CtxCard>
 
       <CtxCard title="Prioritasmu">
-        <div className="space-y-1">
-          {priorities.map((p) => {
-            const { on, off } = starRow(p.w);
-            return (
-              <div key={p.label} className="flex items-center justify-between text-[12.5px]">
-                <span className="text-zinc-500">{p.label}</span>
-                <span className="tracking-tight">
-                  <span className="text-amber-500">{"★".repeat(on)}</span>
-                  <span className="text-zinc-300">{"★".repeat(off)}</span>
-                </span>
+        <div className="space-y-1.5">
+          {(() => {
+            const sorted = [...priorities].sort((a, b) => (b.w ?? 0) - (a.w ?? 0));
+            const maxW = Math.max(...sorted.map((p) => p.w ?? 0), 0.0001);
+            return sorted.map((p, i) => (
+              <div key={p.label} className="flex items-center gap-2 text-[12px]">
+                <span className="w-3.5 shrink-0 text-[10px] font-bold text-zinc-400">{i + 1}</span>
+                <span className="w-14 shrink-0 truncate text-zinc-500">{p.label}</span>
+                <span className="h-1 flex-1 overflow-hidden rounded-full bg-[#F0EFEB]"><span className="block h-full rounded-full bg-teal-500/80" style={{ width: `${((p.w ?? 0) / maxW) * 100}%` }} /></span>
+                <span className="w-7 shrink-0 text-right tabular-nums text-zinc-400">{Math.round((p.w ?? 0) * 100)}%</span>
               </div>
-            );
-          })}
+            ));
+          })()}
         </div>
       </CtxCard>
 
