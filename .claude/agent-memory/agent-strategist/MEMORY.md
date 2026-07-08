@@ -1,3 +1,5 @@
 - [MVP Build Order — Compare First](project-mvp-sequencing.md) — Compare must be first sprint, not last; input/AI extraction is commodity without validated compare
 - [Hunian Core Positioning](project-hunian-positioning.md) — Decision tool not marketplace; moat = structured survey data; hero = trade-off forward compare; metric = cycle completion rate 60%
 - [Slice 2 Strategic Analysis](../STR/slice2-strategy.md) — Survey fisik (S2-2) = true moat; pilot subset = S2-0+S2-2+S2-5+S2-4; defer Apt/Kost; foto listing = feature parity trap
+- [Monetization — Fomo-style Analysis](project-monetization-fomo.md) — Keep one-time per-cycle; collect negotiation/all-in data passively now; Mamikos structurally can't collect negotiation data = real moat
+- [Browser Extension Verdict](project-browser-extension-verdict.md) — Deprioritized: doesn't feed real moat, not acquisition channel, ToS/DOM fragility, desktop-only vs mobile-first users

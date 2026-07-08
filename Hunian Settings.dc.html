@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .hunian-root {
+    --page-bg:#e7e5df;
+    --bg-base:#FAFAF9; --bg-surface:#FFFFFF; --bg-elevated:#F4F3F0;
+    --border:#E4E3DF; --border-subtle:#C8C7C3;
+    --text-primary:#1A1917; --text-secondary:#6B6A66; --text-muted:#9E9D99;
+    --primary:#0B4F6C; --primary-hover:#0E6789; --primary-surface:#EBF7FA;
+    --accent:#E8621A; --accent-surface:#FEF0E8; --accent-text:#C4511A;
+    --success:#16A34A; --success-surface:#F0FDF4; --success-text:#15803D;
+    --warning:#D97706; --warning-surface:#FFFBEB; --warning-text:#B45309;
+    --danger:#DC2626; --danger-surface:#FFF5F5; --danger-text:#B91C1C;
+    --shadow-2:0 4px 6px rgba(15,14,12,0.06),0 2px 4px rgba(15,14,12,0.05);
+    --shadow-4:0 20px 25px rgba(15,14,12,0.10),0 8px 10px rgba(15,14,12,0.06);
+  }
+  .hunian-root.dark {
+    --page-bg:#0a0a09;
+    --bg-base:#131211; --bg-surface:#1E1D1B; --bg-elevated:#2A2927;
+    --border:#3A3936; --border-subtle:#4A4946;
+    --text-primary:#F5F4F2; --text-secondary:#A8A7A3; --text-muted:#6B6A66;
+    --primary:#1A80A6; --primary-hover:#2496C0; --primary-surface:#0B2E3A;
+    --accent:#F07B3A; --accent-surface:#2D1A0E; --accent-text:#F07B3A;
+    --success:#22C55E; --success-surface:#052E16; --success-text:#22C55E;
+    --warning:#FBBF24; --warning-surface:#1C1204; --warning-text:#FBBF24;
+    --danger:#F87171; --danger-surface:#1C0404; --danger-text:#F87171;
+    --shadow-2:0 4px 6px rgba(0,0,0,0.3); --shadow-4:0 16px 28px rgba(0,0,0,0.5);
+  }
+  @keyframes hFade { from{opacity:0;} to{opacity:1;} }
+  @keyframes hSheetUp { from{transform:translateY(100%);} to{transform:translateY(0);} }
+  .h-scroll::-webkit-scrollbar { width:0; }
+  .hunian-root a { text-decoration:none; }
+  .hunian-root input[type=range]{ -webkit-appearance:none; appearance:none; height:6px; border-radius:9999px; background:var(--bg-elevated); outline:none; }
+  .hunian-root input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:20px; height:20px; border-radius:50%; background:var(--primary); border:3px solid var(--bg-surface); box-shadow:var(--shadow-2); cursor:grab; }
+  .hunian-root input[type=range]::-moz-range-thumb{ width:16px; height:16px; border-radius:50%; background:var(--primary); border:3px solid var(--bg-surface); cursor:grab; }
+</style>
+</helmet>
+
+<div class="hunian-root {{ darkClass }}" style="font-family:'Inter',sans-serif; background:var(--page-bg); min-width:100%; width:max-content; min-height:100vh; box-sizing:border-box; padding:48px; transition:background 250ms ease;">
+
+  <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.04em; text-transform:uppercase; color:#8a8780; margin-bottom:12px;">Setelan — budget · bobot 7 dimensi · deal breaker rule builder</div>
+
+  <div style="width:390px; background:var(--bg-base); border-radius:24px; box-shadow:var(--shadow-4); overflow:hidden; border:1px solid var(--border); display:flex; flex-direction:column;">
+
+    <!-- HEADER -->
+    <div style="background:var(--bg-surface); border-bottom:1px solid var(--border); padding:12px 10px; display:flex; align-items:center; gap:4px;">
+      <a href="Hunian Dashboard.dc.html" style="width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--text-secondary);" aria-label="Kembali">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </a>
+      <div style="flex:1;"><div style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:16px; color:var(--text-primary);">Setelan</div></div>
+      <button onClick="{{ toggleDark }}" style="width:40px; height:40px; border-radius:10px; border:none; background:none; color:var(--text-secondary); cursor:pointer; font-size:15px;" aria-label="Ganti tema">{{ themeIcon }}</button>
+    </div>
+
+    <div class="h-scroll" style="overflow-y:auto; max-height:760px; padding:16px; display:flex; flex-direction:column; gap:16px;">
+
+      <!-- KANTOR -->
+      <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow-2);">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/></svg>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; color:var(--text-primary);">Lokasi kantor</span>
+        </div>
+        <label for="office" style="display:block; font-size:12.5px; font-weight:500; color:var(--text-secondary); margin-bottom:5px;">Alamat kantor</label>
+        <div style="display:flex; gap:8px;">
+          <input id="office" value="Jl. TB Simatupang, Jaksel" readonly style="flex:1; height:44px; border-radius:9px; border:1px solid var(--border); background:var(--bg-elevated); padding:0 12px; font-size:13.5px; color:var(--text-primary); font-family:Inter;"/>
+          <button onClick="{{ flashGps }}" style="height:44px; padding:0 13px; border-radius:9px; border:1px solid var(--border); background:var(--bg-surface); color:var(--primary); font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="M2 12h3"/><path d="M19 12h3"/></svg>
+            GPS
+          </button>
+        </div>
+      </div>
+
+      <!-- BUDGET -->
+      <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow-2);">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; color:var(--text-primary);">Budget</span>
+        </div>
+
+        <!-- bar visualization -->
+        <div style="height:10px; border-radius:9999px; overflow:hidden; display:flex; margin-bottom:6px;">
+          <div style="width:{{ comfortW }}; background:#0B4F6C;"></div>
+          <div style="width:{{ idealW }}; background:#16A34A;"></div>
+          <div style="width:{{ stretchW }}; background:#D97706;"></div>
+          <div style="flex:1; background:#DC2626;"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:10.5px; color:var(--text-muted); margin-bottom:16px;">
+          <span>Comfort</span><span>Ideal</span><span>Stretch</span><span>Over</span>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+          <label for="ideal" style="font-size:12.5px; color:var(--text-secondary);">Budget ideal</label>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text-primary);">{{ idealStr }}</span>
+        </div>
+        <input id="ideal" type="range" min="2000000" max="5000000" step="100000" value="{{ ideal }}" onInput="{{ setIdeal }}" style="width:100%; margin-bottom:16px;"/>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+          <label for="maks" style="font-size:12.5px; color:var(--text-secondary);">Budget maksimum</label>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text-primary);">{{ maxStr }}</span>
+        </div>
+        <input id="maks" type="range" min="2000000" max="5500000" step="100000" value="{{ max }}" onInput="{{ setMax }}" style="width:100%; margin-bottom:16px;"/>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+          <label for="stretch" style="font-size:12.5px; color:var(--text-secondary);">Stretch zone</label>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text-primary);">{{ stretchPct }}%</span>
+        </div>
+        <input id="stretch" type="range" min="10" max="30" step="1" value="{{ stretchPct }}" onInput="{{ setStretch }}" style="width:100%;"/>
+      </div>
+
+      <!-- RENCANA TINGGAL -->
+      <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow-2);">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <div style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; color:var(--text-primary);">Rencana lama tinggal</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">untuk deteksi lock-in kontrak</div>
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--text-primary);">{{ stay }} bln</span>
+        </div>
+        <input type="range" min="3" max="36" step="1" value="{{ stay }}" onInput="{{ setStay }}" style="width:100%; margin-top:12px;"/>
+      </div>
+
+      <!-- BOBOT 7 DIMENSI -->
+      <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow-2);">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+            <span style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; color:var(--text-primary);">Bobot scoring</span>
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:500; padding:3px 9px; border-radius:9999px; background:{{ sumBg }}; color:{{ sumColor }};">Total {{ weightSum }}%</span>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:13px;">
+          <sc-for list="{{ weights }}" as="w" hint-placeholder-count="7">
+            <div>
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+                <span style="font-size:12.5px; color:var(--text-secondary);">{{ w.label }}</span>
+                <span style="font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--text-primary);">{{ w.value }}%</span>
+              </div>
+              <input type="range" min="0" max="40" step="1" value="{{ w.value }}" onInput="{{ w.onInput }}" style="width:100%;"/>
+            </div>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ sumOff }}">
+          <button onClick="{{ normalize }}" style="margin-top:14px; width:100%; height:42px; border-radius:9px; border:1px solid var(--warning); background:var(--warning-surface); color:var(--warning-text); font-size:13px; font-weight:600; cursor:pointer;">Seimbangkan ke 100%</button>
+        </sc-if>
+      </div>
+
+      <!-- DEAL BREAKERS -->
+      <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow-2);">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; color:var(--text-primary);">Deal Breakers</span>
+        </div>
+        <p style="margin:0 0 13px; font-size:12px; color:var(--text-muted); line-height:1.45;">Kriteria wajib & larangan — berlaku untuk semua hunian.</p>
+
+        <sc-if value="{{ hasRules }}">
+          <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+            <sc-for list="{{ rules }}" as="r" hint-placeholder-count="3">
+              <div style="display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:9px; background:{{ r.bg }};">
+                <span style="flex:none; color:{{ r.iconColor }};">{{ r.icon }}</span>
+                <div style="flex:1;">
+                  <div style="font-size:13px; font-weight:500; color:var(--text-primary);">{{ r.label }}</div>
+                  <div style="font-size:10.5px; font-weight:600; letter-spacing:0.03em; text-transform:uppercase; color:{{ r.iconColor }};">{{ r.typeLabel }}</div>
+                </div>
+                <button onClick="{{ r.remove }}" style="width:30px; height:30px; border-radius:8px; border:none; background:none; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; justify-content:center;" aria-label="Hapus rule">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noRules }}">
+          <div style="padding:14px; border:1px dashed var(--border-subtle); border-radius:9px; text-align:center; font-size:12.5px; color:var(--text-muted); margin-bottom:12px;">Belum ada deal breaker. Set kriteria sebelum survey supaya tidak lupa.</div>
+        </sc-if>
+
+        <button onClick="{{ openAdd }}" style="width:100%; height:44px; border-radius:9px; border:1px dashed var(--primary); background:var(--primary-surface); color:var(--primary); font-size:13.5px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          Tambah deal breaker
+        </button>
+      </div>
+
+      <!-- SINKRONISASI -->
+      <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow-2);">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9 9 0 0 0-6.7 3L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9 9 0 0 0 6.7-3L21 16"/><path d="M21 21v-5h-5"/></svg>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; color:var(--text-primary);">Sinkronisasi</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; font-size:12.5px;"><span style="color:var(--text-secondary);">Last sync</span><span style="color:var(--text-primary);">2 menit lalu</span></div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; font-size:12.5px;"><span style="color:var(--text-secondary);">Perubahan pending</span><span style="color:var(--text-primary);">1 record</span></div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0 12px; font-size:12.5px;"><span style="color:var(--text-secondary);">Foto pending</span><span style="color:var(--text-primary);">0 foto</span></div>
+        <button onClick="{{ flashSync }}" style="width:100%; height:44px; border-radius:9px; border:none; background:var(--primary); color:#fff; font-size:14px; font-weight:600; cursor:pointer;">Sync sekarang</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ADD RULE SHEET -->
+  <sc-if value="{{ sheetOpen }}">
+    <div onClick="{{ closeSheet }}" style="position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:50; display:flex; align-items:flex-end; justify-content:center; animation:hFade 150ms ease;">
+      <div onClick="{{ stop }}" style="width:390px; max-width:100%; background:var(--bg-surface); border-radius:20px 20px 0 0; box-shadow:var(--shadow-4); padding:10px 0 24px; max-height:80vh; overflow-y:auto; animation:hSheetUp 300ms cubic-bezier(0,0,0.2,1);">
+        <div style="width:36px; height:4px; border-radius:9999px; background:var(--border-subtle); margin:6px auto 14px;"></div>
+        <div style="padding:0 20px 12px; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:16px; color:var(--text-primary);">Tambah deal breaker</div>
+        <sc-if value="{{ hasTemplates }}">
+          <sc-for list="{{ templates }}" as="t" hint-placeholder-count="4">
+            <button onClick="{{ t.add }}" style="width:100%; text-align:left; padding:13px 20px; border:none; background:none; cursor:pointer; display:flex; align-items:center; gap:11px;">
+              <span style="flex:none; color:{{ t.iconColor }};">{{ t.icon }}</span>
+              <div><div style="font-size:14.5px; color:var(--text-primary);">{{ t.label }}</div><div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.03em; color:{{ t.iconColor }};">{{ t.typeLabel }}</div></div>
+            </button>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{ noTemplates }}">
+          <div style="padding:14px 20px 6px; font-size:13px; color:var(--text-muted);">Semua template sudah ditambahkan.</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ toast }}">
+    <div role="status" aria-live="polite" style="position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:60; background:var(--text-primary); color:var(--bg-surface); padding:11px 18px; border-radius:10px; font-size:13.5px; font-weight:500; box-shadow:var(--shadow-4); animation:hFade 200ms ease;">{{ toast }}</div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:520,&quot;height&quot;:900},&quot;startDark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = {
+    dark:false, ideal:3500000, max:4200000, stretchPct:20, stay:18, toast:null, sheet:false,
+    weights:{ afford:25, access:20, cond:15, liv:15, env:10, val:10, commit:5 },
+    rules:[
+      {id:'r1', type:'must_have', label:'Kamar mandi private'},
+      {id:'r2', type:'must_have', label:'Jarak < 10 km'},
+      {id:'r3', type:'must_not', label:'Pernah banjir'},
+    ],
+  };
+  _seq=10;
+
+  componentDidMount(){ if(this.props.startDark) this.setState({dark:true}); }
+  fmt(n){ return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
+  flash(m){ this.setState({toast:m}); clearTimeout(this._t); this._t=setTimeout(()=>this.setState({toast:null}),2000); }
+
+  renderVals(){
+    const S=this.state, dark=S.dark;
+
+    // budget bar widths (relative to a 0..6jt scale)
+    const SCALE=6000000;
+    const comfortPx=S.ideal*0.7, idealPx=S.ideal, stretchPx=S.max;
+    const pct=(n)=> Math.max(0,Math.min(100, n/SCALE*100)).toFixed(1)+'%';
+    const comfortW=pct(comfortPx);
+    const idealW=pct(idealPx-comfortPx);
+    const stretchW=pct(stretchPx-idealPx);
+
+    // weights
+    const wmeta=[
+      ['afford','Affordability'],['access','Accessibility'],['cond','Condition'],
+      ['liv','Livability'],['env','Environment'],['val','Value for Money'],['commit','Commitment Risk'],
+    ];
+    const sum=Object.values(S.weights).reduce((a,b)=>a+b,0);
+    const weights=wmeta.map(([k,label])=>({
+      label, value:S.weights[k],
+      onInput:(e)=>{ const v=+e.target.value; this.setState(st=>({weights:{...st.weights,[k]:v}})); },
+    }));
+    const sumOff = sum!==100;
+    const normalize=()=>{
+      const keys=Object.keys(S.weights); const cur=keys.map(k=>S.weights[k]); const tot=cur.reduce((a,b)=>a+b,0)||1;
+      const scaled={}; let acc=0;
+      keys.forEach((k,i)=>{ if(i<keys.length-1){ const v=Math.round(S.weights[k]/tot*100); scaled[k]=v; acc+=v; } else scaled[k]=100-acc; });
+      this.setState({weights:scaled}); this.flash('Bobot diseimbangkan ke 100%');
+    };
+
+    // rules
+    const typeMeta={ must_have:{icon:'✓', iconColor:'var(--success-text)', bg:'var(--success-surface)', typeLabel:'Harus ada'},
+                     must_not:{icon:'✕', iconColor:'var(--danger-text)', bg:'var(--danger-surface)', typeLabel:'Tidak boleh'} };
+    const rules=S.rules.map(r=>({ ...r, ...typeMeta[r.type], remove:()=>this.setState(st=>({rules:st.rules.filter(x=>x.id!==r.id)})) }));
+
+    const allTemplates=[
+      {type:'must_have', label:'AC tersedia'},
+      {type:'must_have', label:'Dapur boleh masak'},
+      {type:'must_have', label:'Full furnished'},
+      {type:'must_have', label:'Keamanan 24 jam'},
+      {type:'must_not', label:'Sharing bathroom'},
+      {type:'must_not', label:'Deposit > 3 bulan'},
+      {type:'must_not', label:'Kontrak minimum tahunan'},
+      {type:'must_not', label:'Jarak > 15 km'},
+    ];
+    const existing=new Set(S.rules.map(r=>r.label));
+    const templates=allTemplates.filter(t=>!existing.has(t.label)).map(t=>({
+      ...t, ...typeMeta[t.type],
+      add:()=>{ const id='r'+(this._seq++); this.setState(st=>({rules:[...st.rules,{id,type:t.type,label:t.label}], sheet:false})); this.flash('Deal breaker ditambahkan'); },
+    }));
+
+    return {
+      darkClass: dark?'dark':'', themeIcon: dark?'☀':'☾', toggleDark:()=>this.setState({dark:!dark}),
+
+      ideal:S.ideal, max:S.max, idealStr:this.fmt(S.ideal), maxStr:this.fmt(S.max), stretchPct:S.stretchPct, stay:S.stay,
+      setIdeal:(e)=>{ const v=+e.target.value; this.setState({ideal:v, max:Math.max(v,S.max)}); },
+      setMax:(e)=>{ const v=+e.target.value; this.setState({max:v, ideal:Math.min(v,S.ideal)}); },
+      setStretch:(e)=>this.setState({stretchPct:+e.target.value}),
+      setStay:(e)=>this.setState({stay:+e.target.value}),
+      comfortW, idealW, stretchW,
+
+      weights, weightSum:sum, sumOff,
+      sumBg: sumOff?'var(--warning-surface)':'var(--success-surface)',
+      sumColor: sumOff?'var(--warning-text)':'var(--success-text)',
+      normalize,
+
+      rules, hasRules:S.rules.length>0, noRules:S.rules.length===0,
+      templates, hasTemplates:templates.length>0, noTemplates:templates.length===0,
+      openAdd:()=>this.setState({sheet:true}), sheetOpen:S.sheet, closeSheet:()=>this.setState({sheet:false}), stop:(e)=>e.stopPropagation(),
+
+      flashGps:()=>this.flash('Mengambil GPS kantor…'), flashSync:()=>this.flash('Menyinkronkan…'),
+      toast:S.toast,
+    };
+  }
+}
+</script>
+</body>
+</html>

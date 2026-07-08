@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .hunian-root {
+    --page-bg:#e7e5df;
+    --bg-base:#FAFAF9; --bg-surface:#FFFFFF; --bg-elevated:#F4F3F0;
+    --border:#E4E3DF; --border-subtle:#C8C7C3;
+    --text-primary:#1A1917; --text-secondary:#6B6A66; --text-muted:#9E9D99;
+    --primary:#0B4F6C; --primary-hover:#0E6789; --primary-surface:#EBF7FA;
+    --accent:#E8621A; --accent-surface:#FEF0E8; --accent-text:#C4511A;
+    --success:#16A34A; --success-surface:#F0FDF4; --success-text:#15803D;
+    --warning:#D97706; --warning-surface:#FFFBEB; --warning-text:#B45309;
+    --danger:#DC2626; --danger-surface:#FFF5F5; --danger-text:#B91C1C;
+    --shadow-2:0 4px 6px rgba(15,14,12,0.06),0 2px 4px rgba(15,14,12,0.05);
+    --shadow-3:0 10px 15px rgba(15,14,12,0.08),0 4px 6px rgba(15,14,12,0.05);
+    --shadow-4:0 20px 25px rgba(15,14,12,0.10),0 8px 10px rgba(15,14,12,0.06);
+  }
+  .hunian-root.dark {
+    --page-bg:#0a0a09;
+    --bg-base:#131211; --bg-surface:#1E1D1B; --bg-elevated:#2A2927;
+    --border:#3A3936; --border-subtle:#4A4946;
+    --text-primary:#F5F4F2; --text-secondary:#A8A7A3; --text-muted:#6B6A66;
+    --primary:#1A80A6; --primary-hover:#2496C0; --primary-surface:#0B2E3A;
+    --accent:#F07B3A; --accent-surface:#2D1A0E; --accent-text:#F07B3A;
+    --success:#22C55E; --success-surface:#052E16; --success-text:#22C55E;
+    --warning:#FBBF24; --warning-surface:#1C1204; --warning-text:#FBBF24;
+    --danger:#F87171; --danger-surface:#1C0404; --danger-text:#F87171;
+    --shadow-2:0 4px 6px rgba(0,0,0,0.3); --shadow-3:0 10px 18px rgba(0,0,0,0.4); --shadow-4:0 16px 28px rgba(0,0,0,0.5);
+  }
+  @keyframes hFade { from{opacity:0;} to{opacity:1;} }
+  .h-scroll::-webkit-scrollbar { width:0; height:0; }
+  .hunian-root a { text-decoration:none; }
+</style>
+</helmet>
+
+<div class="hunian-root {{ darkClass }}" style="font-family:'Inter',sans-serif; background:var(--page-bg); min-width:100%; width:max-content; min-height:100vh; box-sizing:border-box; padding:48px; transition:background 250ms ease;">
+
+  <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.04em; text-transform:uppercase; color:#8a8780; margin-bottom:12px;">Detail hunian — overview · biaya · kondisi · foto · GIS · AI</div>
+
+  <div style="width:390px; background:var(--bg-base); border-radius:24px; box-shadow:var(--shadow-4); overflow:hidden; border:1px solid var(--border); display:flex; flex-direction:column;">
+
+    <!-- HEADER -->
+    <div style="background:var(--bg-surface); border-bottom:1px solid var(--border); padding:12px 10px; display:flex; align-items:center; gap:4px;">
+      <a href="Hunian Dashboard.dc.html" style="width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--text-secondary);" aria-label="Kembali ke dashboard">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </a>
+      <div style="flex:1; min-width:0;">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:15px; color:var(--text-primary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Apt Skandinavia Lt 12</div>
+        <div role="status" aria-live="polite" style="display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text-secondary);"><span style="width:7px; height:7px; border-radius:50%; background:var(--warning);"></span>1 perubahan pending</div>
+      </div>
+      <button onClick="{{ toggleDark }}" style="width:40px; height:40px; border-radius:10px; border:none; background:none; color:var(--text-secondary); cursor:pointer; font-size:15px;" aria-label="Ganti tema">{{ themeIcon }}</button>
+      <button onClick="{{ openKebab }}" style="width:40px; height:40px; border-radius:10px; border:none; background:none; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; justify-content:center;" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>
+      </button>
+    </div>
+
+    <div class="h-scroll" style="overflow-y:auto; max-height:760px;">
+
+      <!-- HERO -->
+      <div style="padding:16px;">
+        <div style="display:flex; align-items:center; gap:7px; margin-bottom:10px;">
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-size:10px; font-weight:700; letter-spacing:0.05em; color:#fff; background:#0B4F6C; padding:3px 7px; border-radius:4px;">APARTEMEN</span>
+          <span style="font-size:13px; color:var(--text-muted);">Bekasi Selatan · Favorit</span>
+        </div>
+        <div style="display:flex; align-items:flex-end; justify-content:space-between;">
+          <div>
+            <div style="display:flex; align-items:baseline; gap:5px;">
+              <span style="font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:500; color:var(--text-primary); letter-spacing:-0.01em;">Rp 4.100.000</span>
+              <span style="font-size:13px; color:var(--text-muted);">/bln</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:3px;">sewa pokok Rp 3.500.000</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:10.5px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">Upfront</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:500; color:var(--text-secondary);">Rp 14.000.000</div>
+          </div>
+        </div>
+        <div style="margin-top:13px; display:flex; align-items:center; gap:9px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:6px; padding:5px 11px; border-radius:9999px; background:{{ zoneBg }}; border:1px solid {{ zoneBorder }};">
+            <span style="width:8px; height:8px; border-radius:50%; background:{{ zoneDot }};"></span>
+            <span style="font-size:12.5px; font-weight:600; color:{{ zoneFg }};">Stretch Zone</span>
+          </div>
+          <span style="font-size:12.5px; color:var(--text-muted);">117% budget ideal · 7.2 km</span>
+        </div>
+      </div>
+
+      <!-- DEVIL'S ADVOCATE alert -->
+      <div style="margin:0 16px 4px; background:var(--danger-surface); border:1px solid var(--danger); border-radius:12px; padding:13px 14px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:7px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--danger-text)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="20" y2="20"/><path d="m19 21 2-2"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/></svg>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:13.5px; color:var(--danger-text);">Devil's Advocate</span>
+        </div>
+        <p style="margin:0; font-size:12.5px; line-height:1.5; color:var(--text-secondary);">Deposit tertinggi dari semua kandidat (4 bln = Rp 14 jt) dan commute 45 mnt — terlama. <span style="color:var(--text-primary); font-weight:500;">Kost Anggrek</span> unggul di 4 dari 7 dimensi dengan selisih Rp 300rb/bln.</p>
+      </div>
+
+      <!-- TABS -->
+      <div class="h-scroll" style="display:flex; gap:4px; overflow-x:auto; padding:12px 16px 0; border-bottom:1px solid var(--border);">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
+          <button onClick="{{ t.onClick }}" style="flex:none; padding:9px 12px; border:none; background:none; cursor:pointer; font-size:13.5px; font-weight:600; color:{{ t.color }}; border-bottom:2px solid {{ t.underline }}; margin-bottom:-1px;">{{ t.label }}</button>
+        </sc-for>
+      </div>
+
+      <div style="padding:16px;">
+
+        <!-- ===== TAB: OVERVIEW ===== -->
+        <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex; flex-direction:column; gap:16px; animation:hFade 200ms ease;">
+
+            <!-- Score total + radar -->
+            <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow-2);">
+              <div style="display:flex; align-items:center; justify-content:space-between;">
+                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:15px; color:var(--text-primary);">Skor total</span>
+                <div style="display:flex; align-items:baseline; gap:3px;">
+                  <span style="font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:600; color:{{ totalColor }};">84</span>
+                  <span style="font-size:12px; color:var(--text-muted);">/100</span>
+                </div>
+              </div>
+              <div style="font-size:12.5px; font-weight:600; color:{{ totalColor }}; margin-top:2px; margin-bottom:6px;">Sangat Direkomendasikan</div>
+
+              <!-- radar -->
+              <div role="img" aria-label="Radar skor 7 dimensi. Tertinggi: Accessibility 92. Terendah: Commitment Risk 55." style="position:relative; width:100%; height:240px; margin:6px 0 2px;">
+                <svg viewBox="0 0 280 240" style="width:100%; height:100%; overflow:visible;">
+                  <polygon points="{{ radarOuter }}" fill="none" stroke="var(--border)" stroke-width="1"/>
+                  <polygon points="{{ radarMid }}" fill="none" stroke="var(--border)" stroke-width="1"/>
+                  <polygon points="{{ radarInner }}" fill="none" stroke="var(--border)" stroke-width="1"/>
+                  <polygon points="{{ radarData }}" fill="var(--primary)" fill-opacity="0.18" stroke="var(--primary)" stroke-width="2"/>
+                  <sc-for list="{{ radarDots }}" as="d" hint-placeholder-count="7">
+                    <circle cx="{{ d.x }}" cy="{{ d.y }}" r="3" fill="var(--primary)"/>
+                  </sc-for>
+                </svg>
+                <sc-for list="{{ radarLabels }}" as="l" hint-placeholder-count="7">
+                  <div style="position:absolute; left:{{ l.left }}; top:{{ l.top }}; transform:translate(-50%,-50%); text-align:center; width:74px;">
+                    <div style="font-size:10px; color:var(--text-muted); line-height:1.2;">{{ l.label }}</div>
+                    <div style="font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:500; color:var(--text-primary);">{{ l.score }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- breakdown bars -->
+            <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow-2);">
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; color:var(--text-primary); margin-bottom:13px;">Breakdown 7 dimensi</div>
+              <div style="display:flex; flex-direction:column; gap:11px;">
+                <sc-for list="{{ dims }}" as="d" hint-placeholder-count="7">
+                  <div>
+                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:5px;">
+                      <span style="font-size:12.5px; color:var(--text-secondary);">{{ d.label }} <span style="color:var(--text-muted);">{{ d.weight }}</span></span>
+                      <span style="font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--text-primary);">{{ d.score }}</span>
+                    </div>
+                    <div style="height:6px; border-radius:9999px; background:var(--bg-elevated); overflow:hidden;">
+                      <div style="height:100%; width:{{ d.width }}; border-radius:9999px; background:{{ d.color }};"></div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- deal breaker panel -->
+            <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow-2);">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:13px;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; color:var(--text-primary);">Deal Breaker Check</span>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <sc-for list="{{ dealBreakers }}" as="r" hint-placeholder-count="4">
+                  <div style="display:flex; align-items:center; gap:10px; padding:9px 11px; border-radius:9px; background:{{ r.bg }};">
+                    <span style="flex:none; color:{{ r.iconColor }};">{{ r.icon }}</span>
+                    <div style="flex:1;">
+                      <div style="font-size:13px; font-weight:500; color:var(--text-primary);">{{ r.label }}</div>
+                      <div style="font-size:11.5px; color:{{ r.statusColor }};">{{ r.status }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- reverse recommendation -->
+            <div style="background:var(--warning-surface); border:1px solid var(--warning); border-radius:12px; padding:16px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--warning-text)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:13.5px; color:var(--warning-text);">Alasan kuat untuk dihindari</span>
+              </div>
+              <ul style="margin:0; padding-left:18px; display:flex; flex-direction:column; gap:6px;">
+                <li style="font-size:12.5px; line-height:1.45; color:var(--text-secondary);">Di atas budget ideal (+Rp 600rb/bln)</li>
+                <li style="font-size:12.5px; line-height:1.45; color:var(--text-secondary);">Deposit terbesar (4 bln = Rp 14 jt upfront)</li>
+                <li style="font-size:12.5px; line-height:1.45; color:var(--text-secondary);">Commute 45 mnt — terlama dari semua kandidat</li>
+              </ul>
+              <div style="margin-top:11px; padding-top:11px; border-top:1px solid var(--warning); font-size:12px; font-style:italic; color:var(--text-secondary);">Kalau ketiga hal ini bisa dinego, hunian ini jadi kandidat terkuat.</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== TAB: BIAYA ===== -->
+        <sc-if value="{{ isBiaya }}">
+          <div style="display:flex; flex-direction:column; gap:16px; animation:hFade 200ms ease;">
+
+            <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow-2);">
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; color:var(--text-primary); margin-bottom:12px;">Rincian all-in per bulan</div>
+              <sc-for list="{{ costRows }}" as="c" hint-placeholder-count="5">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:7px 0; border-bottom:1px solid var(--border);">
+                  <span style="font-size:13px; color:var(--text-secondary);">{{ c.label }}</span>
+                  <span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text-primary);">{{ c.value }}</span>
+                </div>
+              </sc-for>
+              <div style="display:flex; align-items:center; justify-content:space-between; padding-top:11px;">
+                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; color:var(--text-primary);">Total per bulan</span>
+                <span style="font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:500; color:var(--text-primary);">Rp 4.100.000</span>
+              </div>
+            </div>
+
+            <!-- upfront -->
+            <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow-2);">
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; color:var(--text-primary); margin-bottom:12px;">Upfront cost</div>
+              <div style="display:flex; justify-content:space-between; padding:6px 0;"><span style="font-size:13px; color:var(--text-secondary);">Deposit (4 bulan)</span><span style="font-family:'JetBrains Mono'; font-size:13px; color:var(--text-primary);">Rp 14.000.000</span></div>
+              <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);"><span style="font-size:13px; color:var(--text-secondary);">Bulan pertama</span><span style="font-family:'JetBrains Mono'; font-size:13px; color:var(--text-primary);">Rp 4.100.000</span></div>
+              <div style="display:flex; justify-content:space-between; padding-top:11px;"><span style="font-family:'Plus Jakarta Sans'; font-weight:700; font-size:14px; color:var(--text-primary);">Total awal</span><span style="font-family:'JetBrains Mono'; font-size:16px; font-weight:500; color:var(--text-primary);">Rp 18.100.000</span></div>
+            </div>
+
+            <!-- future projection -->
+            <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow-2);">
+              <div style="display:flex; align-items:center; gap:7px; margin-bottom:13px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; color:var(--text-primary);">Proyeksi biaya</span>
+              </div>
+              <div style="display:flex;">
+                <sc-for list="{{ projection }}" as="pr" hint-placeholder-count="3">
+                  <div style="flex:1; text-align:center; padding:4px;">
+                    <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px;">{{ pr.term }}</div>
+                    <div style="font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:500; color:var(--text-primary);">{{ pr.amount }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- hidden cost alert -->
+            <div style="background:var(--warning-surface); border:1px solid var(--warning); border-radius:12px; padding:14px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--warning-text)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                <span style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:13.5px; color:var(--warning-text);">Hidden cost — deposit besar</span>
+              </div>
+              <p style="margin:0; font-size:12.5px; line-height:1.5; color:var(--text-secondary);">Deposit 4 bulan (Rp 14 jt) + bulan pertama = <span style="font-family:'JetBrains Mono'; color:var(--text-primary);">Rp 18.100.000</span> harus siap di awal. Pastikan dana tersedia sebelum deal.</p>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== TAB: KONDISI ===== -->
+        <sc-if value="{{ isKondisi }}">
+          <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:8px 16px; box-shadow:var(--shadow-2); animation:hFade 200ms ease;">
+            <sc-for list="{{ specs }}" as="s" hint-placeholder-count="6">
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border);">
+                <span style="font-size:13px; color:var(--text-secondary);">{{ s.label }}</span>
+                <span style="font-size:13px; font-weight:500; color:var(--text-primary);">{{ s.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- ===== TAB: FOTO ===== -->
+        <sc-if value="{{ isFoto }}">
+          <div style="animation:hFade 200ms ease;">
+            <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px;">4 dari 8 slot terisi</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <sc-for list="{{ photoSlots }}" as="ph" hint-placeholder-count="6">
+                <div style="aspect-ratio:4/3; border-radius:10px; border:{{ ph.border }}; background:{{ ph.bg }}; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; overflow:hidden; position:relative;">
+                  <sc-if value="{{ ph.filled }}">
+                    <div style="position:absolute; inset:0; background:repeating-linear-gradient(135deg, var(--border) 0 8px, var(--bg-elevated) 8px 16px);"></div>
+                    <div style="position:absolute; top:6px; right:6px; width:20px; height:20px; border-radius:50%; background:var(--success); display:flex; align-items:center; justify-content:center;">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div style="position:absolute; bottom:6px; left:8px; font-size:11px; font-weight:600; color:var(--text-primary); background:var(--bg-surface); padding:1px 6px; border-radius:5px;">{{ ph.label }}</div>
+                  </sc-if>
+                  <sc-if value="{{ ph.empty }}">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ ph.iconColor }}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                    <span style="font-size:11.5px; font-weight:500; color:var(--text-secondary); text-align:center; padding:0 8px;">{{ ph.label }}</span>
+                    <span style="font-size:10px; font-weight:600; color:{{ ph.tagColor }};">{{ ph.tag }}</span>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== TAB: GIS ===== -->
+        <sc-if value="{{ isGis }}">
+          <div style="display:flex; flex-direction:column; gap:16px; animation:hFade 200ms ease;">
+            <div style="display:flex; gap:12px;">
+              <div style="flex:1; background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:14px; box-shadow:var(--shadow-2); text-align:center;">
+                <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">Walkability</div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:600; color:var(--success-text); margin-top:4px;">78</div>
+              </div>
+              <div style="flex:1; background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:14px; box-shadow:var(--shadow-2); text-align:center;">
+                <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">Transit</div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:600; color:var(--warning-text); margin-top:4px;">65</div>
+              </div>
+            </div>
+            <div style="background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow-2);">
+              <div style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; color:var(--text-primary); margin-bottom:13px;">POI Radar</div>
+              <div style="display:flex; flex-direction:column; gap:9px;">
+                <sc-for list="{{ pois }}" as="poi" hint-placeholder-count="5">
+                  <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <span style="font-size:13px; color:var(--text-secondary);">{{ poi.name }}</span>
+                    <span style="font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--text-primary);">{{ poi.dist }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- ===== TAB: AI ===== -->
+        <sc-if value="{{ isAi }}">
+          <div style="display:flex; flex-direction:column; gap:12px; animation:hFade 200ms ease;">
+            <sc-for list="{{ aiFeatures }}" as="ai" hint-placeholder-count="4">
+              <button onClick="{{ ai.onClick }}" style="text-align:left; background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:14px; box-shadow:var(--shadow-2); cursor:pointer; display:flex; align-items:center; gap:12px;">
+                <div style="width:38px; height:38px; border-radius:10px; flex:none; background:var(--primary-surface); display:flex; align-items:center; justify-content:center; color:var(--primary);">{{ ai.icon }}</div>
+                <div style="flex:1;">
+                  <div style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:600; font-size:14px; color:var(--text-primary);">{{ ai.title }}</div>
+                  <div style="font-size:12px; color:var(--text-muted); margin-top:1px;">{{ ai.desc }}</div>
+                </div>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+
+    <!-- STICKY ACTION BAR -->
+    <div style="border-top:1px solid var(--border); background:var(--bg-surface); padding:12px 16px; display:flex; gap:10px;">
+      <button onClick="{{ flashSelect }}" style="flex:1; height:48px; border-radius:10px; border:none; background:var(--primary); color:#fff; font-size:15px; font-weight:600; cursor:pointer;">Pilih hunian ini</button>
+      <button onClick="{{ flashNego }}" style="height:48px; padding:0 16px; border-radius:10px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-secondary); font-size:14px; font-weight:600; cursor:pointer;">Nego</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM SHEET -->
+  <sc-if value="{{ sheetOpen }}">
+    <div onClick="{{ closeSheet }}" style="position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:50; display:flex; align-items:flex-end; justify-content:center; animation:hFade 150ms ease;">
+      <div onClick="{{ stop }}" style="width:390px; max-width:100%; background:var(--bg-surface); border-radius:20px 20px 0 0; box-shadow:var(--shadow-4); padding:10px 0 24px;">
+        <div style="width:36px; height:4px; border-radius:9999px; background:var(--border-subtle); margin:6px auto 14px;"></div>
+        <button onClick="{{ closeSheet }}" style="width:100%; text-align:left; padding:13px 20px; border:none; background:none; cursor:pointer; font-size:15px; color:var(--text-primary);">Ubah status</button>
+        <button onClick="{{ closeSheet }}" style="width:100%; text-align:left; padding:13px 20px; border:none; background:none; cursor:pointer; font-size:15px; color:var(--text-primary);">Edit Full Survey</button>
+        <button onClick="{{ closeSheet }}" style="width:100%; text-align:left; padding:13px 20px; border:none; background:none; cursor:pointer; font-size:15px; color:var(--danger-text); font-weight:600;">Hapus hunian</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ toast }}">
+    <div role="status" aria-live="polite" style="position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:60; background:var(--text-primary); color:var(--bg-surface); padding:11px 18px; border-radius:10px; font-size:13.5px; font-weight:500; box-shadow:var(--shadow-4); animation:hFade 200ms ease;">{{ toast }}</div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:520,&quot;height&quot;:920},&quot;startDark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;defaultTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Overview&quot;,&quot;Biaya&quot;,&quot;Kondisi&quot;,&quot;Foto&quot;,&quot;GIS&quot;,&quot;AI&quot;],&quot;default&quot;:&quot;Overview&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { dark:false, tab:'Overview', sheet:false, toast:null };
+
+  componentDidMount(){
+    if(this.props.startDark) this.setState({ dark:true });
+    if(this.props.defaultTab) this.setState({ tab:this.props.defaultTab });
+  }
+
+  barColor(s){ if(s>=80) return '#16A34A'; if(s>=65) return '#D97706'; if(s>=45) return '#EA580C'; return '#DC2626'; }
+  flash(m){ this.setState({toast:m}); clearTimeout(this._t); this._t=setTimeout(()=>this.setState({toast:null}),2000); }
+
+  renderVals(){
+    const S=this.state, dark=S.dark;
+
+    const dimsRaw=[
+      {label:'Affordability', weight:'25%', score:72},
+      {label:'Accessibility', weight:'20%', score:92},
+      {label:'Condition', weight:'15%', score:85},
+      {label:'Livability', weight:'15%', score:78},
+      {label:'Environment', weight:'10%', score:74},
+      {label:'Value', weight:'10%', score:75},
+      {label:'Commitment', weight:'5%', score:55},
+    ];
+    const dims=dimsRaw.map(d=>({...d, width:d.score+'%', color:this.barColor(d.score)}));
+
+    // radar geometry — 280x240 viewbox, center 140,120, R 80
+    const cx=140, cy=120, R=80, N=7;
+    const pts=(r)=> dimsRaw.map((d,i)=>{ const a=-Math.PI/2 + i*2*Math.PI/N; return (cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1); }).join(' ');
+    const radarOuter=pts(R), radarMid=pts(R*0.66), radarInner=pts(R*0.33);
+    const radarData=dimsRaw.map((d,i)=>{ const a=-Math.PI/2 + i*2*Math.PI/N; const r=R*d.score/100; return (cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1); }).join(' ');
+    const radarDots=dimsRaw.map((d,i)=>{ const a=-Math.PI/2 + i*2*Math.PI/N; const r=R*d.score/100; return {x:(cx+r*Math.cos(a)).toFixed(1), y:(cy+r*Math.sin(a)).toFixed(1)}; });
+    // labels — container is 100% wide (treat 280 as width), convert px to %
+    const W=280, H=240;
+    const radarLabels=dimsRaw.map((d,i)=>{ const a=-Math.PI/2 + i*2*Math.PI/N; const lr=R+24; const x=cx+lr*Math.cos(a); const y=cy+lr*Math.sin(a); return {label:d.label, score:d.score, left:(x/W*100).toFixed(1)+'%', top:(y/H*100).toFixed(1)+'%'}; });
+
+    const tabDefs=['Overview','Biaya','Kondisi','Foto','GIS','AI'];
+    const tabs=tabDefs.map(t=>({label:t, onClick:()=>this.setState({tab:t}),
+      color: S.tab===t?'var(--primary)':'var(--text-muted)',
+      underline: S.tab===t?'var(--primary)':'transparent' }));
+
+    const dealBreakers=[
+      {label:'Kamar mandi private', status:'Terpenuhi', icon:'✓', iconColor:'var(--success)', bg:'var(--success-surface)', statusColor:'var(--success-text)'},
+      {label:'Jarak < 10 km (7.2 km)', status:'Terpenuhi', icon:'✓', iconColor:'var(--success)', bg:'var(--success-surface)', statusColor:'var(--success-text)'},
+      {label:'Deposit ≤ 3 bulan (4 bln)', status:'Dilanggar — deposit 4 bulan', icon:'✕', iconColor:'var(--danger)', bg:'var(--danger-surface)', statusColor:'var(--danger-text)'},
+      {label:'AC tersedia', status:'Belum diisi — tanyakan ke pemilik', icon:'○', iconColor:'var(--text-muted)', bg:'var(--bg-elevated)', statusColor:'var(--text-muted)'},
+    ];
+
+    const costRows=[
+      {label:'Sewa pokok', value:'Rp 3.500.000'},
+      {label:'IPL + service charge', value:'Rp 350.000'},
+      {label:'Listrik (estimasi)', value:'Rp 200.000'},
+      {label:'Parkir motor', value:'Rp 50.000'},
+      {label:'Internet', value:'include'},
+    ];
+    const projection=[
+      {term:'6 bln', amount:'Rp 38,7jt'},
+      {term:'12 bln', amount:'Rp 63,2jt'},
+      {term:'24 bln', amount:'Rp 112,4jt'},
+    ];
+    const specs=[
+      {label:'Luas', value:'32 m²'},
+      {label:'Kamar tidur', value:'1'},
+      {label:'Kamar mandi', value:'1 (private)'},
+      {label:'Kondisi bangunan', value:'4 / 5'},
+      {label:'Furnitur', value:'Full furnished'},
+      {label:'Lantai', value:'12'},
+      {label:'Menghadap', value:'Timur'},
+      {label:'Keamanan', value:'Satpam 24 jam'},
+    ];
+    const photoSlots=[
+      {label:'Tampak gedung', filled:true},
+      {label:'Ruang utama', filled:true},
+      {label:'Kamar tidur', filled:true},
+      {label:'View balkon', filled:true},
+      {label:'Dapur', filled:false, tag:'Recommended', tagColor:'var(--text-muted)', border:'2px dashed var(--border-subtle)', bg:'var(--bg-elevated)', iconColor:'var(--text-muted)'},
+      {label:'Kamar mandi', filled:false, tag:'Recommended', tagColor:'var(--text-muted)', border:'2px dashed var(--border-subtle)', bg:'var(--bg-elevated)', iconColor:'var(--text-muted)'},
+    ].map(p=>({...p, empty:!p.filled, border:p.border||'1px solid var(--border)', bg:p.bg||'var(--bg-elevated)'}));
+    const pois=[
+      {name:'Masjid Al-Falah', dist:'180 m'},
+      {name:'Indomaret', dist:'90 m'},
+      {name:'RS Mitra Keluarga', dist:'1.4 km'},
+      {name:'Stasiun KRL Bekasi', dist:'2.8 km'},
+      {name:'Halte TransJabodetabek', dist:'420 m'},
+    ];
+    const aiFeatures=[
+      {title:'AI Red Team', desc:'Kontradiksi & anomali data', icon:'⚑', onClick:()=>this.flash('Menganalisis…')},
+      {title:'Apa yang belum ditanyakan?', desc:'Checklist kontekstual', icon:'?', onClick:()=>this.flash('Menyusun checklist…')},
+      {title:'Cek area', desc:'Neighborhood Intelligence', icon:'◎', onClick:()=>this.flash('Mengecek area…')},
+      {title:'Siapkan argumen nego', desc:'Negotiation Strategy 2.0', icon:'₹', onClick:()=>this.flash('Menyusun strategi…')},
+    ];
+
+    return {
+      darkClass: dark?'dark':'', themeIcon: dark?'☀':'☾',
+      toggleDark: ()=>this.setState({dark:!dark}),
+      openKebab: ()=>this.setState({sheet:true}),
+      sheetOpen:S.sheet, closeSheet:()=>this.setState({sheet:false}), stop:(e)=>e.stopPropagation(),
+      toast:S.toast, flashSelect:()=>this.flash('Status → Dipilih · memo siap dibuat'), flashNego:()=>this.flash('Negotiation Strategy 2.0'),
+
+      zoneBg: dark?'#1C1204':'#FFFBEB', zoneFg: dark?'#FBBF24':'#B45309', zoneBorder: dark?'#3a2608':'#FEF3C7', zoneDot: dark?'#FBBF24':'#D97706',
+      totalColor: dark?'#22C55E':'#15803D',
+
+      tabs,
+      isOverview:S.tab==='Overview', isBiaya:S.tab==='Biaya', isKondisi:S.tab==='Kondisi',
+      isFoto:S.tab==='Foto', isGis:S.tab==='GIS', isAi:S.tab==='AI',
+
+      dims, radarOuter, radarMid, radarInner, radarData, radarDots, radarLabels,
+      dealBreakers, costRows, projection, specs, photoSlots, pois, aiFeatures,
+    };
+  }
+}
+</script>
+</body>
+</html>

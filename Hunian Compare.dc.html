@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .hunian-root {
+    --page-bg:#e7e5df;
+    --bg-base:#FAFAF9; --bg-surface:#FFFFFF; --bg-elevated:#F4F3F0;
+    --border:#E4E3DF; --border-subtle:#C8C7C3;
+    --text-primary:#1A1917; --text-secondary:#6B6A66; --text-muted:#9E9D99;
+    --primary:#0B4F6C; --primary-hover:#0E6789; --primary-surface:#EBF7FA;
+    --accent:#E8621A; --accent-surface:#FEF0E8; --accent-text:#C4511A;
+    --success:#16A34A; --success-surface:#F0FDF4; --success-text:#15803D;
+    --warning:#D97706; --warning-surface:#FFFBEB; --warning-text:#B45309;
+    --danger:#DC2626; --danger-surface:#FFF5F5; --danger-text:#B91C1C;
+    --shadow-2:0 4px 6px rgba(15,14,12,0.06),0 2px 4px rgba(15,14,12,0.05);
+    --shadow-4:0 20px 25px rgba(15,14,12,0.10),0 8px 10px rgba(15,14,12,0.06);
+  }
+  .hunian-root.dark {
+    --page-bg:#0a0a09;
+    --bg-base:#131211; --bg-surface:#1E1D1B; --bg-elevated:#2A2927;
+    --border:#3A3936; --border-subtle:#4A4946;
+    --text-primary:#F5F4F2; --text-secondary:#A8A7A3; --text-muted:#6B6A66;
+    --primary:#1A80A6; --primary-hover:#2496C0; --primary-surface:#0B2E3A;
+    --accent:#F07B3A; --accent-surface:#2D1A0E; --accent-text:#F07B3A;
+    --success:#22C55E; --success-surface:#052E16; --success-text:#22C55E;
+    --warning:#FBBF24; --warning-surface:#1C1204; --warning-text:#FBBF24;
+    --danger:#F87171; --danger-surface:#1C0404; --danger-text:#F87171;
+    --shadow-2:0 4px 6px rgba(0,0,0,0.3); --shadow-4:0 16px 28px rgba(0,0,0,0.5);
+  }
+  @keyframes hFade { from{opacity:0;} to{opacity:1;} }
+  .h-scroll::-webkit-scrollbar { height:6px; width:0; }
+  .h-scroll::-webkit-scrollbar-thumb { background:var(--border-subtle); border-radius:9999px; }
+  .hunian-root a { text-decoration:none; }
+  .hunian-root input[type=range]{ -webkit-appearance:none; appearance:none; height:6px; border-radius:9999px; background:var(--bg-elevated); outline:none; }
+  .hunian-root input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:22px; height:22px; border-radius:50%; background:var(--primary); border:3px solid var(--bg-surface); box-shadow:var(--shadow-2); cursor:grab; }
+  .hunian-root input[type=range]::-moz-range-thumb{ width:18px; height:18px; border-radius:50%; background:var(--primary); border:3px solid var(--bg-surface); cursor:grab; }
+</style>
+</helmet>
+
+<div class="hunian-root {{ darkClass }}" style="font-family:'Inter',sans-serif; background:var(--page-bg); min-width:100%; width:max-content; min-height:100vh; box-sizing:border-box; padding:48px; transition:background 250ms ease;">
+
+  <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.04em; text-transform:uppercase; color:#8a8780; margin-bottom:12px;">Compare — radar 7 dimensi · What-If budget slider · highlight terbaik/terburuk</div>
+
+  <div style="width:390px; background:var(--bg-base); border-radius:24px; box-shadow:var(--shadow-4); overflow:hidden; border:1px solid var(--border); display:flex; flex-direction:column;">
+
+    <!-- HEADER -->
+    <div style="background:var(--bg-surface); border-bottom:1px solid var(--border); padding:12px 10px; display:flex; align-items:center; gap:4px;">
+      <a href="Hunian Dashboard.dc.html" style="width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--text-secondary);" aria-label="Kembali">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </a>
+      <div style="flex:1;">
+        <div style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:16px; color:var(--text-primary);">Bandingkan</div>
+        <div style="font-size:11px; color:var(--text-muted);">3 kandidat</div>
+      </div>
+      <button onClick="{{ toggleDark }}" style="width:40px; height:40px; border-radius:10px; border:none; background:none; color:var(--text-secondary); cursor:pointer; font-size:15px;" aria-label="Ganti tema">{{ themeIcon }}</button>
+    </div>
+
+    <div class="h-scroll" style="overflow-y:auto; max-height:768px;">
+
+      <!-- RADAR OVERLAY -->
+      <div style="padding:16px 16px 8px;">
+        <div role="img" aria-label="Radar overlay skor 7 dimensi untuk 3 kandidat." style="position:relative; width:100%; height:236px;">
+          <svg viewBox="0 0 280 236" style="width:100%; height:100%; overflow:visible;">
+            <polygon points="{{ radarOuter }}" fill="none" stroke="var(--border)" stroke-width="1"/>
+            <polygon points="{{ radarMid }}" fill="none" stroke="var(--border)" stroke-width="1"/>
+            <polygon points="{{ radarInner }}" fill="none" stroke="var(--border)" stroke-width="1"/>
+            <sc-for list="{{ radarPolys }}" as="rp" hint-placeholder-count="3">
+              <polygon points="{{ rp.points }}" fill="{{ rp.fill }}" fill-opacity="0.08" stroke="{{ rp.color }}" stroke-width="2" stroke-dasharray="{{ rp.dash }}"/>
+            </sc-for>
+          </svg>
+          <sc-for list="{{ radarLabels }}" as="l" hint-placeholder-count="7">
+            <div style="position:absolute; left:{{ l.left }}; top:{{ l.top }}; transform:translate(-50%,-50%); font-size:10px; color:var(--text-muted); width:70px; text-align:center; line-height:1.2;">{{ l.label }}</div>
+          </sc-for>
+        </div>
+        <!-- legend -->
+        <div style="display:flex; gap:14px; justify-content:center; margin-top:6px; flex-wrap:wrap;">
+          <sc-for list="{{ legend }}" as="lg" hint-placeholder-count="3">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="width:18px; height:0; border-top:2px {{ lg.style }} {{ lg.color }};"></span>
+              <span style="font-size:11px; color:var(--text-secondary);">{{ lg.name }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- WHAT-IF SLIDER -->
+      <div style="margin:8px 16px 16px; background:var(--bg-surface); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow-2);">
+        <div style="display:flex; align-items:center; gap:7px; margin-bottom:14px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16"/><path d="M4 8h16"/><circle cx="12" cy="8" r="2" fill="var(--bg-surface)"/><path d="M4 16h10"/><circle cx="16" cy="16" r="2" fill="var(--bg-surface)"/></svg>
+          <span style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; color:var(--text-primary);">Simulasi budget (What-If)</span>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+          <label for="ideal" style="font-size:12.5px; color:var(--text-secondary);">Budget ideal</label>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text-primary);">{{ idealStr }}</span>
+        </div>
+        <input id="ideal" type="range" min="2000000" max="5000000" step="100000" value="{{ ideal }}" onInput="{{ setIdeal }}" style="width:100%; margin-bottom:16px;"/>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+          <label for="maks" style="font-size:12.5px; color:var(--text-secondary);">Budget maksimum</label>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text-primary);">{{ maxStr }}</span>
+        </div>
+        <input id="maks" type="range" min="2000000" max="5000000" step="100000" value="{{ max }}" onInput="{{ setMax }}" style="width:100%;"/>
+
+        <div style="margin-top:14px; padding-top:13px; border-top:1px solid var(--border);">
+          <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:8px;">Peringkat dengan budget ini:</div>
+          <sc-for list="{{ ranking }}" as="r" hint-placeholder-count="3">
+            <div style="display:flex; align-items:center; gap:9px; padding:5px 0;">
+              <span style="width:20px; height:20px; border-radius:6px; flex:none; background:{{ r.rankBg }}; color:{{ r.rankFg }}; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:500; display:flex; align-items:center; justify-content:center;">{{ r.rank }}</span>
+              <span style="flex:1; font-size:13px; color:var(--text-primary);">{{ r.name }}</span>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:500; color:{{ r.scoreColor }};">{{ r.score }}</span>
+              <span style="font-size:11px; color:{{ r.deltaColor }}; min-width:74px; text-align:right;">{{ r.delta }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <button onClick="{{ applyBudget }}" style="margin-top:13px; width:100%; height:44px; border-radius:10px; border:none; background:var(--primary); color:#fff; font-size:14px; font-weight:600; cursor:pointer;">Terapkan budget ini</button>
+      </div>
+
+      <!-- COMPARE TABLE -->
+      <div style="margin:0 0 8px; display:flex;">
+        <!-- label column -->
+        <div style="flex:none; width:104px; background:var(--bg-surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); z-index:2;">
+          <div style="height:80px; border-bottom:1px solid var(--border);"></div>
+          <sc-for list="{{ rowLabels }}" as="rl" hint-placeholder-count="7">
+            <div style="height:56px; display:flex; align-items:center; padding:0 14px; border-bottom:1px solid var(--border); font-size:12px; color:var(--text-secondary);">{{ rl }}</div>
+          </sc-for>
+        </div>
+        <!-- candidate columns -->
+        <div class="h-scroll" style="overflow-x:auto; display:flex; flex:1;">
+          <sc-for list="{{ columns }}" as="col" hint-placeholder-count="3">
+            <div style="flex:none; width:140px; border-right:1px solid var(--border); border-top:1px solid var(--border);">
+              <!-- header -->
+              <div style="height:80px; padding:11px 12px; border-bottom:1px solid var(--border); display:flex; flex-direction:column; justify-content:center; gap:3px;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="width:18px; height:18px; border-radius:5px; background:{{ col.rankBg }}; color:{{ col.rankFg }}; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:500; display:flex; align-items:center; justify-content:center;">{{ col.rank }}</span>
+                  <span style="width:10px; height:10px; border-radius:50%; background:{{ col.color }};"></span>
+                </div>
+                <div style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:600; font-size:12.5px; color:var(--text-primary); line-height:1.2; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ col.name }}</div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:600; color:{{ col.scoreColor }};">{{ col.score }}</div>
+              </div>
+              <sc-for list="{{ col.cells }}" as="cell" hint-placeholder-count="7">
+                <div style="height:56px; border-bottom:1px solid var(--border); background:{{ cell.bg }}; display:flex; flex-direction:column; justify-content:center; padding:0 12px;">
+                  <sc-if value="{{ cell.isZone }}">
+                    <div style="display:inline-flex; align-items:center; gap:5px; padding:3px 8px; border-radius:9999px; background:{{ cell.zoneBg }}; border:1px solid {{ cell.zoneBorder }}; align-self:flex-start;">
+                      <span style="width:6px; height:6px; border-radius:50%; background:{{ cell.zoneDot }};"></span>
+                      <span style="font-size:11px; font-weight:600; color:{{ cell.zoneFg }};">{{ cell.value }}</span>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ cell.isDb }}">
+                    <span style="display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:{{ cell.color }};">{{ cell.icon }} {{ cell.value }}</span>
+                  </sc-if>
+                  <sc-if value="{{ cell.isText }}">
+                    <span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text-primary);">{{ cell.value }}</span>
+                    <sc-if value="{{ cell.sub }}"><span style="font-size:10.5px; color:var(--text-muted);">{{ cell.sub }}</span></sc-if>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="padding:6px 16px 18px; font-size:11px; color:var(--text-muted); text-align:center;">Hijau = terbaik · merah = terburuk per baris · geser tabel →</div>
+    </div>
+  </div>
+
+  <sc-if value="{{ toast }}">
+    <div role="status" aria-live="polite" style="position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:60; background:var(--text-primary); color:var(--bg-surface); padding:11px 18px; border-radius:10px; font-size:13.5px; font-weight:500; box-shadow:var(--shadow-4); animation:hFade 200ms ease;">{{ toast }}</div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:520,&quot;height&quot;:960},&quot;startDark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = {
+    dark:false, ideal:3500000, max:4200000, toast:null,
+    cands:[
+      { id:'sk', name:'Apt Skandinavia', color:'#0B4F6C', dcolor:'#1A80A6', dash:'0', allIn:4100000, upfront:14000000, dist:7.2, db:1,
+        dims:{access:92,cond:85,liv:78,env:74,val:75,commit:55} },
+      { id:'an', name:'Kost Anggrek', color:'#E8621A', dcolor:'#F07B3A', dash:'5 4', allIn:1800000, upfront:5400000, dist:9.5, db:0,
+        dims:{access:70,cond:72,liv:82,env:80,val:85,commit:88} },
+      { id:'jw', name:'Kontrakan Jatiwaringin', color:'#16A34A', dcolor:'#22C55E', dash:'2 4', allIn:3200000, upfront:35500000, dist:6.4, db:0,
+        dims:{access:84,cond:80,liv:60,env:78,val:70,commit:70} },
+    ],
+    W:{afford:25,access:20,cond:15,liv:15,env:10,val:10,commit:5},
+  };
+
+  componentDidMount(){ if(this.props.startDark) this.setState({dark:true}); }
+
+  fmt(n){ return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
+  jt(n){ return 'Rp ' + (n/1e6).toFixed(1).replace('.',',') + 'jt'; }
+
+  afford(allIn, ideal, max){
+    if(allIn < ideal*0.7) return 100;
+    if(allIn <= ideal) return 100 - (allIn-ideal*0.7)/(ideal*0.3)*25;          // 100→75
+    if(allIn <= max) return 75 - (allIn-ideal)/(max-ideal)*35;                  // 75→40
+    if(allIn <= max*1.3) return 40 - (allIn-max)/(max*0.3)*40;                  // 40→0
+    return 0;
+  }
+  total(c, ideal, max){
+    const W=this.state.W; const af=this.afford(c.allIn,ideal,max); const d=c.dims;
+    const t = af*W.afford + d.access*W.access + d.cond*W.cond + d.liv*W.liv + d.env*W.env + d.val*W.val + d.commit*W.commit;
+    return Math.round(t/100);
+  }
+  zoneOf(allIn, ideal, max){
+    if(allIn < ideal*0.7) return 'comfort';
+    if(allIn <= ideal) return 'ideal';
+    if(allIn <= max) return 'stretch';
+    return 'over';
+  }
+  zoneStyle(z, dark){
+    const L={comfort:{bg:'#EBF7FA',fg:'#062F40',border:'#D6EEF5',dot:'#0B4F6C',label:'Comfort'},
+      ideal:{bg:'#F0FDF4',fg:'#15803D',border:'#DCFCE7',dot:'#16A34A',label:'Ideal'},
+      stretch:{bg:'#FFFBEB',fg:'#B45309',border:'#FEF3C7',dot:'#D97706',label:'Stretch'},
+      over:{bg:'#FFF5F5',fg:'#B91C1C',border:'#FEE2E2',dot:'#DC2626',label:'Over'}};
+    const D={comfort:{bg:'#0B2E3A',fg:'#A8D8E8',border:'#13455a',dot:'#1A80A6',label:'Comfort'},
+      ideal:{bg:'#052E16',fg:'#22C55E',border:'#0c4d26',dot:'#22C55E',label:'Ideal'},
+      stretch:{bg:'#1C1204',fg:'#FBBF24',border:'#3a2608',dot:'#FBBF24',label:'Stretch'},
+      over:{bg:'#1C0404',fg:'#F87171',border:'#3a0a0a',dot:'#F87171',label:'Over'}};
+    return (dark?D:L)[z];
+  }
+  scoreColor(s, dark){ if(s>=80) return dark?'#22C55E':'#15803D'; if(s>=65) return dark?'#FBBF24':'#B45309'; if(s>=45) return dark?'#FB923C':'#EA580C'; return dark?'#F87171':'#B91C1C'; }
+  flash(m){ this.setState({toast:m}); clearTimeout(this._t); this._t=setTimeout(()=>this.setState({toast:null}),2000); }
+
+  renderVals(){
+    const S=this.state, dark=S.dark;
+    const dimOrder=['afford','access','cond','liv','env','val','commit'];
+    const dimNames={afford:'Afford',access:'Akses',cond:'Kondisi',liv:'Livability',env:'Lingkungan',val:'Value',commit:'Commit'};
+
+    // baseline ranks (default budget)
+    const base=S.cands.map(c=>({id:c.id, t:this.total(c,3500000,4200000)})).sort((a,b)=>b.t-a.t);
+    const baseRank={}; base.forEach((x,i)=>baseRank[x.id]=i+1);
+
+    // live
+    const live=S.cands.map(c=>{
+      const af=Math.round(this.afford(c.allIn,S.ideal,S.max));
+      const t=this.total(c,S.ideal,S.max);
+      return {...c, af, t};
+    }).sort((a,b)=>b.t-a.t);
+    const liveRank={}; live.forEach((x,i)=>liveRank[x.id]=i+1);
+
+    // radar geometry
+    const cx=140, cy=118, R=78, N=7, W=280, H=236;
+    const pts=(r)=> dimOrder.map((d,i)=>{ const a=-Math.PI/2+i*2*Math.PI/N; return (cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1); }).join(' ');
+    const radarOuter=pts(R), radarMid=pts(R*0.66), radarInner=pts(R*0.33);
+    const radarPolys=live.map(c=>{
+      const vals={...c.dims, afford:c.af};
+      const p=dimOrder.map((d,i)=>{ const a=-Math.PI/2+i*2*Math.PI/N; const r=R*vals[d]/100; return (cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1); }).join(' ');
+      return {points:p, color:dark?c.dcolor:c.color, fill:dark?c.dcolor:c.color, dash:c.dash};
+    });
+    const radarLabels=dimOrder.map((d,i)=>{ const a=-Math.PI/2+i*2*Math.PI/N; const lr=R+22; return {label:dimNames[d], left:((cx+lr*Math.cos(a))/W*100).toFixed(1)+'%', top:((cy+lr*Math.sin(a))/H*100).toFixed(1)+'%'}; });
+    const legend=S.cands.map(c=>({name:c.name, color:dark?c.dcolor:c.color, style:c.dash==='0'?'solid':'dashed'}));
+
+    // ranking list (in live order)
+    const ranking=live.map(c=>{
+      const prev=baseRank[c.id], now=liveRank[c.id];
+      let delta='—', dc='var(--text-muted)';
+      if(now<prev){ delta='↑ dari #'+prev; dc='var(--success-text)'; }
+      else if(now>prev){ delta='↓ dari #'+prev; dc='var(--danger-text)'; }
+      else delta='tetap #'+now;
+      return { name:c.name, rank:now, score:c.t, scoreColor:this.scoreColor(c.t,dark),
+        rankBg: now===1?'var(--primary)':'var(--bg-elevated)', rankFg: now===1?'#fff':'var(--text-secondary)',
+        delta, deltaColor:dc };
+    });
+
+    // compare table
+    const rowLabels=['Skor','Upfront','Budget zone','Deal breaker','All-in /bln','Proyeksi 24 bln','Jarak'];
+    // numeric helpers for best/worst
+    const upfrontArr=live.map(c=>c.upfront), allInArr=live.map(c=>c.allIn), distArr=live.map(c=>c.dist), scoreArr=live.map(c=>c.t);
+    const proj=c=>c.allIn*24+c.upfront; const projArr=live.map(proj);
+    const hi=(arr,v)=> v===Math.max(...arr); const lo=(arr,v)=> v===Math.min(...arr);
+    const goodBg='var(--success-surface)', badBg='var(--danger-surface)';
+    const mark=(isBest,isWorst)=> isBest?goodBg : (isWorst?badBg:'transparent');
+
+    const columns=live.map(c=>{
+      const z=this.zoneOf(c.allIn,S.ideal,S.max); const zs=this.zoneStyle(z,dark);
+      const cells=[
+        { isText:true, value:c.t, sub:'', bg: mark(hi(scoreArr,c.t), lo(scoreArr,c.t)) },
+        { isText:true, value:this.jt(c.upfront), sub:'', bg: mark(lo(upfrontArr,c.upfront), hi(upfrontArr,c.upfront)) },
+        { isZone:true, value:zs.label, zoneBg:zs.bg, zoneFg:zs.fg, zoneBorder:zs.border, zoneDot:zs.dot, bg:'transparent' },
+        { isDb:true, value: c.db>0 ? c.db+' dilanggar' : 'aman', icon: c.db>0?'✕':'✓', color: c.db>0?'var(--danger-text)':'var(--success-text)', bg: c.db>0?badBg:'transparent' },
+        { isText:true, value:this.jt(c.allIn), sub:'', bg: mark(lo(allInArr,c.allIn), hi(allInArr,c.allIn)) },
+        { isText:true, value:this.jt(proj(c)), sub:'', bg: mark(lo(projArr,proj(c)), hi(projArr,proj(c))) },
+        { isText:true, value:c.dist.toFixed(1)+' km', sub:'', bg: mark(lo(distArr,c.dist), hi(distArr,c.dist)) },
+      ];
+      return { name:c.name, color:dark?c.dcolor:c.color, rank:liveRank[c.id], score:c.t, scoreColor:this.scoreColor(c.t,dark),
+        rankBg: liveRank[c.id]===1?'var(--primary)':'var(--bg-elevated)', rankFg: liveRank[c.id]===1?'#fff':'var(--text-secondary)',
+        cells };
+    });
+
+    return {
+      darkClass: dark?'dark':'', themeIcon: dark?'☀':'☾', toggleDark:()=>this.setState({dark:!dark}),
+      ideal:S.ideal, max:S.max, idealStr:this.fmt(S.ideal), maxStr:this.fmt(S.max),
+      setIdeal:(e)=>{ const v=+e.target.value; this.setState({ideal:v, max:Math.max(v,S.max)}); },
+      setMax:(e)=>{ const v=+e.target.value; this.setState({max:v, ideal:Math.min(v,S.ideal)}); },
+      applyBudget:()=>this.flash('Budget tersimpan ke pengaturan'),
+      radarOuter, radarMid, radarInner, radarPolys, radarLabels, legend,
+      ranking, rowLabels, columns,
+      toast:S.toast,
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -6,6 +6,65 @@ Context lintas sesi untuk agent team. Dibaca Orchestrator di awal tiap sesi.
 
 ## Keputusan & Prinsip yang Sudah Disepakati
 
+### Sesi 2026-07-06 — Collaboration (Undang Pasangan): DEFER-dengan-Gate (Confidence: MEDIUM, status: 🙋 UNCERTAIN / PENDING FAISAL)
+
+**Artefak:** `next-feature/collaboration-partner.md`, transcript `sessions/2026-07-06-collaboration.md`. Agents: PM·UX·STR·TL·DA·SYN·PO (semua 7 — high-stakes, menyentuh fondasi identitas). Grounding: 21 file `.eq("user_id")`, 10 file child via `candidate_id`.
+
+**VERDICT: DEFER-DENGAN-GATE** (bukan GO, bukan NO). Alasan utama BUKAN mahal (TL: slice read-only ~3-4 hari, additive) tapi karena **premis "pasangan AKTIF berdua" belum tervalidasi 1 data point pun (DA-C3, tantangan terpenting)**. Kalau pola dominan ID = "solo-lead + partner PASIF approver", maka **share-link read-only** (sudah direncanakan PREMIUM di sesi 2026-06-29) sudah menjawab ~95% kebutuhan → collaboration 2-arah = over-build. Pola ini mengulang sesi browser-extension (asumsi menolak asumsi). DEFER wajib bertanggal/bertrigger, bukan defer selamanya.
+
+**Keputusan mengikat (bila kelak GO):**
+- **Model data = Opsi A `candidate_shares` + `invitations` (ADDITIVE).** TOLAK `workspace_id`/`household_id` (migrasi 21 file `.eq(user_id)` + backfill live + isu bobot ganda). Reversibel (tabel bisa di-drop). Loader `app/dashboard/data.ts` cukup +1 branch (perluas `ids` dengan shared candidate_id). Helper terpusat `assertCandidateAccess` (migrasi bertahap dari mutation actions). Foto: path owner tetap, ambil owner_id dari `candidates` bukan session viewer.
+- **Skor collaborator DITUNDA** sampai pola tervalidasi. Rata-rata bobot DITOLAK (skor fiksi + langgar prinsip). **"Satu skor owner untuk collaborator" DITOLAK PO** kecuali collaborator bisa atur bobot sendiri — melanggar prinsip terkunci "bobot=pilihan user" (ditutup prinsip, bukan open question). Opsi bila GO: approver-pasif → tanpa-skor+komentar cukup; evaluator-aktif → dua-skor-berdampingan+label sumber bertahap. Jangan sentuh scoring engine/`scoring_version` untuk scope ini.
+- **Real-time DITOLAK; async sync-on-open.** Supabase Realtime tak kompatibel pola service-role client (butuh anon-key + RLS aktif yang belum fungsional); low-frequency = dua orang buka bersamaan hampir tak pernah.
+- **Share-link read-only PREMIUM = eksekusi terpisah** dari debat collaboration (sudah di roadmap). Menyelesaikan job "partner pasif lihat data".
+- **Monetisasi collaboration:** diferensiasi FUNGSIONAL tak-bisa-diworkaround (share=publik-tanpa-akun-deliverable-PREMIUM vs collaboration=butuh-akun-workflow-GRATIS-1-partner) agar invite gratis tak mengkanibal share-link premium (DA-C5). Efek strategis = "qualified-pair acquisition" (~1 partner, BUKAN viral eksponensial) + within-cycle completion, BUKAN long-term retention.
+
+**Langkah pemutus (murah, sebelum commit kode apa pun):** VALIDASI-2 = tanya pilot "pernah screenshot Compare & kirim ke pasangan?" (2 hari, termurah, pemutus DEFER vs GO / pull-signal). VALIDASI-1 = intercept 10-15 pencari (solo vs berdua, aktif vs pasif).
+
+**DA quality:** 5 tantangan SEMUA aktif; hanya 1 minor dicabut (schema-additive, tak ada argumen teknis). Lebih sedikit pencabutan dari sesi Slice 2 karena premis collaboration lebih lemah (nol behavioral data).
+
+**🙋 GATE FAISAL (output ditahan, default 48 jam):**
+1. **Q1:** Share-link read-only — eksekusi sekarang (terpisah) atau tunggu validasi 2 hari? (Default: eksekusi sekarang; collaboration tetap DEFER.)
+2. **Q2:** Batas free/premium collaboration — invite 1 partner gratis atau premium? Bergantung gate freemium Q1 (2026-06-29) yang masih pending. (Default: gratis 1 partner.)
+
+**BOLEH jalan tanpa Faisal:** VALIDASI-2 (hari ini), finalisasi spec share-link. **DITAHAN:** arsitektur collaboration 2-arah; skor/monetisasi collaborator (bergantung gate lama: Slice 2 G1 + Freemium Q1, keduanya PENDING).
+
+**REVISIT TRIGGER:** VALIDASI-2 >20% pilot sudah screenshot Compare · keluhan organik "tak bisa ajak pasangan" · kompetitor lokal tambah collaboration · %di-Compare >30% (fondasi single-user solid).
+
+---
+
+### Sesi 2026-06-29 — Monetisasi: Tolak Fomo, Pivot Freemium/Premium (Confidence: MEDIUM, status: 🙋 PENDING CONFIRMATION oleh Faisal)
+
+**Artefak:** `next-feature/monetization-freemium-premium.md`, transcript `sessions/2026-06-29-monetization-fomo.md`, analisis Fomo diarsip `.claude/agent-memory/agent-strategist/project-monetization-fomo.md`. Agents: STR·TL·PM·UX·DA·SYN·PO (2 wave).
+
+**Model Fomo (kontribusi data anonim → subscribe Rp50rb buka market-intelligence agregat): DITOLAK FAISAL** ("kayaknya ga cocok buat hunian"). Tim sempat verdict: ambil mechanic contribute-to-unlock, buang billing subscription; whitespace data nego/all-in = potensi moat (Mamikos conflict-of-interest struktural ke supply-side). Diarsip; JANGAN usulkan ulang Fomo/subscription tanpa alasan baru.
+
+**Arah final = FREEMIUM + PREMIUM klasik. Prinsip mengikat: GATE DI OUTPUT, BUKAN INPUT.**
+- **FREE = akses PENUH semua INPUT + ANALISIS:** AI extraction UNLIMITED, **kandidat UNLIMITED** (limit kandidat DITOLAK — langgar prior-verdict & bunuh aha-moment Compare), scoring 5D, Compare (HERO), survey fisik, biaya all-in, nego tracker, timeline, AI explanation/red-flags/summary (bundled dlm extraction, cost marginal ~0).
+- **PREMIUM = hanya OUTPUT DELIVERABLE yang butuh cloud resource / AI-generation baru:** foto cloud sync, share-link real-time, PDF decision memo, nego script AI. WAJIB ada **preview static/sample** (bukan full-lock → hindari 0% conversion).
+- **Cost reality (TL baca codebase):** AI calls MURAH (~$0.0004-0.0013/call). Cost per-user TERBESAR = **Google Directions (POI rute asli) ~$0.125/user**. Gate POI+foto cloud → free tier aman 5000-10000 MAU.
+- **POI:** premium = Google Directions; free = road-based estimate (BLOCKING spike Overpass 1 hari); **crow-flies/garis lurus BUKAN opsi** (menyesatkan di Jakarta: sungai/tol/macet).
+- **Foto OPFS lokal (free):** 2 safeguard WAJIB sebelum ship (BLOCKING, bukan optional): **warning banner prominent + tombol export foto ZIP gratis** (DA-C4 trust damage; "user in control atas datanya").
+
+**Fasing (DA-C1: jangan prematur):** MANUAL-PREMIUM dulu — semua fitur unlock untuk pilot, validasi WTP via **transfer manual + flag `is_premium`**. Bangun otomasi gating (`user_usage_counters` atomic / candidate COUNT; JWT-claim & RLS-count DITOLAK) HANYA setelah cycle-completion terbukti & ≥3 transfer manual. Effort otomasi 1-2 hari (bukan foundational).
+
+**"Full free dulu, monet nanti" (pertanyaan Faisal):** Yang ditunda = **PAYWALL (enforcement)**, BUKAN **keputusan MODEL**. Tunda model sama sekali = JEBAKAN untuk Hunian (low-frequency → user churn sebelum di-monet; COGS AI jalan tanpa revenue = net-negatif solo dev; tanpa instrumentasi hari-1, "user banyak" = data sampah). Instrumentasi (cycle-completion, % kandidat di-Compare, WTP signal, definisi "siklus") WAJIB dirancang sejak hari 1.
+
+**Harga:** Rp59rb/siklus one-time = hipotesis diuji (bukan fiksi — kill-condition = measurement). Definisi "SIKLUS" wajib eksplisit di UI + exit-survey 1 pertanyaan saat user tolak paywall.
+
+**Metrik pembuka (DA):** % kandidat yang di-add benar-benar di-Compare. Jika <30% → aha-moment belum terjadi, TUNDA semua monetisasi, fokus cycle completion. Kill-condition: 30 hari/≥100 user/<3 bayar sukarela → freeze. Saweria pasif cover COGS.
+
+**DA quality:** sesi Fomo 5 tantangan (C3 dicabut SYN dgn rebuttal); sesi gating 6 tantangan (C2 decisive = gate output, C5 sebagian dicabut). PM keliru 2 hal (limit kandidat & POI gratis), dikoreksi SYN.
+
+**🙋 GATE FAISAL (output ditahan, ada default 48 jam):**
+1. **G1:** "Full free dulu" = tunda paywall (default, = rekomendasi tim) atau tunda model (jebakan)? Konfirmasi maksud.
+2. **G2:** Safeguard foto OPFS (warning + export ZIP) = blocking sebelum ship foto? (Default: Ya.)
+3. **G3 (opsional):** Rp59rb/siklus + definisi siklus eksplisit di UI? (Default: Ya.)
+
+**REVISIT TRIGGER:** % di-Compare <30% → emergency review (tunda monet); ≥3 transfer manual + cycle-completion terbukti → mulai bangun otomasi gating; spike Overpass selesai → kunci desain POI free tier.
+
+---
+
 ### Sesi 2026-06-27 — Slice 2 Prioritisasi & Scope (Confidence: MEDIUM, status: 🙋 PENDING CONFIRMATION oleh Faisal)
 
 **Artefak:** `next-feature/slice2-prioritisasi.md`, transcript `sessions/2026-06-27-slice2-prioritisasi.md`. Agents: PM·UX·STR·TL·DA·SYN·PO (semua 7). Acuan: `docs/DEVELOPMENT-PLAN-SLICE2.md` (fase S2-0..S2-8).
