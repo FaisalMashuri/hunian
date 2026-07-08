@@ -1,8 +1,8 @@
-import Image from "next/image";
 import type { Metadata } from "next";
+import { OptioMark } from "@/components/app/optio-mark";
 
 export const metadata: Metadata = {
-  title: "Offline — Hunian",
+  title: "Offline — Optio",
   robots: { index: false, follow: false },
 };
 
@@ -11,14 +11,7 @@ export const metadata: Metadata = {
 export default function OfflinePage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
-      <Image
-        src="/icon.png"
-        alt="Hunian"
-        width={72}
-        height={72}
-        priority
-        className="h-16 w-16 object-contain opacity-90"
-      />
+      <OptioMark className="h-16 w-16 text-teal-700 opacity-90" />
       <h1 className="mt-6 text-xl font-extrabold tracking-tight text-zinc-900">
         Kamu sedang offline
       </h1>

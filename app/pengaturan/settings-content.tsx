@@ -248,9 +248,9 @@ export function SettingsContent({
 
       {/* ── TENTANG ── */}
       <div className="py-5 text-center">
-        <div className="text-[15px] font-extrabold tracking-tight text-zinc-900">Hunian</div>
+        <div className="text-[15px] font-extrabold tracking-tight text-zinc-900">Optio</div>
         <div className="text-xs text-zinc-400">Versi 1.0.0 · Decision Support untuk Hunian Sewa</div>
-        <div className="mt-1 text-[11.5px] italic text-zinc-400">&quot;Hunian doesn&apos;t optimize decisions. It optimizes how decisions are formed.&quot;</div>
+        <div className="mt-1 text-[11.5px] italic text-zinc-400">&quot;Optio doesn&apos;t optimize decisions. It optimizes how decisions are formed.&quot;</div>
       </div>
 
       {/* LOGOUT DIALOG */}
@@ -258,7 +258,7 @@ export function SettingsContent({
         <div className="fixed inset-0 z-[500] flex items-center justify-center bg-black/45 p-6" onClick={() => setLogoutOpen(false)}>
           <div className="w-full max-w-[400px] rounded-[20px] bg-white p-7 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="mb-3 text-4xl">👋</div>
-            <h2 className="mb-2 text-lg font-extrabold tracking-tight text-zinc-900">Keluar dari Hunian?</h2>
+            <h2 className="mb-2 text-lg font-extrabold tracking-tight text-zinc-900">Keluar dari Optio?</h2>
             <p className="mb-5 text-[13.5px] leading-relaxed text-zinc-500">Data dan shortlist-mu tetap tersimpan dengan aman. Kamu bisa masuk kembali kapan saja.</p>
             <div className="flex gap-2">
               <button type="button" onClick={() => setLogoutOpen(false)} className="flex-1 rounded-[10px] border-[1.5px] border-[#E4E3DF] py-2.5 text-[13.5px] text-zinc-500 transition-colors hover:bg-[#F4F3F0]">Tetap di sini</button>

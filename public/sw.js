@@ -1,4 +1,4 @@
-// Service worker Hunian — installable PWA + tahan koneksi buruk.
+// Service worker Optio — installable PWA + tahan koneksi buruk.
 // Strategi:
 //  - App shell (/, /offline, icon, manifest) di-precache saat install.
 //  - Navigasi halaman: network-first → cache → fallback /offline.
@@ -6,8 +6,8 @@
 //  - Request non-GET / lintas-origin / API dinamis: selalu ke network (tidak di-cache).
 // Bukan full offline: data (Supabase/API) tetap butuh koneksi.
 
-const VERSION = "v2";
-const CACHE = `hunian-${VERSION}`;
+const VERSION = "v3";
+const CACHE = `optio-${VERSION}`;
 const OFFLINE_URL = "/offline";
 
 const PRECACHE = [
@@ -15,10 +15,11 @@ const PRECACHE = [
   OFFLINE_URL,
   "/manifest.webmanifest",
   "/favicon.ico",
-  "/favicon-32x32.png",
+  "/favicon.svg",
+  "/favicon-96x96.png",
   "/apple-touch-icon.png",
-  "/android-chrome-192x192.png",
-  "/android-chrome-512x512.png",
+  "/web-app-manifest-192x192.png",
+  "/web-app-manifest-512x512.png",
   "/icon.png",
 ];
 

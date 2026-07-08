@@ -658,7 +658,7 @@ export default async function CandidateDetailPage({
         ) : (
           <div className="rounded-2xl border border-dashed border-[#E4E3DF] bg-white p-6 text-center shadow-sm">
             <p className="text-sm font-medium text-zinc-700">{canEdit ? "Belum ada hasil survei" : "Belum ada hasil survei"}</p>
-            <p className="mx-auto mt-1 max-w-sm text-xs text-zinc-400">{canEdit ? "Setelah kunjungan langsung, isi kesan dan kondisi yang kamu lihat. Hunian akan segera perbarui evaluasinya — termasuk nilai kondisi fisik dan penilaian owner." : "Belum ada yang mengisi hasil survei lapangan."}</p>
+            <p className="mx-auto mt-1 max-w-sm text-xs text-zinc-400">{canEdit ? "Setelah kunjungan langsung, isi kesan dan kondisi yang kamu lihat. Optio akan segera perbarui evaluasinya — termasuk nilai kondisi fisik dan penilaian owner." : "Belum ada yang mengisi hasil survei lapangan."}</p>
             {canEdit && <Link href={`/shortlist/${id}/survey`} className="mt-4 inline-flex h-10 items-center justify-center rounded-xl bg-teal-700 px-5 text-sm font-semibold text-white transition-colors hover:bg-teal-800">Isi Hasil Kunjungan →</Link>}
           </div>
         )}

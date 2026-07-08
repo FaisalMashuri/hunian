@@ -1,40 +1,41 @@
 {
-  "session_id": "2026-06-27-slice2-prioritisasi",
-  "topic": "Prioritisasi, urutan eksekusi & keputusan scope Slice 2 Hunian",
-  "status": "AWAITING_FAISAL",
-  "session_state": "DONE_PENDING_CONFIRMATION",
-  "po_status": "PENDING CONFIRMATION",
+  "session_id": "2026-07-06-collaboration",
+  "topik": "Fitur Collaboration — undang pasangan berbagi & analisis hunian bersama",
+  "status": "COMPLETED",
+  "started_at": "2026-07-06",
+  "completed_at": "2026-07-06",
+  "verdict": "DEFER-DENGAN-GATE",
   "confidence": "MEDIUM",
-  "faisal_gates": {
-    "G1": "BLOCKING formula v2.0 — di mana/bagaimana user atur bobot Kondisi & Owner? A(settings override default EQUAL)/B(default EQUAL fixed Slice2)/C(default RENDAH fixed). Rekom A atau B. NO DEFAULT.",
-    "G2": "BLOCKING deploy S2-2 — Faisal bersedia inform pilot user skor berubah 3D->5D saat Slice2 live? Rekom Ya. NO DEFAULT."
+  "po_status": "UNCERTAIN / PENDING FAISAL",
+  "rounds_planned": 3,
+  "agents_done": ["PM", "UX", "STR", "TL", "DA", "SYN", "PO"],
+  "artifacts_written": [
+    "next-feature/collaboration-partner.md",
+    "next-feature/_INDEX.md (updated: count In Discussion 2->3, tabel, kategori Collaboration)",
+    "sessions/2026-07-06-collaboration.md",
+    ".claude/hunian-team-context.md (entri sesi baru di atas)"
+  ],
+  "keputusan_mengikat": {
+    "verdict": "DEFER-dengan-trigger; alasan = premis pasangan-aktif belum tervalidasi (DA-C3), bukan karena mahal",
+    "model_data": "Opsi A candidate_shares + invitations ADDITIVE; TOLAK workspace_id",
+    "skor": "DITUNDA; rata-rata & satu-skor-owner-diam DITOLAK (langgar bobot=pilihan user)",
+    "realtime": "DITOLAK; async sync-on-open",
+    "share_link": "read-only PREMIUM, eksekusi terpisah dari collaboration",
+    "monetisasi": "diferensiasi fungsional tak-bisa-diworkaround; bergantung gate freemium Q1"
   },
-  "artifacts": {
-    "feature_file": "next-feature/slice2-prioritisasi.md",
-    "transcript": "sessions/2026-06-27-slice2-prioritisasi.md",
-    "team_context_updated": true,
-    "index_updated": true
+  "gate_faisal": [
+    "Q1: share-link eksekusi sekarang vs tunggu validasi (default: sekarang)",
+    "Q2: invite 1 partner gratis vs premium (default: gratis)"
+  ],
+  "validasi_pemutus": "VALIDASI-2 (tanya pilot screenshot Compare, 2 hari) + VALIDASI-1 (intercept 10-15)",
+  "agent_ids": {
+    "PM": "a2134f4dbb7ecdc5c",
+    "UX": "a5a4a8fe6a4283dfc",
+    "STR": "af21a5fdc3c430f64",
+    "TL": "a8cef321856ea1674",
+    "DA": "a29a9e4faaa12a7eb",
+    "SYN": "a2d8dc5184de251b0",
+    "PO": "a966f56f5dad959b9"
   },
-  "revisit_trigger": "0 survey_complete events dlm 3 sesi pilot -> emergency review (usul 2D DA jadi relevan dgn data)",
-  "execution_model": "ASYNC (background agents, notified on completion)",
-  "prev_session": "2026-06-26-code-review-slice1 (COMPLETED)",
-  "intent": "Tentukan urutan eksekusi optimal + tarik garis Slice 2 MVP tajam untuk pilot + putuskan 4 scope terbuka (survey form/deriveVerdict, Apt&Kost JSONB vs typed, biaya all-in numeric, POI Directions cost) + tandai risiko over-build.",
-  "tasks": {
-    "T-001": {"agent": "PM", "id": "a6d14df029432f010", "status": "done", "verdict": "MVP=S2-0+S2-2+S2-4; std-if-capacity=S2-1+S2-5; defer S2-3/6/7/8. Urutan: S2-0->S2-2->S2-4->S2-1->S2-5->S2-6->S2-7->S2-3->S2-8. deriveVerdict ikut 5D, bump scoring_version 2.0, weight Kondisi/Owner default rendah. Apt/Kost SKIP. Biaya all-in semi-terstruktur NON-scoring. POI skip straight-line."},
-    "T-002": {"agent": "UX", "id": "a12c03fbc0ec92660", "status": "done", "verdict": "Decision-shaping: S2-2/S2-5/S2-4. Theater untuk solo pilot: S2-1 foto/S2-3 timeline/S2-7 POI. Survey worth dibangun; dead-zone=logistik bukan form; form <90 detik di properti. KOREKSI urutan dimensi: Kondisi+Owner DULU (ghost, nilai compare tertinggi). deriveVerdict berubah TAPI eksplisit (silent merusak trust). Partial radar: dashed outline, EXCLUDE ghost dari total, callout. RISIKO TERBESAR: biaya parsial di Compare (all-in vs listing tak comparable -> bisa membalik keputusan) -> wajib label sumber harga. Apt/Kost contingent demand onboarding; Kost>Apartemen. Assumption: dead-zone mungkin krn user putuskan di LUAR Hunian tanpa log balik."},
-    "T-003": {"agent": "STR", "id": "a273ff8cbb743a087", "status": "done", "verdict": "MVP=S2-0+S2-2+S2-5+S2-4 (foto survey dijahit ke S2-2 BUKAN foto-listing standalone=parity-trap). Survey=core moat irreplaceable 18-24bln. Biaya all-in=conviction trigger. Apt/Kost DEFER; Kost > Apartemen di Slice 3. 4 parity-trap risk."},
-    "T-004": {"agent": "TL", "id": "a8acd896c02c0e03e", "status": "done", "verdict": "Effort total 18-25 hari solo. Urutan S2-0(S 0.5h)->S2-2(L 4-5h KUNCI)->S2-4(S 1h)->S2-1(M)->S2-5(M). Scope: (a)survey=avg sederhana per kelompok 0-100, partial pakai renormalisasi Slice1, bump scoring_version 2.0, badge survey parsial; (b)Apt/Kost JSONB+Zod TANPA pg_jsonschema, reset type_specific_data saat ganti property_type; (c)biaya all-in=ADD COLUMN numeric additive, text asli disimpan, reversibility HIGH; (d)POI=Distance Matrix bukan Directions, lazy top-15, cache, ~$0.75/bln/100MAU. candidate_poi DDL BELUM ada di schema.sql. 10 jebakan: RLS-via-JOIN child tables data-leak, helper insertCandidateEvent, signed-url TTL, compare v1-vs-v2 badge, type_specific reset, race double-billing, re-survey overwrite->log events."},
-    "T-005": {"agent": "DA", "id": "a1f4cb0688ca3e130", "status": "done", "verdict": "CABUT 2 (S2-4 negosiasi=norma budaya effort S; POI defer tetap benar walau $0.75). MODIFIKASI S2-3: defer UI tapi POPULATE events table sbg side-effect S2-2 (data pilot invaluable). 3 konflik utk SYN: (A) S2-5 show-vs-score -> usul show-never-score; (B) survey 2D-dulu vs 6D-langsung -> usul build 2D (Kondisi+Owner) validate 1 minggu lalu expand; (C) scoring_version migration -> one-shot rescore semua kandidat existing (pilot kecil personally-known) BUKAN lazy+badge. 4 GATE FAISAL: G1 survey 2D vs 6D; G2 biaya all-in score vs display-only; G3 migration one-shot vs lazy; G4 biaya schema JSONB vs fixed-columns. DA default: 2D / display-only / one-shot / minta TL justifikasi fixed-columns."},
-    "T-006": {"agent": "SYN", "id": "a9c689ee01d7bd909", "status": "done", "verdict": "RESOLUSI: A=display-only (tdk masuk scoring); B=6D LANGSUNG (non-adopsi=behavior bukan form-length; 2D malah 2x migration; events side-effect beri detection window 3 sesi); C=ONE-SHOT migration (Compare hero; 3D+5D dlm 1 view=functional failure; <20 kandidat trivial; script=deliverable S2-2). MVP=S2-0+S2-2+S2-4+S2-5(display)+events-side-effect. Tier2=foto survey dijahit S2-2. Defer S2-3UI/S2-6/S2-7/S2-8. 4 gate DA SEMUA ditutup developer-default. 2 GATE FAISAL BARU: F1=weight Kondisi+Owner EQUAL vs RENDAH (rekom EQUAL, default diam=EQUAL); F2=sign-off awareness one-shot migration (MUST-ACT, no default, TL tdk deploy sampai confirm). REVISIT TRIGGER: 0 survey_complete dlm 3 sesi->emergency review. Confidence MEDIUM (behavioral bet on-location belum teruji)."},
-    "T-007": {"agent": "PO", "id": "a9fcf8f87172e92f4", "status": "done", "verdict": "PENDING CONFIRMATION. Vision check: 5D/one-shot/deriveVerdict AMAN selama framing trade-off; biaya display-only AMAN. KONFLIK VISION: F1 hanya pilih antar default sistem -> langgar 'bobot SELALU=pilihan user' utk 2 dimensi baru. 2 gate Faisal final (G1 bobot, G2 sign-off migrasi), NO DEFAULT keduanya. 4 gate DA & 11 hal lain = developer-default, tak perlu ditanya Faisal."}
-  },
-  "agent_memory_backups": {
-    "PM": ".claude/agent-memory/PM/slice2-prioritisasi.md",
-    "UX": ".claude/agent-memory/UX/slice2-behavior.md",
-    "STR": ".claude/agent-memory/STR/slice2-strategy.md",
-    "TL": ".claude/agent-memory/TL/slice2-feasibility.md"
-  },
-  "note": "Wave 1 paralel. Setelah keempat selesai -> DA challenge -> SYN -> PO gate. Subagent diinstruksikan menulis output penuh ke agent-memory (anti-truncation notifikasi).",
-  "persisted_by": "main-thread",
-  "updated": "2026-06-27"
+  "persisted_by": "main-thread"
 }

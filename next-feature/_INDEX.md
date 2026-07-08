@@ -9,7 +9,7 @@ Di-update otomatis oleh Orchestrator setiap kali sesi debat selesai.
 
 ```
 Backlog      : 0
-In Discussion: 1
+In Discussion: 3
 Approved     : 3
 In Progress  : 0
 Done         : 0
@@ -39,6 +39,8 @@ Rejected     : 0
 | 🟢 Approved | ERD & Schema Database (Slice 1) | HIGH | 2026-06-26 | [erd-schema-db.md](erd-schema-db.md) |
 | 🟢 Approved | UX/UI Design — Slice 1 (8 layar) | HIGH | 2026-06-26 | [ux-ui-slice1.md](ux-ui-slice1.md) |
 | 🔵 In Discussion | Slice 2 — Prioritisasi & Scope (Survey-First MVP) | MEDIUM | 2026-06-27 | [slice2-prioritisasi.md](slice2-prioritisasi.md) |
+| 🔵 In Discussion | Monetisasi — Freemium + Premium (gate di output, manual-premium dulu) | MEDIUM | 2026-06-29 | [monetization-freemium-premium.md](monetization-freemium-premium.md) |
+| 🔵 In Discussion | Collaboration — Undang Pasangan (DEFER-dengan-gate; validasi premis dulu) | MEDIUM | 2026-07-06 | [collaboration-partner.md](collaboration-partner.md) |
 
 ---
 
@@ -89,12 +91,12 @@ Rejected     : 0
 ### 👥 Collaboration
 *Fitur yang melibatkan lebih dari satu orang dalam proses keputusan*
 
-*(belum ada)*
+- 🔵 [Collaboration — Undang Pasangan](collaboration-partner.md) — verdict **DEFER-dengan-gate**: premis "pasangan aktif berdua" belum tervalidasi 1 data point; kalau pola dominan "solo-lead + partner pasif", share-link premium (sudah di roadmap) menjawab ~95% kebutuhan. Model data = `candidate_shares` additive (TOLAK workspace_id migrasi 21 file). Skor collaborator DITUNDA (satu-skor-owner DITOLAK PO — langgar "bobot=pilihan user"). PENDING VALIDASI-2 (2 hari) + konfirmasi Faisal (Q1 eksekusi share-link, Q2 batas free/premium).
 
 ### 💰 Monetization
 *Fitur yang berhubungan dengan revenue model Hunian*
 
-*(belum ada)*
+- 🔵 [Monetisasi — Freemium + Premium](monetization-freemium-premium.md) — gate di OUTPUT (deliverable) bukan INPUT; extraction/kandidat unlimited gratis; premium = foto cloud/share-link/PDF memo/nego script AI; manual-premium dulu (validasi WTP transfer manual); Rp59rb/siklus hipotesis. Model Fomo & subscription DITOLAK.
 
 ---
 

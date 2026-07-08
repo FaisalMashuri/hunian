@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .hunian-root {
+    --page-bg:#e7e5df;
+    --bg-base:#FAFAF9; --bg-surface:#FFFFFF; --bg-elevated:#F4F3F0;
+    --border:#E4E3DF; --border-subtle:#C8C7C3;
+    --text-primary:#1A1917; --text-secondary:#6B6A66; --text-muted:#9E9D99;
+    --primary:#0B4F6C; --primary-hover:#0E6789; --primary-surface:#EBF7FA;
+    --accent:#E8621A; --accent-surface:#FEF0E8; --accent-text:#C4511A;
+    --success:#16A34A; --success-surface:#F0FDF4; --success-text:#15803D;
+    --warning:#D97706; --warning-surface:#FFFBEB; --warning-text:#B45309;
+    --danger:#DC2626; --danger-surface:#FFF5F5; --danger-text:#B91C1C;
+    --shadow-2:0 4px 6px rgba(15,14,12,0.06),0 2px 4px rgba(15,14,12,0.05);
+    --shadow-4:0 20px 25px rgba(15,14,12,0.10),0 8px 10px rgba(15,14,12,0.06);
+  }
+  .hunian-root.dark {
+    --page-bg:#0a0a09;
+    --bg-base:#131211; --bg-surface:#1E1D1B; --bg-elevated:#2A2927;
+    --border:#3A3936; --border-subtle:#4A4946;
+    --text-primary:#F5F4F2; --text-secondary:#A8A7A3; --text-muted:#6B6A66;
+    --primary:#1A80A6; --primary-hover:#2496C0; --primary-surface:#0B2E3A;
+    --accent:#F07B3A; --accent-surface:#2D1A0E; --accent-text:#F07B3A;
+    --success:#22C55E; --success-surface:#052E16; --success-text:#22C55E;
+    --warning:#FBBF24; --warning-surface:#1C1204; --warning-text:#FBBF24;
+    --danger:#F87171; --danger-surface:#1C0404; --danger-text:#F87171;
+    --shadow-2:0 4px 6px rgba(0,0,0,0.3); --shadow-4:0 16px 28px rgba(0,0,0,0.5);
+  }
+  @keyframes hFade { from{opacity:0;} to{opacity:1;} }
+  .h-scroll::-webkit-scrollbar { width:0; }
+  .hunian-root a { text-decoration:none; }
+  .hunian-root input, .hunian-root textarea { font-family:Inter; color:var(--text-primary); background:var(--bg-surface); }
+  .hunian-root input::placeholder, .hunian-root textarea::placeholder { color:var(--text-muted); }
+</style>
+</helmet>
+
+<div class="hunian-root {{ darkClass }}" style="font-family:'Inter',sans-serif; background:var(--page-bg); min-width:100%; width:max-content; min-height:100vh; box-sizing:border-box; padding:48px; transition:background 250ms ease;">
+
+  <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.04em; text-transform:uppercase; color:#8a8780; margin-bottom:12px;">Survey — quick (30 detik) → full survey (5 tab) · {{ modeLabel }}</div>
+
+  <div style="width:390px; background:var(--bg-base); border-radius:24px; box-shadow:var(--shadow-4); overflow:hidden; border:1px solid var(--border); display:flex; flex-direction:column;">
+
+    <!-- HEADER -->
+    <div style="background:var(--bg-surface); border-bottom:1px solid var(--border); padding:12px 10px; display:flex; align-items:center; gap:4px;">
+      <a href="Hunian Dashboard.dc.html" style="width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--text-secondary);" aria-label="Kembali">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </a>
+      <div style="flex:1;"><div style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:16px; color:var(--text-primary);">{{ headerTitle }}</div></div>
+      <button onClick="{{ toggleDark }}" style="width:40px; height:40px; border-radius:10px; border:none; background:none; color:var(--text-secondary); cursor:pointer; font-size:15px;" aria-label="Ganti tema">{{ themeIcon }}</button>
+    </div>
+
+    <!-- ========= QUICK ========= -->
+    <sc-if value="{{ isQuick }}" hint-placeholder-val="{{ true }}">
+      <div class="h-scroll" style="overflow-y:auto; max-height:700px; padding:16px; display:flex; flex-direction:column; gap:16px; animation:hFade 200ms ease;">
+
+        <!-- AI shortcuts -->
+        <div style="display:flex; gap:10px;">
+          <button onClick="{{ flashAi }}" style="flex:1; height:46px; border-radius:10px; border:none; background:var(--accent); color:#fff; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2 11 6l4 1.5L11 9l-1.5 4L8 9 4 7.5 8 6z"/><path d="M18 13l1 2.5L21.5 17 19 18l-1 2.5L17 18l-2.5-1L17 15.5z"/></svg>
+            Paste deskripsi
+          </button>
+          <button onClick="{{ flashUrl }}" style="flex:1; height:46px; border-radius:10px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-secondary); font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Paste URL
+          </button>
+        </div>
+        <div style="text-align:center; font-size:11.5px; color:var(--text-muted);">— atau isi manual —</div>
+
+        <!-- nama -->
+        <div>
+          <label for="nm" style="display:block; font-size:12.5px; font-weight:500; color:var(--text-secondary); margin-bottom:5px;">Nama / label <span style="color:var(--danger-text);" aria-hidden="true">*</span></label>
+          <input id="nm" value="{{ name }}" onInput="{{ setName }}" placeholder="Kost Bu Sari - Pondok Gede" style="width:100%; height:46px; border-radius:9px; border:1px solid var(--border); padding:0 13px; font-size:14px;"/>
+        </div>
+
+        <!-- tipe -->
+        <div>
+          <label style="display:block; font-size:12.5px; font-weight:500; color:var(--text-secondary); margin-bottom:5px;">Tipe properti <span style="color:var(--danger-text);" aria-hidden="true">*</span></label>
+          <div style="display:flex; background:var(--bg-elevated); border:1px solid var(--border); border-radius:10px; padding:3px; gap:3px;">
+            <sc-for list="{{ typeChips }}" as="t" hint-placeholder-count="3">
+              <button onClick="{{ t.onClick }}" style="flex:1; height:40px; border-radius:7px; border:none; cursor:pointer; font-size:13px; font-weight:600; background:{{ t.bg }}; color:{{ t.fg }}; box-shadow:{{ t.shadow }};">{{ t.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- harga -->
+        <div>
+          <label for="pr" style="display:block; font-size:12.5px; font-weight:500; color:var(--text-secondary); margin-bottom:5px;">Harga sewa pokok <span style="color:var(--danger-text);" aria-hidden="true">*</span></label>
+          <div style="display:flex; gap:8px;">
+            <div style="flex:1; display:flex; align-items:center; height:46px; border-radius:9px; border:1px solid var(--border); overflow:hidden;">
+              <span style="height:100%; display:flex; align-items:center; padding:0 12px; background:var(--bg-elevated); border-right:1px solid var(--border); font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--text-secondary);">Rp</span>
+              <input id="pr" value="{{ priceStr }}" onInput="{{ setPrice }}" inputmode="numeric" placeholder="0" style="flex:1; height:100%; border:none; outline:none; padding:0 12px; font-family:'JetBrains Mono',monospace; font-size:14px;"/>
+            </div>
+            <div style="display:flex; background:var(--bg-elevated); border:1px solid var(--border); border-radius:9px; padding:3px; gap:3px;">
+              <sc-for list="{{ periodChips }}" as="p" hint-placeholder-count="2">
+                <button onClick="{{ p.onClick }}" style="height:38px; padding:0 12px; border-radius:7px; border:none; cursor:pointer; font-size:12.5px; font-weight:600; background:{{ p.bg }}; color:{{ p.fg }}; box-shadow:{{ p.shadow }};">{{ p.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <!-- lokasi -->
+        <div>
+          <label style="display:block; font-size:12.5px; font-weight:500; color:var(--text-secondary); margin-bottom:5px;">Lokasi <span style="color:var(--danger-text);" aria-hidden="true">*</span></label>
+          <sc-if value="{{ locVerified }}">
+            <div style="display:flex; align-items:center; gap:9px; padding:12px 13px; border-radius:9px; background:var(--success-surface); border:1px solid var(--success);">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--success-text)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+              <div style="flex:1;"><div style="font-size:13px; font-weight:600; color:var(--success-text);">Lokasi terverifikasi</div><div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-secondary);">-6.2841, 106.9876</div></div>
+              <button onClick="{{ resetLoc }}" style="border:none; background:none; color:var(--text-muted); cursor:pointer; font-size:12px;">Ubah</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ locUnset }}">
+            <div style="display:flex; gap:8px;">
+              <button onClick="{{ setGps }}" style="flex:1; height:46px; border-radius:9px; border:1px solid var(--primary); background:var(--primary-surface); color:var(--primary); font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="M2 12h3"/><path d="M19 12h3"/></svg>
+                Ambil GPS
+              </button>
+              <button onClick="{{ setGps }}" style="flex:1; height:46px; border-radius:9px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-secondary); font-size:13px; font-weight:600; cursor:pointer;">Paste Maps link</button>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- foto wajib -->
+        <div>
+          <label style="display:block; font-size:12.5px; font-weight:500; color:var(--text-secondary); margin-bottom:5px;">Foto wajib (2)</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <sc-for list="{{ quickPhotos }}" as="ph" hint-placeholder-count="2">
+              <button onClick="{{ ph.onClick }}" style="aspect-ratio:4/3; border-radius:10px; border:{{ ph.border }}; background:{{ ph.bg }}; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; position:relative; overflow:hidden;">
+                <sc-if value="{{ ph.filled }}">
+                  <div style="position:absolute; inset:0; background:repeating-linear-gradient(135deg, var(--border) 0 8px, var(--bg-elevated) 8px 16px);"></div>
+                  <div style="position:absolute; top:6px; right:6px; width:20px; height:20px; border-radius:50%; background:var(--success); display:flex; align-items:center; justify-content:center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                  <div style="position:absolute; bottom:6px; left:8px; font-size:11px; font-weight:600; color:var(--text-primary); background:var(--bg-surface); padding:1px 6px; border-radius:5px;">{{ ph.label }}</div>
+                </sc-if>
+                <sc-if value="{{ ph.empty }}">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ ph.iconColor }}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                  <span style="font-size:11.5px; font-weight:500; color:{{ ph.labelColor }}; text-align:center; padding:0 6px;">{{ ph.label }}</span>
+                  <span style="font-size:10px; font-weight:600; color:var(--danger-text);">Wajib</span>
+                </sc-if>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <!-- quick submit bar -->
+      <div style="border-top:1px solid var(--border); background:var(--bg-surface); padding:12px 16px;">
+        <button onClick="{{ submitQuick }}" style="width:100%; height:50px; border-radius:11px; border:none; background:var(--primary); color:#fff; font-size:16px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7H7v7"/><path d="M7 3v4h8"/></svg>
+          Simpan hunian
+        </button>
+      </div>
+    </sc-if>
+
+    <!-- ========= FULL ========= -->
+    <sc-if value="{{ isFull }}">
+      <!-- success banner -->
+      <div style="margin:14px 16px 0; padding:11px 13px; border-radius:10px; background:var(--success-surface); border:1px solid var(--success); display:flex; align-items:center; gap:9px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success-text)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+        <span style="flex:1; font-size:12.5px; color:var(--success-text); font-weight:500;">Hunian tersimpan. Lengkapi untuk skor akurat.</span>
+      </div>
+
+      <!-- tabs -->
+      <div class="h-scroll" style="display:flex; gap:4px; overflow-x:auto; padding:12px 16px 0; border-bottom:1px solid var(--border);">
+        <sc-for list="{{ fullTabs }}" as="t" hint-placeholder-count="5">
+          <button onClick="{{ t.onClick }}" style="flex:none; padding:9px 12px; border:none; background:none; cursor:pointer; font-size:13.5px; font-weight:600; color:{{ t.color }}; border-bottom:2px solid {{ t.underline }}; margin-bottom:-1px;">{{ t.label }}</button>
+        </sc-for>
+      </div>
+
+      <div class="h-scroll" style="overflow-y:auto; max-height:580px; padding:16px;">
+
+        <!-- BIAYA -->
+        <sc-if value="{{ tBiaya }}">
+          <div style="display:flex; flex-direction:column; gap:13px; animation:hFade 200ms ease;">
+            <div style="font-size:12px; color:var(--text-muted);">Komponen biaya untuk <span style="color:var(--text-primary); font-weight:600;">{{ typeName }}</span></div>
+            <sc-for list="{{ costFields }}" as="c" hint-placeholder-count="5">
+              <div>
+                <label style="display:block; font-size:12.5px; color:var(--text-secondary); margin-bottom:5px;">{{ c.label }}</label>
+                <div style="display:flex; align-items:center; height:44px; border-radius:9px; border:1px solid var(--border); overflow:hidden;">
+                  <span style="height:100%; display:flex; align-items:center; padding:0 11px; background:var(--bg-elevated); border-right:1px solid var(--border); font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text-secondary);">Rp</span>
+                  <input value="{{ c.value }}" onInput="{{ c.onInput }}" inputmode="numeric" placeholder="0" style="flex:1; height:100%; border:none; outline:none; padding:0 11px; font-family:'JetBrains Mono',monospace; font-size:13px;"/>
+                </div>
+              </div>
+            </sc-for>
+
+            <!-- missing cost -->
+            <sc-if value="{{ hasMissing }}">
+              <div style="padding:12px 13px; border-radius:10px; background:var(--warning-surface); border:1px solid var(--warning);">
+                <div style="display:flex; align-items:center; gap:7px; margin-bottom:6px;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--warning-text)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                  <span style="font-size:12.5px; font-weight:700; color:var(--warning-text);">Biaya mungkin belum lengkap</span>
+                </div>
+                <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;">{{ missingText }}</div>
+              </div>
+            </sc-if>
+
+            <!-- total -->
+            <div style="margin-top:2px; padding:14px; border-radius:11px; background:var(--primary-surface); display:flex; align-items:center; justify-content:space-between;">
+              <span style="font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:13.5px; color:var(--primary);">Estimasi total / bulan</span>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:600; color:var(--primary);">{{ totalStr }}</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- KONDISI -->
+        <sc-if value="{{ tKondisi }}">
+          <div style="display:flex; flex-direction:column; gap:16px; animation:hFade 200ms ease;">
+            <div style="display:flex; gap:12px;">
+              <div style="flex:1;"><label style="display:block; font-size:12.5px; color:var(--text-secondary); margin-bottom:5px;">Luas (m²)</label><input value="{{ area }}" onInput="{{ setArea }}" inputmode="numeric" placeholder="0" style="width:100%; height:44px; border-radius:9px; border:1px solid var(--border); padding:0 12px; font-family:'JetBrains Mono',monospace; font-size:13px;"/></div>
+            </div>
+            <div style="display:flex; gap:12px;">
+              <div style="flex:1;"><label style="display:block; font-size:12.5px; color:var(--text-secondary); margin-bottom:6px;">Kamar tidur</label>
+                <div style="display:flex; align-items:center; gap:12px;"><button onClick="{{ bedMinus }}" style="width:38px; height:38px; border-radius:9px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-primary); font-size:18px; cursor:pointer;">−</button><span style="font-family:'JetBrains Mono',monospace; font-size:16px; color:var(--text-primary); min-width:18px; text-align:center;">{{ beds }}</span><button onClick="{{ bedPlus }}" style="width:38px; height:38px; border-radius:9px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-primary); font-size:18px; cursor:pointer;">+</button></div>
+              </div>
+              <div style="flex:1;"><label style="display:block; font-size:12.5px; color:var(--text-secondary); margin-bottom:6px;">Kamar mandi</label>
+                <div style="display:flex; align-items:center; gap:12px;"><button onClick="{{ bathMinus }}" style="width:38px; height:38px; border-radius:9px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-primary); font-size:18px; cursor:pointer;">−</button><span style="font-family:'JetBrains Mono',monospace; font-size:16px; color:var(--text-primary); min-width:18px; text-align:center;">{{ baths }}</span><button onClick="{{ bathPlus }}" style="width:38px; height:38px; border-radius:9px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-primary); font-size:18px; cursor:pointer;">+</button></div>
+              </div>
+            </div>
+            <div><label style="display:block; font-size:12.5px; color:var(--text-secondary); margin-bottom:6px;">Kondisi bangunan</label>
+              <div style="display:flex; gap:7px;"><sc-for list="{{ condChips }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.onClick }}" style="flex:1; height:42px; border-radius:9px; border:1px solid {{ c.border }}; background:{{ c.bg }}; color:{{ c.fg }}; font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:500; cursor:pointer;">{{ c.label }}</button></sc-for></div>
+            </div>
+            <div><label style="display:block; font-size:12.5px; color:var(--text-secondary); margin-bottom:6px;">Furnitur</label>
+              <div style="display:flex; gap:7px;"><sc-for list="{{ furnishChips }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.onClick }}" style="flex:1; height:42px; border-radius:9px; border:1px solid {{ c.border }}; background:{{ c.bg }}; color:{{ c.fg }}; font-size:12.5px; font-weight:600; cursor:pointer;">{{ c.label }}</button></sc-for></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- LINGKUNGAN -->
+        <sc-if value="{{ tLingkungan }}">
+          <div style="display:flex; flex-direction:column; gap:16px; animation:hFade 200ms ease;">
+            <div><label style="display:block; font-size:12.5px; color:var(--text-secondary); margin-bottom:6px;">Keamanan komplek</label>
+              <div style="display:flex; gap:7px; flex-wrap:wrap;"><sc-for list="{{ secChips }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.onClick }}" style="padding:0 13px; height:40px; border-radius:9px; border:1px solid {{ c.border }}; background:{{ c.bg }}; color:{{ c.fg }}; font-size:12.5px; font-weight:600; cursor:pointer;">{{ c.label }}</button></sc-for></div>
+            </div>
+            <div><label style="display:block; font-size:12.5px; color:var(--text-secondary); margin-bottom:6px;">Riwayat banjir</label>
+              <div style="display:flex; gap:7px;"><sc-for list="{{ floodChips }}" as="c" hint-placeholder-count="3"><button onClick="{{ c.onClick }}" style="flex:1; height:40px; border-radius:9px; border:1px solid {{ c.border }}; background:{{ c.bg }}; color:{{ c.fg }}; font-size:12.5px; font-weight:600; cursor:pointer;">{{ c.label }}</button></sc-for></div>
+            </div>
+            <div><label style="display:block; font-size:12.5px; color:var(--text-secondary); margin-bottom:6px;">Periode kontrak tersedia <span style="color:var(--text-muted); font-weight:400;">(pilih semua)</span></label>
+              <div style="display:flex; gap:7px; flex-wrap:wrap;"><sc-for list="{{ periodMulti }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.onClick }}" style="padding:0 13px; height:40px; border-radius:9px; border:1px solid {{ c.border }}; background:{{ c.bg }}; color:{{ c.fg }}; font-size:12.5px; font-weight:600; cursor:pointer;">{{ c.label }}</button></sc-for></div>
+              <div style="margin-top:7px; font-size:11.5px; color:var(--text-muted);">Minimal kontrak otomatis: <span style="color:var(--text-primary); font-weight:500;">{{ minContract }}</span></div>
+            </div>
+            <div><label style="display:block; font-size:12.5px; color:var(--text-secondary); margin-bottom:6px;">Deposit (bulan)</label>
+              <div style="display:flex; align-items:center; gap:12px;"><button onClick="{{ depMinus }}" style="width:38px; height:38px; border-radius:9px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-primary); font-size:18px; cursor:pointer;">−</button><span style="font-family:'JetBrains Mono',monospace; font-size:16px; color:var(--text-primary); min-width:18px; text-align:center;">{{ deposit }}</span><button onClick="{{ depPlus }}" style="width:38px; height:38px; border-radius:9px; border:1px solid var(--border); background:var(--bg-surface); color:var(--text-primary); font-size:18px; cursor:pointer;">+</button></div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- FOTO -->
+        <sc-if value="{{ tFoto }}">
+          <div style="animation:hFade 200ms ease;">
+            <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px;">{{ filledCount }} dari {{ slotCount }} slot terisi · 2 wajib</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <sc-for list="{{ fullPhotos }}" as="ph" hint-placeholder-count="6">
+                <button onClick="{{ ph.onClick }}" style="aspect-ratio:4/3; border-radius:10px; border:{{ ph.border }}; background:{{ ph.bg }}; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; position:relative; overflow:hidden;">
+                  <sc-if value="{{ ph.filled }}">
+                    <div style="position:absolute; inset:0; background:repeating-linear-gradient(135deg, var(--border) 0 8px, var(--bg-elevated) 8px 16px);"></div>
+                    <div style="position:absolute; top:6px; right:6px; width:18px; height:18px; border-radius:50%; background:var(--success); display:flex; align-items:center; justify-content:center;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div style="position:absolute; bottom:6px; left:7px; font-size:10.5px; font-weight:600; color:var(--text-primary); background:var(--bg-surface); padding:1px 5px; border-radius:5px;">{{ ph.label }}</div>
+                  </sc-if>
+                  <sc-if value="{{ ph.empty }}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{ ph.iconColor }}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                    <span style="font-size:11px; font-weight:500; color:{{ ph.labelColor }}; text-align:center; padding:0 6px;">{{ ph.label }}</span>
+                    <span style="font-size:9.5px; font-weight:600; color:{{ ph.tagColor }};">{{ ph.tag }}</span>
+                  </sc-if>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- CATATAN -->
+        <sc-if value="{{ tCatatan }}">
+          <div style="animation:hFade 200ms ease;">
+            <label for="cat" style="display:block; font-size:12.5px; color:var(--text-secondary); margin-bottom:6px;">Catatan bebas</label>
+            <textarea id="cat" value="{{ notes }}" onInput="{{ setNotes }}" placeholder="Kesan, hal yang perlu ditanyakan lagi, observasi lapangan…" style="width:100%; height:160px; border-radius:10px; border:1px solid var(--border); padding:12px; font-size:14px; line-height:1.5; resize:none;"></textarea>
+          </div>
+        </sc-if>
+      </div>
+
+      <!-- autosave + done -->
+      <div style="border-top:1px solid var(--border); background:var(--bg-surface); padding:10px 16px 12px;">
+        <div style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text-muted); margin-bottom:9px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z"/><path d="m9 12 2 2 4-4"/></svg>
+          Draft tersimpan otomatis · 2 detik lalu
+        </div>
+        <button onClick="{{ flashDone }}" style="width:100%; height:48px; border-radius:11px; border:none; background:var(--primary); color:#fff; font-size:15px; font-weight:600; cursor:pointer;">Selesai</button>
+      </div>
+    </sc-if>
+
+  </div>
+
+  <sc-if value="{{ toast }}">
+    <div role="status" aria-live="polite" style="position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:60; background:var(--text-primary); color:var(--bg-surface); padding:11px 18px; border-radius:10px; font-size:13.5px; font-weight:500; box-shadow:var(--shadow-4); animation:hFade 200ms ease;">{{ toast }}</div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:520,&quot;height&quot;:880},&quot;startDark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;startMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;quick&quot;,&quot;full&quot;],&quot;default&quot;:&quot;quick&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = {
+    dark:false, mode:'quick', tab:'Biaya', toast:null,
+    name:'', type:'apartemen', price:3500000, period:'bulan',
+    locVerified:false, q1:false, q2:false,
+    cost:{}, // keyed by field label
+    area:'', beds:1, baths:1, cond:4, furnish:'semi',
+    sec:'one_gate', flood:'unknown', periods:['bulanan','tahunan'], deposit:2,
+    notes:'', fullPhotoFilled:{},
+  };
+
+  componentDidMount(){
+    if(this.props.startDark) this.setState({dark:true});
+    if(this.props.startMode) this.setState({mode:this.props.startMode});
+  }
+  fmt(n){ return n ? Number(n).toLocaleString('id-ID') : ''; }
+  rp(n){ return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
+  parseNum(s){ return +(String(s).replace(/\D/g,'')) || 0; }
+  flash(m){ this.setState({toast:m}); clearTimeout(this._t); this._t=setTimeout(()=>this.setState({toast:null}),2000); }
+
+  costConfig(type){
+    if(type==='apartemen') return ['IPL + service charge','Listrik (estimasi)','Air (estimasi)','Internet','Parkir motor'];
+    if(type==='kontrakan') return ['Kebersihan RT','Keamanan / siskamling','Listrik (estimasi)','Air (estimasi)','Parkir'];
+    return ['Listrik (estimasi)','WiFi','Laundry','Parkir']; // kost
+  }
+
+  renderVals(){
+    const S=this.state, dark=S.dark;
+    const seg=(active)=>({ bg: active?'var(--bg-surface)':'transparent', fg: active?'var(--primary)':'var(--text-muted)', shadow: active?'var(--shadow-2)':'none' });
+    const chip=(active)=>({ bg: active?'var(--primary)':'var(--bg-surface)', fg: active?'#fff':'var(--text-secondary)', border: active?'var(--primary)':'var(--border)' });
+
+    const typeName = {apartemen:'Apartemen',kontrakan:'Kontrakan',kost:'Kost'}[S.type];
+
+    // type / period chips
+    const typeChips=[['kontrakan','Kontrakan'],['apartemen','Apartemen'],['kost','Kost']].map(([k,l])=>({label:l, ...seg(S.type===k), onClick:()=>this.setState({type:k, cost:{}})}));
+    const periodChips=[['bulan','/bln'],['tahun','/thn']].map(([k,l])=>({label:l, ...seg(S.period===k), onClick:()=>this.setState({period:k})}));
+
+    // quick photos
+    const qp=(filled,label,key)=> filled
+      ? {filled:true, empty:false, label, border:'2px solid var(--success)', bg:'var(--success-surface)', onClick:()=>this.setState({[key]:false})}
+      : {filled:false, empty:true, label, border:'2px dashed var(--danger)', bg:'var(--danger-surface)', iconColor:'var(--danger)', labelColor:'var(--danger-text)', onClick:()=>this.setState({[key]:true})};
+    const quickPhotos=[ qp(S.q1,'Tampak depan','q1'), qp(S.q2,'Area utama','q2') ];
+
+    // FULL — cost
+    const cfg=this.costConfig(S.type);
+    const costFields=cfg.map(label=>({ label, value:this.fmt(S.cost[label]), onInput:(e)=>{ const v=this.parseNum(e.target.value); this.setState(st=>({cost:{...st.cost,[label]:v}})); } }));
+    const baseMonthly = S.period==='tahun' ? Math.round(S.price/12) : S.price;
+    const costSum = cfg.reduce((a,l)=>a+(S.cost[l]||0),0);
+    const total = baseMonthly + costSum;
+    const missing = cfg.filter(l=>!S.cost[l]);
+    const hasMissing = missing.length>0;
+    const missingText = missing.length ? ('Belum diisi: ' + missing.join(', ') + '. Estimasi total bisa berbeda — tanyakan saat survey.') : '';
+
+    // kondisi chips
+    const condChips=[1,2,3,4,5].map(n=>({label:String(n), ...chip(S.cond===n), onClick:()=>this.setState({cond:n})}));
+    const furnishChips=[['unfurnished','Kosong'],['semi','Semi'],['furnished','Full']].map(([k,l])=>({label:l, ...chip(S.furnish===k), onClick:()=>this.setState({furnish:k})}));
+
+    // lingkungan chips
+    const secChips=[['satpam24','Satpam 24 jam'],['one_gate','One gate'],['none','Tidak ada']].map(([k,l])=>({label:l, ...chip(S.sec===k), onClick:()=>this.setState({sec:k})}));
+    const floodChips=[['never','Tidak pernah'],['yes','Pernah'],['unknown','Tidak tahu']].map(([k,l])=>({label:l, ...chip(S.flood===k), onClick:()=>this.setState({flood:k})}));
+    const periodOpts=[['bulanan','Bulanan'],['3bulan','3 bulan'],['6bulan','6 bulan'],['tahunan','Tahunan']];
+    const periodMulti=periodOpts.map(([k,l])=>{ const on=S.periods.includes(k);
+      return {label:l, ...chip(on), onClick:()=>this.setState(st=>({periods: on? st.periods.filter(x=>x!==k) : [...st.periods,k]}))}; });
+    const rank={bulanan:0,'3bulan':1,'6bulan':2,tahunan:3};
+    const minContract = S.periods.length ? periodOpts[Math.min(...S.periods.map(p=>rank[p]))][1] : '—';
+
+    // full photos per type
+    const slotDefs = S.type==='apartemen'
+      ? [['Tampak gedung',1],['Ruang utama',1],['Lobby',0],['Kamar tidur',0],['Kamar mandi',0],['View balkon',0]]
+      : S.type==='kontrakan'
+      ? [['Tampak depan',1],['Ruang tamu',1],['Dapur',0],['Kamar tidur',0],['Kamar mandi',0],['Parkir',0]]
+      : [['Tampak depan',1],['Kamar',1],['Kamar mandi',0],['Dapur bersama',0],['Parkir',0],['Lingkungan',0]];
+    const fullPhotos=slotDefs.map(([label,req])=>{ const filled=!!S.fullPhotoFilled[label];
+      if(filled) return {filled:true, empty:false, label, border:'2px solid var(--success)', bg:'var(--success-surface)', onClick:()=>this.setState(st=>({fullPhotoFilled:{...st.fullPhotoFilled,[label]:false}}))};
+      return {filled:false, empty:true, label,
+        border: req?'2px dashed var(--danger)':'2px dashed var(--border-subtle)',
+        bg: req?'var(--danger-surface)':'var(--bg-elevated)',
+        iconColor:'var(--text-muted)', labelColor:'var(--text-secondary)',
+        tag: req?'Wajib':'Recommended', tagColor: req?'var(--danger-text)':'var(--text-muted)',
+        onClick:()=>this.setState(st=>({fullPhotoFilled:{...st.fullPhotoFilled,[label]:true}}))};
+    });
+    const filledCount=Object.values(S.fullPhotoFilled).filter(Boolean).length;
+
+    const fullTabs=['Biaya','Kondisi','Lingkungan','Foto','Catatan'].map(t=>({label:t, onClick:()=>this.setState({tab:t}), color:S.tab===t?'var(--primary)':'var(--text-muted)', underline:S.tab===t?'var(--primary)':'transparent'}));
+
+    return {
+      darkClass: dark?'dark':'', themeIcon: dark?'☀':'☾', toggleDark:()=>this.setState({dark:!dark}),
+      modeLabel: S.mode==='quick'?'quick':'full survey',
+      headerTitle: S.mode==='quick'?'Quick Survey':'Full Survey',
+      isQuick:S.mode==='quick', isFull:S.mode==='full',
+
+      name:S.name, setName:(e)=>this.setState({name:e.target.value}),
+      typeChips, periodChips,
+      priceStr:this.fmt(S.price), setPrice:(e)=>this.setState({price:this.parseNum(e.target.value)}),
+      locVerified:S.locVerified, locUnset:!S.locVerified, setGps:()=>{this.setState({locVerified:true}); this.flash('Lokasi terverifikasi via GPS');}, resetLoc:()=>this.setState({locVerified:false}),
+      quickPhotos,
+      submitQuick:()=>{ this.setState({mode:'full'}); this.flash('Hunian tersimpan'); },
+      flashAi:()=>this.flash('Text-to-Form — segera hadir'), flashUrl:()=>this.flash('Link Extraction — segera hadir'),
+
+      typeName, costFields, hasMissing, missingText, totalStr:this.rp(total),
+      area:S.area, setArea:(e)=>this.setState({area:e.target.value}),
+      beds:S.beds, bedPlus:()=>this.setState(s=>({beds:s.beds+1})), bedMinus:()=>this.setState(s=>({beds:Math.max(0,s.beds-1)})),
+      baths:S.baths, bathPlus:()=>this.setState(s=>({baths:s.baths+1})), bathMinus:()=>this.setState(s=>({baths:Math.max(0,s.baths-1)})),
+      condChips, furnishChips,
+      secChips, floodChips, periodMulti, minContract,
+      deposit:S.deposit, depPlus:()=>this.setState(s=>({deposit:s.deposit+1})), depMinus:()=>this.setState(s=>({deposit:Math.max(0,s.deposit-1)})),
+      fullPhotos, filledCount, slotCount:slotDefs.length,
+      notes:S.notes, setNotes:(e)=>this.setState({notes:e.target.value}),
+      fullTabs, tBiaya:S.tab==='Biaya', tKondisi:S.tab==='Kondisi', tLingkungan:S.tab==='Lingkungan', tFoto:S.tab==='Foto', tCatatan:S.tab==='Catatan',
+      flashDone:()=>this.flash('Full Survey selesai · skor diperbarui'),
+      toast:S.toast,
+    };
+  }
+}
+</script>
+</body>
+</html>

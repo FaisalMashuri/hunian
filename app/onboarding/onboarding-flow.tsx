@@ -168,7 +168,7 @@ export function OnboardingFlow() {
                   />
                 </div>
                 <p className="mt-2.5 text-xs leading-snug text-zinc-400">
-                  Hunian akan menilai lebih positif listing yang harganya masuk di zona ini.
+                  Optio akan menilai lebih positif listing yang harganya masuk di zona ini.
                 </p>
               </div>
             </div>
@@ -226,7 +226,7 @@ export function OnboardingFlow() {
             <div className="mt-2">
               <p className="text-[15px] leading-relaxed text-zinc-600">
                 Susun dari yang <strong>paling menentukan</strong> (atas) ke yang paling tidak — pakai
-                panah ↑↓ atau geser. Ini memengaruhi cara Hunian menilai tiap pilihan.
+                panah ↑↓ atau geser. Ini memengaruhi cara Optio menilai tiap pilihan.
               </p>
 
               <div className="mt-5">
@@ -280,7 +280,7 @@ export function OnboardingFlow() {
                 ? "Simpan Budget →"
                 : step === 1
                   ? "Simpan Tujuan →"
-                  : "Mulai Pakai Hunian →"}
+                  : "Mulai Pakai Optio →"}
           </button>
         </div>
       </div>
