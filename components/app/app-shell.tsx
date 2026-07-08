@@ -1,6 +1,6 @@
-import Image from "next/image";
 import { Sidebar } from "./sidebar";
 import { BottomNav } from "./bottom-nav";
+import { OptioMark } from "./optio-mark";
 
 export type AppUser = { name: string; email: string; initial: string };
 
@@ -26,9 +26,9 @@ export function AppShell({
       {/* Header mobile — hanya untuk halaman non-bleed (halaman bleed punya topbar sendiri) */}
       {!bleed && (
         <header className="sticky top-9 z-20 flex h-14 items-center gap-2 border-b border-zinc-200/70 bg-stone-50/85 px-4 backdrop-blur sm:hidden">
-          <Image src="/icon.png" alt="Hunian" width={28} height={28} priority className="h-7 w-7 object-contain" />
+          <OptioMark className="h-7 w-7 text-teal-700" />
           <span className="text-lg font-extrabold tracking-tight text-zinc-900">
-            Hunian<span className="text-teal-700">.</span>
+            Optio<span className="text-teal-700">.</span>
           </span>
         </header>
       )}

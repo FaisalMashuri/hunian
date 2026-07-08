@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { NAV_ITEMS } from "./nav-icons";
+import { OptioMark } from "./optio-mark";
 
 // Sidebar untuk layar besar (sm:flex) — persis mockup: logo, Menu, Konteks.
 export function Sidebar({
@@ -18,8 +18,8 @@ export function Sidebar({
     <aside className="fixed bottom-0 left-0 top-9 hidden w-64 flex-col overflow-y-auto border-r border-[#E4E3DF] bg-white sm:flex">
       {/* Logo */}
       <div className="flex items-center gap-2.5 border-b border-[#E4E3DF] px-5 py-[18px]">
-        <Image src="/icon.png" alt="Hunian" width={28} height={28} priority className="h-7 w-7 object-contain" />
-        <span className="text-[17px] font-extrabold tracking-tight text-zinc-900">Hunian</span>
+        <OptioMark className="h-7 w-7 text-teal-700" />
+        <span className="text-[17px] font-extrabold tracking-tight text-zinc-900">Optio</span>
       </div>
 
       {/* Menu */}

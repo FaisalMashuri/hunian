@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { signIn, auth } from "@/auth";
 
 export const metadata: Metadata = {
-  title: "Masuk ke Hunian — mulai bandingkan hunian sewa",
+  title: "Masuk ke Optio — mulai bandingkan hunian sewa",
   description:
     "Masuk dengan Google untuk mulai mengumpulkan, menskor, dan membandingkan pilihan hunian sewamu. Gratis.",
   alternates: { canonical: "/login" },
@@ -18,7 +18,7 @@ export default async function LoginPage() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-stone-50 p-6">
       <div className="w-full max-w-sm space-y-8">
         <Link href="/" className="block text-center text-lg font-bold tracking-tight text-zinc-900">
-          Hunian<span className="text-teal-700">.</span>
+          Optio<span className="text-teal-700">.</span>
         </Link>
 
         <div className="rounded-2xl border border-zinc-200 bg-white p-7 text-center shadow-sm">

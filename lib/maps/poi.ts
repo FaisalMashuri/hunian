@@ -175,7 +175,7 @@ async function callOverpass(query: string): Promise<OverpassResponse> {
         // Header etiket Overpass: tanpa User-Agent/Accept beberapa mirror menolak (406) atau lebih agresif rate-limit.
         const res = await fetch(url, {
           signal: ctrl.signal,
-          headers: { "User-Agent": "Hunian/1.0 (rental decision app; +hunian)", Accept: "application/json" },
+          headers: { "User-Agent": "Optio/1.0 (rental decision app; +optio)", Accept: "application/json" },
           next: { revalidate: 604800 },
         });
         if (!res.ok) {
